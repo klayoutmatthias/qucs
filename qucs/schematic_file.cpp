@@ -650,7 +650,7 @@ void Schematic::simpleInsertComponent(Component *c)
 // -------------------------------------------------------------
 bool Schematic::loadComponents(QTextStream *stream, Q3PtrList<Component> *List)
 {
-  QString Line, cstr;
+  QString Line;
   Component *c;
   while(!stream->atEnd()) {
     Line = stream->readLine();
@@ -998,7 +998,7 @@ QString Schematic::createSymbolUndoString(char Op)
 // -------------------------------------------------------------
 // Is quite similiar to "loadDocument()" but with less error checking.
 // Used for "undo" function.
-bool Schematic::rebuild(QString *s)
+bool Schematic::rebuild(const QString &s)
 {
   DocWires.clear();	// delete whole document
   DocNodes.clear();

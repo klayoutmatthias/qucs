@@ -18,7 +18,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include <Q3PtrList>
+#include <QList>
 
 #include "element.h"
 
@@ -64,13 +64,13 @@ public:
   // do somehting with buttons. can sb think of a more descriptive name?
   virtual void dialgButtStuff(ComponentDialog&)const;
 
-  QList<Line *>     Lines;
-  QList<struct Arc *>      Arcs;
-  QList<Area *>     Rects;
-  QList<Area *>     Ellips;
-  QList<Port *>     Ports;
-  QList<Text *>     Texts;
-  Q3PtrList<Property> Props;
+  QList<Line>       Lines;
+  QList<Arc>        Arcs;
+  QList<Area>       Rects;
+  QList<Area>       Ellips;
+  QList<Port>       Ports;
+  QList<Text>       Texts;
+  QList<Property>   Props;
 
   #define COMP_IS_OPEN    0
   #define COMP_IS_ACTIVE  1

@@ -35,11 +35,10 @@
 #include "paintings/painting.h"
 #include "components/component.h"
 
-#include <Q3ScrollView>
-#include <Q3PtrList>
 #include <QVector>
 #include <QStringList>
 #include <QFileInfo>
+#include <QScrollArea>
 
 class QTextStream;
 class QTextEdit;
@@ -75,24 +74,25 @@ struct SubFile {
 };
 typedef QMap<QString, SubFile> SubMap;
 
+// @@@ does not work this way!!!
 // TODO: refactor here
-class WireList : public Q3PtrList<Wire> {
+class WireList : public QList<QSharedPointer<Wire> > {
 };
 // TODO: refactor here
-class NodeList : public Q3PtrList<Node> {
+class NodeList : public QList<QSharedPointer<Node> > {
 };
 // TODO: refactor here
-class DiagramList : public Q3PtrList<Diagram> {
+class DiagramList : public QList<QSharedPointer<Diagram> > {
 };
 // TODO: refactor here
-class ComponentList : public Q3PtrList<Component> {
+class ComponentList : public QList<QSharedPointer<Component> > {
 	// void first(){} // GOAL: hide, still compile.
 };
 // TODO: refactor here
-class PaintingList : public Q3PtrList<Painting> {
+class PaintingList : public QList<QSharedPointer<Painting> > {
 };
 
-class Schematic : public Q3ScrollView, public QucsDoc {
+class Schematic : public QScrollArea, public QucsDoc {
   Q_OBJECT
 public:
   Schematic(QucsApp*, const QString&);
@@ -128,7 +128,7 @@ public:
 
   void    cut();
   void    copy();
-  bool    paste(QTextStream*, Q3PtrList<Element>*);
+  bool    paste(QTextStream*, const QList<Element> &);
   bool    load();
   int     save();
   int     saveSymbolCpp (void);
@@ -177,9 +177,9 @@ public:
   int tmpUsedX1, tmpUsedY1, tmpUsedX2, tmpUsedY2;
 
   int undoActionIdx;
-  QVector<QString *> undoAction;
+  QVector<QString> undoAction;
   int undoSymbolIdx;
-  QVector<QString *> undoSymbol;    // undo stack for circuit symbol
+  QVector<QString> undoSymbol;    // undo stack for circuit symbol
 
   /*! \brief Get (schematic) file reference */
   QFileInfo getFileInfo (void) { return FileInfo; }
@@ -243,15 +243,15 @@ public:
   void  deleteWire(Wire*);
 
   Marker* setMarker(int, int);
-  void    markerLeftRight(bool, Q3PtrList<Element>*);
-  void    markerUpDown(bool, Q3PtrList<Element>*);
+  void    markerLeftRight(bool, const QList<Element> &);
+  void    markerUpDown(bool, const QList<Element> &);
 
   Element* selectElement(float, float, bool, int *index=0);
   void     deselectElements(Element*);
   int      selectElements(int, int, int, int, bool);
   void     selectMarkers();
-  void     newMovingWires(Q3PtrList<Element>*, Node*, int);
-  int      copySelectedElements(Q3PtrList<Element>*);
+  void     newMovingWires(const QList<Element> &, Node*, int);
+  int      copySelectedElements(const QList<Element> &);
   bool     deleteElements();
   bool     aligning(int);
   bool     distributeHorizontal();
@@ -310,20 +310,20 @@ private:
 
   bool loadProperties(QTextStream*);
   void simpleInsertComponent(Component*);
-  bool loadComponents(QTextStream*, Q3PtrList<Component> *List=0);
+  bool loadComponents(QTextStream*, QList<Component> *List=0);
   void simpleInsertWire(Wire*);
-  bool loadWires(QTextStream*, Q3PtrList<Element> *List=0);
-  bool loadDiagrams(QTextStream*, Q3PtrList<Diagram>*);
-  bool loadPaintings(QTextStream*, Q3PtrList<Painting>*);
+  bool loadWires(QTextStream*, QList<Element> *List=0);
+  bool loadDiagrams(QTextStream*, QList<Diagram>&);
+  bool loadPaintings(QTextStream*, QList<Painting>&);
   bool loadIntoNothing(QTextStream*);
 
   QString createClipboardFile();
-  bool    pasteFromClipboard(QTextStream *, Q3PtrList<Element>*);
+  bool    pasteFromClipboard(QTextStream *, const QList<Element>&);
 
   QString createUndoString(char);
-  bool    rebuild(QString *);
+  bool    rebuild(const QString &);
   QString createSymbolUndoString(char);
-  bool    rebuildSymbol(QString *);
+  bool    rebuildSymbol(const QString &);
 
   static void createNodeSet(QStringList&, int&, Conductor*, Node*);
   void throughAllNodes(bool, QStringList&, int&);

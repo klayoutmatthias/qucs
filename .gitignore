@@ -1,6 +1,13 @@
+CMakeFiles
+CMakeCache.txt
+CMakeLists.txt.user
+*.cmake
 *.moc.o
 *.moc.o
 *.moc.cpp
+moc_*.cpp
+moc_*.cpp_parameters
+*.qrc.depends
 ui_*.h
 *.o
 Makefile.in

@@ -56,24 +56,9 @@ add_definitions(-DHAVE_CONFIG_H)
 
 find_package(
   Qt5
-  COMPONENTS Widgets Core Gui Svg Xml Script Test
+  COMPONENTS Widgets Core Gui Svg Xml Script Test PrintSupport
   REQUIRED
 )
-
-# MESSAGE("QT_INCLUDES=[${QT_INCLUDES}]")
-# MESSAGE("QT_LIBRARIES=[${QT_LIBRARIES}]")
-
-# Check whether the Qt QTabWidget::setMovable() function exists. This function
-# was added in Qt 4.5. * Maybe use CMake CheckCXXSourceCompiles in the future?
-try_compile(
-  HAVE_QTABWIDGET_SETMOVABLE ${CMAKE_BINARY_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/QTabWidget_setMovable.cpp
-  CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${QT_INCLUDES}"
-  LINK_LIBRARIES ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
-  OUTPUT_VARIABLE TRY_OUT)
-if(NOT HAVE_QTABWIDGET_SETMOVABLE)
-  message("QTabWidget::setMovable() not available, feature disabled.")
-endif()
 
 # configure the header config.h
 configure_file("${PROJECT_SOURCE_DIR}/../config.h.cmake"
@@ -89,30 +74,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x ") # enable C++11
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register ")
 endif()
-
-# For some reason, on Windows QT_LIBRARIES point to static(?) .a libs which do
-# not provide the needed symbols. They are found on the .dll libraries.
-if(WIN32)
-  link_directories("${QT_BINARY_DIR}")
-
-  # TODO: update for Qt5
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(QT_LIBRARIES QtCored4 QtGuid4 Qt3Supportd4 QtSvgd4 QtXmld4 QtScriptd4)
-  else()
-    set(QT_LIBRARIES QtCore4 QtGui4 Qt3Support4 QtSvg4 QtXml4 QtScript4)
-  endif()
-endif(WIN32)
-
-#
-# Set position independed code PIC
-#
-if(UNIX AND NOT APPLE)
-  if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  endif()
-endif()
-
-add_definitions(${QT_DEFINITIONS} -DQT3_SUPPORT_WARNINGS)
 
 include_directories(
   ${qucs_SOURCE_DIR}
@@ -278,6 +239,8 @@ endif()
 # schematic library
 add_library(coreSchematic OBJECT ${QUCS_SRCS} ${QUCS_MOC_SRCS})
 
+target_link_libraries(coreSchematic Qt::Core Qt::Gui Qt::Widgets Qt::PrintSupport ${CMAKE_DL_LIBS})
+
 # create shared library
 add_library(
   qucsschematic SHARED
@@ -286,7 +249,7 @@ add_library(
   $<TARGET_OBJECTS:paintings>)
 
 # link system libraries
-target_link_libraries(qucsschematic ${QT_LIBRARIES} ${CMAKE_DL_LIBS})
+target_link_libraries(qucsschematic ${CMAKE_DL_LIBS})
 
 #
 # CMake's way of creating an executable

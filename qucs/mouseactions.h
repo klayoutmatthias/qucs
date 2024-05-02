@@ -19,8 +19,7 @@
 #define MOUSEACTIONS_H
 
 #include "element.h"
-
-#include <Q3PtrList>
+#include <QVector>
 
 class Wire;
 class Schematic;
@@ -48,7 +47,7 @@ public:
   QMouseEvent *focusMEvent;
 
   int  MAx1, MAy1,MAx2, MAy2, MAx3, MAy3;  // cache for mouse movements
-  Q3PtrList<Element> movingElements;
+  QVector<Element *> movingElements;
   int movingRotated;
 
   // menu appearing by right mouse button click on component
@@ -113,8 +112,8 @@ public:
   void paintElementsScheme(Schematic*);
   void rotateElements(Schematic*, int&, int&);
   void moveElements(Schematic*, int&, int&);
-  void moveElements(Q3PtrList<Element>*, int, int);
-  void endElementMoving(Schematic*, Q3PtrList<Element>*);
+  void moveElements(const QVector<Element *>&, int, int);
+  void endElementMoving(Schematic*, const QVector<Element *>&);
   void rightPressMenu(Schematic*, QMouseEvent*, float, float);
 };
 

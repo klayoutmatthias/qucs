@@ -24,7 +24,6 @@
 #include <QDir>
 #include <QTextStream>
 #include <QDragLeaveEvent>
-#include <Q3PtrList>
 #include <QPixmap>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
@@ -78,18 +77,11 @@ Schematic::Schematic(QucsApp *App_, const QString& Name_)
   tmpUsedX2 = tmpUsedY2 = tmpViewX2 = tmpViewY2 =  200;
   tmpScale = 1.0;
 
-  DocComps.setAutoDelete(true);
-  DocWires.setAutoDelete(true);
-  DocNodes.setAutoDelete(true);
-  DocDiags.setAutoDelete(true);
-  DocPaints.setAutoDelete(true);
-  SymbolPaints.setAutoDelete(true);
-
   // The 'i' means state for being unchanged.
   undoActionIdx = 0;
-  undoAction.append(new QString(" i\n</>\n</>\n</>\n</>\n"));
+  undoAction.append(QString(" i\n</>\n</>\n</>\n</>\n"));
   undoSymbolIdx = 0;
-  undoSymbol.append(new QString(" i\n</>\n</>\n</>\n</>\n"));
+  undoSymbol.append(QString(" i\n</>\n</>\n</>\n</>\n"));
 
   isVerilog = false;
   creatingLib = false;
@@ -100,8 +92,8 @@ Schematic::Schematic(QucsApp *App_, const QString& Name_)
   Frame_Text2 = tr("Date:");
   Frame_Text3 = tr("Revision:");
 
-  setVScrollBarMode(Q3ScrollView::AlwaysOn);
-  setHScrollBarMode(Q3ScrollView::AlwaysOn);
+  // @@@setVScrollBarMode(QScrollArea::AlwaysOn);
+  // @@@setHScrollBarMode(QScrollArea::AlwaysOn);
   misc::setWidgetBackgroundColor(viewport(), QucsSettings.BGColor);
   viewport()->setMouseTracking(true);
   viewport()->setAcceptDrops(true);  // enable drag'n drop
@@ -142,28 +134,28 @@ bool Schematic::createSubcircuitSymbol()
     return false;
 
   int h = 30*((countPort-1)/2) + 10;
-  SymbolPaints.prepend(new ID_Text(-20, h+4));
+  SymbolPaints.prepend(QSharedPointer<Painting>(new ID_Text(-20, h+4)));
 
   SymbolPaints.append(
-     new GraphicLine(-20, -h, 40,  0, QPen(Qt::darkBlue,2)));
+     QSharedPointer<Painting>(new GraphicLine(-20, -h, 40,  0, QPen(Qt::darkBlue,2))));
   SymbolPaints.append(
-     new GraphicLine( 20, -h,  0,2*h, QPen(Qt::darkBlue,2)));
+     QSharedPointer<Painting>(new GraphicLine( 20, -h,  0,2*h, QPen(Qt::darkBlue,2))));
   SymbolPaints.append(
-     new GraphicLine(-20,  h, 40,  0, QPen(Qt::darkBlue,2)));
+     QSharedPointer<Painting>(new GraphicLine(-20,  h, 40,  0, QPen(Qt::darkBlue,2))));
   SymbolPaints.append(
-     new GraphicLine(-20, -h,  0,2*h, QPen(Qt::darkBlue,2)));
+     QSharedPointer<Painting>(new GraphicLine(-20, -h,  0,2*h, QPen(Qt::darkBlue,2))));
 
   unsigned int i=0, y = 10-h;
   while(i<countPort) {
     i++;
     SymbolPaints.append(
-       new GraphicLine(-30, y, 10, 0, QPen(Qt::darkBlue,2)));
+       QSharedPointer<Painting>(new GraphicLine(-30, y, 10, 0, QPen(Qt::darkBlue,2))));
     SymbolPaints.at(i)->setCenter(-30,  y);
 
     if(i == countPort)  break;
     i++;
     SymbolPaints.append(
-       new GraphicLine( 20, y, 10, 0, QPen(Qt::darkBlue,2)));
+       QSharedPointer<Painting>(new GraphicLine( 20, y, 10, 0, QPen(Qt::darkBlue,2))));
     SymbolPaints.at(i)->setCenter(30,  y);
     y += 60;
   }
@@ -259,18 +251,16 @@ void Schematic::setChanged(bool c, bool fillStack, char Op)
   // ................................................
   if(symbolMode) {  // for symbol edit mode
     while(undoSymbol.size() > undoSymbolIdx + 1) {
-      delete undoSymbol.last();
       undoSymbol.pop_back();
     }
 
-    undoSymbol.append(new QString(createSymbolUndoString(Op)));
+    undoSymbol.append(QString(createSymbolUndoString(Op)));
     undoSymbolIdx++;
 
     emit signalUndoState(true);
     emit signalRedoState(false);
 
     while(static_cast<unsigned int>(undoSymbol.size()) > QucsSettings.maxUndo) { // "while..." because
-      delete undoSymbol.first();
       undoSymbol.pop_front();
       undoSymbolIdx--;
     }
@@ -280,26 +270,23 @@ void Schematic::setChanged(bool c, bool fillStack, char Op)
   // ................................................
   // for schematic edit mode
   while(undoAction.size() > undoActionIdx + 1) {
-    delete undoAction.last();
     undoAction.pop_back();
   }
 
   if(Op == 'm') {   // only one for move marker
-    if (undoAction.at(undoActionIdx)->at(0) == Op) {
-      delete undoAction.last();
+    if (undoAction.at(undoActionIdx).at(0) == Op) {
       undoAction.pop_back();
       undoActionIdx--;
     }
   }
 
-  undoAction.append(new QString(createUndoString(Op)));
+  undoAction.append(QString(createUndoString(Op)));
   undoActionIdx++;
 
   emit signalUndoState(true);
   emit signalRedoState(false);
 
   while(static_cast<unsigned int>(undoAction.size()) > QucsSettings.maxUndo) { // "while..." because
-    delete undoAction.first(); // "maxUndo" could be decreased meanwhile
     undoAction.pop_front();
     undoActionIdx--;
   }
@@ -405,20 +392,19 @@ void Schematic::drawContents(QPainter *p, int, int, int, int)
   if(!symbolMode)
     paintFrame(&Painter);
 
-  for(Component *pc = Components->first(); pc != 0; pc = Components->next())
-    pc->paint(&Painter);
+  for(auto pc = Components->begin(); pc != Components->end(); ++pc)
+    (*pc)->paint(&Painter);
 
-  for(Wire *pw = Wires->first(); pw != 0; pw = Wires->next()) {
-    pw->paint(&Painter);
-    if(pw->Label)
-      pw->Label->paint(&Painter);  // separate because of paintSelected
+  for(auto pw = Wires->begin(); pw != Wires->end(); ++pw) {
+    (*pw)->paint(&Painter);
+    if((*pw)->Label)
+      (*pw)->Label->paint(&Painter);  // separate because of paintSelected
   }
 
-  Node *pn;
-  for(pn = Nodes->first(); pn != 0; pn = Nodes->next()) {
-    pn->paint(&Painter);
-    if(pn->Label)
-      pn->Label->paint(&Painter);  // separate because of paintSelected
+  for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
+    (*pn)->paint(&Painter);
+    if((*pn)->Label)
+      (*pn)->Label->paint(&Painter);  // separate because of paintSelected
   }
 
   // FIXME disable here, issue with select box goes away
