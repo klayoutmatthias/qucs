@@ -39,6 +39,8 @@
 #include <QDebug>
 #include <QApplication>
 #include <QClipboard>
+#include <QScrollBar>
+#include <QMimeData>
 
 #include "qucs.h"
 #include "schematic.h"
@@ -92,8 +94,8 @@ Schematic::Schematic(QucsApp *App_, const QString& Name_)
   Frame_Text2 = tr("Date:");
   Frame_Text3 = tr("Revision:");
 
-  // @@@setVScrollBarMode(QScrollArea::AlwaysOn);
-  // @@@setHScrollBarMode(QScrollArea::AlwaysOn);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   misc::setWidgetBackgroundColor(viewport(), QucsSettings.BGColor);
   viewport()->setMouseTracking(true);
   viewport()->setAcceptDrops(true);  // enable drag'n drop
@@ -134,29 +136,29 @@ bool Schematic::createSubcircuitSymbol()
     return false;
 
   int h = 30*((countPort-1)/2) + 10;
-  SymbolPaints.prepend(QSharedPointer<Painting>(new ID_Text(-20, h+4)));
+  SymbolPaints.prepend(new ID_Text(-20, h+4));
 
   SymbolPaints.append(
-     QSharedPointer<Painting>(new GraphicLine(-20, -h, 40,  0, QPen(Qt::darkBlue,2))));
+    new GraphicLine(-20, -h, 40,  0, QPen(Qt::darkBlue,2)));
   SymbolPaints.append(
-     QSharedPointer<Painting>(new GraphicLine( 20, -h,  0,2*h, QPen(Qt::darkBlue,2))));
+    new GraphicLine( 20, -h,  0,2*h, QPen(Qt::darkBlue,2)));
   SymbolPaints.append(
-     QSharedPointer<Painting>(new GraphicLine(-20,  h, 40,  0, QPen(Qt::darkBlue,2))));
+    new GraphicLine(-20,  h, 40,  0, QPen(Qt::darkBlue,2)));
   SymbolPaints.append(
-     QSharedPointer<Painting>(new GraphicLine(-20, -h,  0,2*h, QPen(Qt::darkBlue,2))));
+    new GraphicLine(-20, -h,  0,2*h, QPen(Qt::darkBlue,2)));
 
   unsigned int i=0, y = 10-h;
   while(i<countPort) {
     i++;
     SymbolPaints.append(
-       QSharedPointer<Painting>(new GraphicLine(-30, y, 10, 0, QPen(Qt::darkBlue,2))));
-    SymbolPaints.at(i)->setCenter(-30,  y);
+      new GraphicLine(-30, y, 10, 0, QPen(Qt::darkBlue,2)));
+    SymbolPaints.back().setCenter(-30,  y);
 
     if(i == countPort)  break;
     i++;
     SymbolPaints.append(
-       QSharedPointer<Painting>(new GraphicLine( 20, y, 10, 0, QPen(Qt::darkBlue,2))));
-    SymbolPaints.at(i)->setCenter(30,  y);
+      new GraphicLine( 20, y, 10, 0, QPen(Qt::darkBlue,2)));
+    SymbolPaints.back().setCenter(30,  y);
     y += 60;
   }
   return true;
@@ -380,44 +382,47 @@ void Schematic::paintFrame(ViewPainter *p)
 
 // -----------------------------------------------------------
 // Is called when the content (schematic or data display) has to be drawn.
-void Schematic::drawContents(QPainter *p, int, int, int, int)
+void Schematic::paintEvent(QPaintEvent * /*event*/)
 {
   ViewPainter Painter;
+  QPainter p(viewport());
 
-  Painter.init(p, Scale, -ViewX1, -ViewY1, contentsX(), contentsY());
+  Painter.init(&p, Scale, -ViewX1, -ViewY1, contentsX(), contentsY());
 
   paintGrid(&Painter, contentsX(), contentsY(),
-            visibleWidth(), visibleHeight());
+            contentsWidth(), visibleHeight());
 
   if(!symbolMode)
     paintFrame(&Painter);
 
   for(auto pc = Components->begin(); pc != Components->end(); ++pc)
-    (*pc)->paint(&Painter);
+    pc->paint(&Painter);
 
   for(auto pw = Wires->begin(); pw != Wires->end(); ++pw) {
-    (*pw)->paint(&Painter);
-    if((*pw)->Label)
-      (*pw)->Label->paint(&Painter);  // separate because of paintSelected
+    pw->paint(&Painter);
+    if(pw->Label)
+      pw->Label->paint(&Painter);  // separate because of paintSelected
   }
 
   for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
-    (*pn)->paint(&Painter);
-    if((*pn)->Label)
-      (*pn)->Label->paint(&Painter);  // separate because of paintSelected
+    pn->paint(&Painter);
+    if(pn->Label)
+      pn->Label->paint(&Painter);  // separate because of paintSelected
   }
 
   // FIXME disable here, issue with select box goes away
   // also, instead of red, line turns blue
-  for(Diagram *pd = Diagrams->first(); pd != 0; pd = Diagrams->next())
+  for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd) {
     pd->paint(&Painter);
+  }
 
-  for(Painting *pp = Paintings->first(); pp != 0; pp = Paintings->next())
+  for(auto pp = Paintings->begin(); pp != Paintings->end(); ++pp) {
     pp->paint(&Painter);
+  }
 
   if(showBias > 0) {  // show DC bias points in schematic ?
     int x, y, z;
-    for(pn = Nodes->first(); pn != 0; pn = Nodes->next()) {
+    for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
       if(pn->Name.isEmpty()) continue;
       x = pn->cx;
       y = pn->cy + 4;
@@ -620,97 +625,98 @@ void Schematic::print(QPrinter*, QPainter *Painter, bool printAll, bool fitToPag
 
 void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImage, int screenDpiX, int printerDpiX)
 {
-    bool selected;
+  bool selected;
 
-    if (printAll) {
-        int x2,y2;
-        if (sizeOfFrame(x2,y2)) paintFrame(p);
+  if (printAll) {
+    int x2,y2;
+    if (sizeOfFrame(x2,y2)) paintFrame(p);
+  }
+
+  for(auto pc = Components->begin(); pc != Components->end(); ++pc) {
+    if(pc->isSelected || printAll) {
+      selected = pc->isSelected;
+      pc->isSelected = false;
+      if (toImage) {
+          pc->paint(p);
+      } else {
+          pc->print(p, (float)screenDpiX / (float)printerDpiX);
+      }
+      pc->isSelected = selected;
     }
+  }
 
-    for(Component *pc = Components->first(); pc != 0; pc = Components->next())
-      if(pc->isSelected || printAll) {
-        selected = pc->isSelected;
-        pc->isSelected = false;
-        if (toImage) {
-            pc->paint(p);
-        } else {
-            pc->print(p, (float)screenDpiX / (float)printerDpiX);
-        }
-        pc->isSelected = selected;
-      }
-
-    for(Wire *pw = Wires->first(); pw != 0; pw = Wires->next()) {
-      if(pw->isSelected || printAll) {
-        selected = pw->isSelected;
-        pw->isSelected = false;
-        pw->paint(p);   // paint all selected wires
-        pw->isSelected = selected;
-      }
-      if(pw->Label)
-        if(pw->Label->isSelected || printAll) {
-          selected = pw->Label->isSelected;
-          pw->Label->isSelected = false;
-          pw->Label->paint(p);
-          pw->Label->isSelected = selected;
-        }
+  for(auto pw = Wires->begin(); pw != Wires->end(); ++pw) {
+    if(pw->isSelected || printAll) {
+      selected = pw->isSelected;
+      pw->isSelected = false;
+      pw->paint(p);   // paint all selected wires
+      pw->isSelected = selected;
     }
+    if(pw->Label)
+      if(pw->Label->isSelected || printAll) {
+        selected = pw->Label->isSelected;
+        pw->Label->isSelected = false;
+        pw->Label->paint(p);
+        pw->Label->isSelected = selected;
+      }
+  }
 
-    Element *pe;
-    for(Node *pn = Nodes->first(); pn != 0; pn = Nodes->next()) {
-      for(pe = pn->Connections.first(); pe != 0; pe = pn->Connections.next())
-        if(pe->isSelected || printAll) {
-          pn->paint(p); // paint all nodes with selected elements
-          break;
-        }
-      if(pn->Label)
-        if(pn->Label->isSelected || printAll) {
-          selected = pn->Label->isSelected;
-          pn->Label->isSelected = false;
-          pn->Label->paint(p);
-          pn->Label->isSelected = selected;
-        }
+  for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
+    for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
+      if((*pe)->isSelected || printAll) {
+        pn->paint(p); // paint all nodes with selected elements
+        break;
+      }
+    if(pn->Label)
+      if(pn->Label->isSelected || printAll) {
+        selected = pn->Label->isSelected;
+        pn->Label->isSelected = false;
+        pn->Label->paint(p);
+        pn->Label->isSelected = selected;
+      }
+  }
+
+  for(auto pp = Paintings->begin(); pp != Paintings->end(); ++pp) {
+    if(pp->isSelected || printAll) {
+      selected = pp->isSelected;
+      pp->isSelected = false;
+      pp->paint(p);   // paint all selected paintings
+      pp->isSelected = selected;
     }
+  }
 
-    for(Painting *pp = Paintings->first(); pp != 0; pp = Paintings->next())
-      if(pp->isSelected || printAll) {
-        selected = pp->isSelected;
-        pp->isSelected = false;
-        pp->paint(p);   // paint all selected paintings
-        pp->isSelected = selected;
-      }
-
-    for(Diagram *pd = Diagrams->first(); pd != 0; pd = Diagrams->next())
-      if(pd->isSelected || printAll) {
-        // if graph or marker is selected, deselect during printing
-        foreach(Graph *pg, pd->Graphs) {
-      if(pg->isSelected)  pg->Type |= 1;  // remember selection
-      pg->isSelected = false;
-      foreach(Marker *pm, pg->Markers) {
-        if(pm->isSelected)  pm->Type |= 1;  // remember selection
-        pm->isSelected = false;
-      }
-        }
-
-        selected = pd->isSelected;
-        pd->isSelected = false;
-        pd->paintDiagram(p);  // paint all selected diagrams with graphs and markers
-        pd->paintMarkers(p,printAll);
-        pd->isSelected = selected;
-
-        // revert selection of graphs and markers
-        foreach(Graph *pg, pd->Graphs) {
-      if(pg->Type & 1)  pg->isSelected = true;
-      pg->Type &= -2;
-      foreach(Marker *pm, pg->Markers) {
-        if(pm->Type & 1)  pm->isSelected = true;
-        pm->Type &= -2;
-      }
+  for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd) {
+    if(pd->isSelected || printAll) {
+      // if graph or marker is selected, deselect during printing
+      foreach(Graph *pg, pd->Graphs) {
+        if(pg->isSelected)  pg->Type |= 1;  // remember selection
+        pg->isSelected = false;
+        foreach(Marker *pm, pg->Markers) {
+          if(pm->isSelected)  pm->Type |= 1;  // remember selection
+          pm->isSelected = false;
         }
       }
+
+      selected = pd->isSelected;
+      pd->isSelected = false;
+      pd->paintDiagram(p);  // paint all selected diagrams with graphs and markers
+      pd->paintMarkers(p,printAll);
+      pd->isSelected = selected;
+
+      // revert selection of graphs and markers
+      foreach(Graph *pg, pd->Graphs) {
+        if(pg->Type & 1)  pg->isSelected = true;
+        pg->Type &= -2;
+        foreach(Marker *pm, pg->Markers) {
+          if(pm->Type & 1)  pm->isSelected = true;
+          pm->Type &= -2;
+        }
+      }
+    }
 
     if(showBias > 0) {  // show DC bias points in schematic ?
       int x, y, z;
-      for(Node* pn = Nodes->first(); pn != 0; pn = Nodes->next()) {
+      for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
         if(pn->Name.isEmpty()) continue;
         x = pn->cx;
         y = pn->cy + 4;
@@ -728,6 +734,61 @@ void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImag
         p->drawText(pn->Name, x, y);
       }
     }
+  }
+}
+
+// -----------------------------------------------------------
+void Schematic::resizeContents(int w, int h)
+{
+  //  TODO: implement @@@
+}
+
+// -----------------------------------------------------------
+void Schematic::scrollBy(int dx, int dy)
+{
+  //  TODO: implement @@@
+}
+
+// -----------------------------------------------------------
+void Schematic::setContentsPos(int x, int y)
+{
+  //  TODO: implement @@@
+}
+
+// -----------------------------------------------------------
+int Schematic::visibleWidth()
+{
+  return viewport()->width();
+}
+
+// -----------------------------------------------------------
+int Schematic::visibleHeight()
+{
+  return viewport()->height();
+}
+
+// -----------------------------------------------------------
+int Schematic::contentsWidth()
+{
+  return horizontalScrollBar()->maximum () + horizontalScrollBar()->pageStep();
+}
+
+// -----------------------------------------------------------
+int Schematic::contentsHeight()
+{
+  return verticalScrollBar()->maximum () + verticalScrollBar()->pageStep();
+}
+
+// -----------------------------------------------------------
+int Schematic::contentsX()
+{
+  return horizontalScrollBar ()->value();
+}
+
+// -----------------------------------------------------------
+int Schematic::contentsY()
+{
+  return verticalScrollBar ()->value();
 }
 
 // -----------------------------------------------------------
@@ -737,14 +798,8 @@ float Schematic::zoom(float s)
   if(Scale > 10.0) Scale = 10.0f;
   if(Scale < 0.1) Scale = 0.1f;
 
-  // "resizeContents()" performs an immediate repaint. So, set widget
-  // to hidden. This causes some flicker, but it is still nicer.
-  viewport()->setHidden(true);
-//  setHidden(true);
   resizeContents(int(Scale*float(ViewX2 - ViewX1)),
                  int(Scale*float(ViewY2 - ViewY1)));
-//  setHidden(false);
-  viewport()->setHidden(false);
 
   viewport()->update();
   App->view->drawn = false;
@@ -756,8 +811,10 @@ float Schematic::zoomBy(float s)
 {
   zoom(s);
   s -= 1.0;
+#if 0 // @@@
   scrollBy( int(s * float(contentsX()+visibleWidth()/2)),
             int(s * float(contentsY()+visibleHeight()/2)) );
+#endif
   return Scale;
 }
 
@@ -774,8 +831,11 @@ void Schematic::showAll()
     return;
   }
 
-  float xScale = float(visibleWidth()) / float(UsedX2-UsedX1+80);
-  float yScale = float(visibleHeight()) / float(UsedY2-UsedY1+80);
+  int visibleWidth = viewport()->width();
+  int visibleHeight = viewport()->height();
+
+  float xScale = float(visibleWidth) / float(UsedX2-UsedX1+80);
+  float yScale = float(visibleHeight) / float(UsedY2-UsedY1+80);
   if(xScale > yScale) xScale = yScale;
   xScale /= Scale;
 
@@ -925,11 +985,6 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   ymin=INT_MAX;
   xmax=INT_MIN;
   ymax=INT_MIN;
-  Component *pc;
-  Diagram *pd;
-  Wire *pw;
-  WireLabel *pl;
-  Painting *pp;
 
   if(Components->isEmpty())
     if(Wires->isEmpty())
@@ -944,7 +999,7 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   float Corr = textCorr();
   int x1, y1, x2, y2;
   // find boundings of all components
-  for(pc = Components->first(); pc != 0; pc = Components->next()) {
+  for(auto pc = Components->begin(); pc != Components->end(); ++pc) {
     pc->entireBounds(x1, y1, x2, y2, Corr);
     if(x1 < xmin) xmin = x1;
     if(x2 > xmax) xmax = x2;
@@ -953,13 +1008,13 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   }
 
   // find boundings of all wires
-  for(pw = Wires->first(); pw != 0; pw = Wires->next()) {
+  for(auto pw = Wires->begin(); pw != Wires->end(); ++pw) {
     if(pw->x1 < xmin) xmin = pw->x1;
     if(pw->x2 > xmax) xmax = pw->x2;
     if(pw->y1 < ymin) ymin = pw->y1;
     if(pw->y2 > ymax) ymax = pw->y2;
 
-    pl = pw->Label;
+    WireLabel *pl = pw->Label;
     if(pl) {     // check position of wire label
         pl->getLabelBounding(x1,y1,x2,y2);
         if(x1 < xmin) xmin = x1;
@@ -970,8 +1025,8 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   }
 
   // find boundings of all node labels
-  for(Node *pn = Nodes->first(); pn != 0; pn = Nodes->next()) {
-    pl = pn->Label;
+  for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
+    WireLabel *pl = pn->Label;
     if(pl) {     // check position of node label
         pl->getLabelBounding(x1,y1,x2,y2);
         if(x1 < xmin) xmin = x1;
@@ -982,7 +1037,7 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   }
 
   // find boundings of all diagrams
-  for(pd = Diagrams->first(); pd != 0; pd = Diagrams->next()) {
+  for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd) {
     pd->Bounding(x1, y1, x2, y2);
     if(x1 < xmin) xmin = x1;
     if(x2 > xmax) xmax = x2;
@@ -1001,7 +1056,7 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
   }
 
   // find boundings of all Paintings
-  for(pp = Paintings->first(); pp != 0; pp = Paintings->next()) {
+  for(auto pp = Paintings->begin(); pp != Paintings->end(); ++pp) {
     pp->Bounding(x1, y1, x2, y2);
     if(x1 < xmin) xmin = x1;
     if(x2 > xmax) xmax = x2;
@@ -1014,9 +1069,6 @@ void Schematic::sizeOfAll(int& xmin, int& ymin, int& xmax, int& ymax)
 // Rotates all selected components around their midpoint.
 bool Schematic::rotateElements()
 {
-  Wires->setAutoDelete(false);
-  Components->setAutoDelete(false);
-
   int x1=INT_MAX, y1=INT_MAX;
   int x2=INT_MIN, y2=INT_MIN;
   QList<Element *> ElementCache;
@@ -1025,9 +1077,6 @@ bool Schematic::rotateElements()
   copyWires(x1, y1, x2, y2, &ElementCache);
   copyPaintings(x1, y1, x2, y2, &ElementCache);
   if(y1 == INT_MAX) return false;   // no element selected
-
-  Wires->setAutoDelete(true);
-  Components->setAutoDelete(true);
 
   x1 = (x1+x2) >> 1;   // center for rotation
   y1 = (y1+y2) >> 1;
@@ -1113,15 +1162,10 @@ bool Schematic::rotateElements()
 // First copy them to 'ElementCache', then mirror and insert again.
 bool Schematic::mirrorXComponents()
 {
-  Wires->setAutoDelete(false);
-  Components->setAutoDelete(false);
-
   int x1, y1, x2, y2;
   QList<Element *> ElementCache;
   if(!copyComps2WiresPaints(x1, y1, x2, y2, &ElementCache))
     return false;
-  Wires->setAutoDelete(true);
-  Components->setAutoDelete(true);
 
   y1 = (y1+y2) >> 1;   // axis for mirroring
   setOnGrid(y2, y1);
@@ -1182,15 +1226,10 @@ bool Schematic::mirrorXComponents()
 // Mirrors all selected components. First copy them to 'ElementCache', then mirror and insert again.
 bool Schematic::mirrorYComponents()
 {
-  Wires->setAutoDelete(false);
-  Components->setAutoDelete(false);
-
   int x1, y1, x2, y2;
   QList<Element *> ElementCache;
   if(!copyComps2WiresPaints(x1, y1, x2, y2, &ElementCache))
     return false;
-  Wires->setAutoDelete(true);
-  Components->setAutoDelete(true);
 
   x1 = (x1+x2) >> 1;   // axis for mirroring
   setOnGrid(x1, x2);
@@ -1251,8 +1290,9 @@ bool Schematic::mirrorYComponents()
 void Schematic::reloadGraphs()
 {
   QFileInfo Info(DocName);
-  for(Diagram *pd = Diagrams->first(); pd != 0; pd = Diagrams->next())
+  for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd) {
     pd->loadGraphData(Info.path()+QDir::separator()+DataSet);
+  }
 }
 
 // Copy function, 
@@ -1276,7 +1316,7 @@ void Schematic::cut()
 
 // ---------------------------------------------------
 // Performs paste function from clipboard
-bool Schematic::paste(QTextStream *stream, Q3PtrList<Element> *pe)
+bool Schematic::paste(QTextStream *stream, QVector<Element *> &pe)
 {
   return pasteFromClipboard(stream, pe);
 }
@@ -1296,22 +1336,20 @@ bool Schematic::load()
   lastSaved = QDateTime::currentDateTime();
 
   while(!undoAction.isEmpty()) {
-    delete undoAction.last();
     undoAction.pop_back();
   }
   undoActionIdx = 0;
   while(!undoSymbol.isEmpty()) {
-    delete undoSymbol.last();
     undoSymbol.pop_back();
   }
   symbolMode = true;
   setChanged(false, true); // "not changed" state, but put on undo stack
   undoSymbolIdx = 0;
-  undoSymbol.at(undoSymbolIdx)->replace(1, 1, 'i');
+  undoSymbol[undoSymbolIdx].replace(1, 1, 'i');
   symbolMode = false;
   setChanged(false, true); // "not changed" state, but put on undo stack
   undoActionIdx = 0;
-  undoAction.at(undoActionIdx)->replace(1, 1, 'i');
+  undoAction[undoActionIdx].replace(1, 1, 'i');
 
   // The undo stack of the circuit symbol is initialized when first
   // entering its edit mode.
@@ -1344,18 +1382,17 @@ int Schematic::save()
   if(result >= 0) {
     setChanged(false);
 
-    QVector<QString *>::iterator it;
-    for (it = undoAction.begin(); it != undoAction.end(); it++) {
-      (*it)->replace(1, 1, ' '); //at(1) = ' '; state of being changed
+    for (auto it = undoAction.begin(); it != undoAction.end(); it++) {
+      it->replace(1, 1, ' '); //at(1) = ' '; state of being changed
     }
     //(1) = 'i';   // state of being unchanged
-    undoAction.at(undoActionIdx)->replace(1, 1, 'i');
+    undoAction[undoActionIdx].replace(1, 1, 'i');
 
-    for (it = undoSymbol.begin(); it != undoSymbol.end(); it++) {
-      (*it)->replace(1, 1, ' '); //at(1) = ' '; state of being changed
+    for (auto it = undoSymbol.begin(); it != undoSymbol.end(); it++) {
+      it->replace(1, 1, ' '); //at(1) = ' '; state of being changed
     }
     //at(1) = 'i';   // state of being unchanged
-    undoSymbol.at(undoSymbolIdx)->replace(1, 1, 'i');
+    undoSymbol[undoSymbolIdx].replace(1, 1, 'i');
   }
   // update the subcircuit file lookup hashes
   QucsMain->updateSchNameHash();
@@ -1392,9 +1429,9 @@ int Schematic::adjustPortNumbers()
 
   Painting *pp;
   // delete all port names in symbol
-  for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
+  for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
     if(pp->Name == ".PortSym ")
-      ((PortSymbol*)pp)->nameStr = "";
+      static_cast<PortSymbol &>(*pp).nameStr = "";
 
   QString Str;
   int countPort = 0;
@@ -1424,11 +1461,11 @@ int Schematic::adjustPortNumbers()
     if (!VInfo.PortNames.isEmpty())
       Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
 
-    for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
+    for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
-	ID_Text * id = (ID_Text *) pp;
-	id->Prefix = VInfo.EntityName.toUpper();
-	id->Parameter.clear();
+        ID_Text &id = static_cast<ID_Text &>(*pp);
+        id.Prefix = VInfo.EntityName.toUpper();
+        id.Parameter.clear();
 	if (!VInfo.GenNames.isEmpty())
 	  GNames = VInfo.GenNames.split(",", QString::SkipEmptyParts);
 	if (!VInfo.GenTypes.isEmpty())
@@ -1436,7 +1473,7 @@ int Schematic::adjustPortNumbers()
 	if (!VInfo.GenDefs.isEmpty())
 	  GDefs = VInfo.GenDefs.split(",", QString::SkipEmptyParts);;
 	for(Number = 1, it = GNames.begin(); it != GNames.end(); ++it) {
-	  id->Parameter.append(new SubParameter(
+          id.Parameter.append(new SubParameter(
  	    true,
 	    *it+"="+GDefs[Number-1],
 	    tr("generic")+" "+QString::number(Number),
@@ -1450,12 +1487,12 @@ int Schematic::adjustPortNumbers()
 
       Str = QString::number(Number);
       // search for matching port symbol
-      for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
-	if(pp->Name == ".PortSym ")
-	  if(((PortSymbol*)pp)->numberStr == Str) break;
+      for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
+        if(pp->Name == ".PortSym ")
+          if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
       if(pp)
-	((PortSymbol*)pp)->nameStr = *it;
+        static_cast<PortSymbol &>(*pp).nameStr = *it;
       else {
 	SymbolPaints.append(new PortSymbol(x1, y2, Str, *it));
 	y2 += 40;
@@ -1484,11 +1521,11 @@ int Schematic::adjustPortNumbers()
     if (!VInfo.PortNames.isEmpty())
       Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
 
-    for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
+    for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
-	ID_Text * id = (ID_Text *) pp;
-	id->Prefix = VInfo.ModuleName.toUpper();
-	id->Parameter.clear();
+        ID_Text &id = static_cast<ID_Text &>(*pp);
+        id.Prefix = VInfo.ModuleName.toUpper();
+        id.Parameter.clear();
       }
 
     for(Number = 1, it = Names.begin(); it != Names.end(); ++it, Number++) {
@@ -1496,9 +1533,9 @@ int Schematic::adjustPortNumbers()
 
       Str = QString::number(Number);
       // search for matching port symbol
-      for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
+      for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
 	if(pp->Name == ".PortSym ")
-	  if(((PortSymbol*)pp)->numberStr == Str) break;
+          if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
       if(pp)
 	((PortSymbol*)pp)->nameStr = *it;
@@ -1531,11 +1568,11 @@ int Schematic::adjustPortNumbers()
     if (!VInfo.PortNames.isEmpty())
       Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
 
-    for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
+    for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
-	ID_Text * id = (ID_Text *) pp;
-	id->Prefix = VInfo.ModuleName.toUpper();
-	id->Parameter.clear();
+        ID_Text &id = static_cast<ID_Text &>(*pp);
+        id.Prefix = VInfo.ModuleName.toUpper();
+        id.Parameter.clear();
       }
 
     for(Number = 1, it = Names.begin(); it != Names.end(); ++it, Number++) {
@@ -1543,12 +1580,13 @@ int Schematic::adjustPortNumbers()
 
       Str = QString::number(Number);
       // search for matching port symbol
-      for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
-	if(pp->Name == ".PortSym ")
-	  if(((PortSymbol*)pp)->numberStr == Str) break;
+      PaintingList::iterator pp;
+      for(pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
+        if(pp->Name == ".PortSym ")
+          if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
-      if(pp)
-	((PortSymbol*)pp)->nameStr = *it;
+      if(pp != SymbolPaints.end())
+        static_cast<PortSymbol &>(*pp).nameStr = *it;
       else {
 	SymbolPaints.append(new PortSymbol(x1, y2, Str, *it));
 	y2 += 40;
@@ -1558,44 +1596,35 @@ int Schematic::adjustPortNumbers()
   // handle schematic symbol
   else
   {
-      // go through all components in a schematic
-      for(Component *pc = DocComps.first(); pc!=0; pc = DocComps.next())
-      {
-         if(pc->obsolete_model_hack() == "Port") { // BUG. move to device.
-             countPort++;
+    // go through all components in a schematic
+    for(auto pc = DocComps.begin(); pc != DocComps.end(); ++pc) {
+      if(pc->obsolete_model_hack() == "Port") { // BUG. move to device.
+        countPort++;
 
-             Str = pc->Props.getFirst()->Value;
-             // search for matching port symbol
-             for(pp = SymbolPaints.first(); pp!=0; pp = SymbolPaints.next())
-             {
-                 if(pp->Name == ".PortSym ")
-                 {
-                   if(((PortSymbol*)pp)->numberStr == Str) break;
-                 }
-             }
+        Str = pc->Props.front().Value;
+        // search for matching port symbol
+        PaintingList::iterator pp;
+        for(pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
+          if(pp->Name == ".PortSym ")
+            if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
-             if(pp)
-             {
-                 ((PortSymbol*)pp)->nameStr = pc->name();
-             }
-             else
-             {
-                 SymbolPaints.append(new PortSymbol(x1, y2, Str, pc->name()));
-                 y2 += 40;
-             }
-          }
+        if(pp != SymbolPaints.end()) {
+          static_cast<PortSymbol &>(*pp).nameStr = pc->name();
+        } else {
+          SymbolPaints.append(new PortSymbol(x1, y2, Str, pc->name()));
+          y2 += 40;
+        }
       }
+    }
   }
 
   // delete not accounted port symbols
-  for(pp = SymbolPaints.first(); pp!=0; ) {
-    if(pp->Name == ".PortSym ")
-      if(((PortSymbol*)pp)->nameStr.isEmpty()) {
-        SymbolPaints.remove();
-        pp = SymbolPaints.current();
-        continue;
-      }
-    pp = SymbolPaints.next();
+  for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ) {
+    auto here = pp;
+    ++pp;
+    if(here->Name == ".PortSym " && static_cast<PortSymbol &>(*here).nameStr.isEmpty()) {
+      SymbolPaints.erase(here);
+    }
   }
 
   return countPort;
@@ -1613,8 +1642,8 @@ bool Schematic::undo()
     emit signalUndoState(undoSymbolIdx != 0);
     emit signalRedoState(undoSymbolIdx != undoSymbol.size()-1);
 
-    if(undoSymbol.at(undoSymbolIdx)->at(1) == 'i' && 
-        undoAction.at(undoActionIdx)->at(1) == 'i') {
+    if(undoSymbol.at(undoSymbolIdx).at(1) == 'i' &&
+        undoAction.at(undoActionIdx).at(1) == 'i') {
       setChanged(false, false);
       return true;
     }
@@ -1633,12 +1662,12 @@ bool Schematic::undo()
   emit signalUndoState(undoActionIdx != 0);
   emit signalRedoState(undoActionIdx != undoAction.size()-1);
 
-  if(undoAction.at(undoActionIdx)->at(1) == 'i') {
+  if(undoAction.at(undoActionIdx).at(1) == 'i') {
     if(undoSymbol.isEmpty()) {
       setChanged(false, false);
       return true;
     }
-    else if(undoSymbol.at(undoSymbolIdx)->at(1) == 'i') {
+    else if(undoSymbol.at(undoSymbolIdx).at(1) == 'i') {
       setChanged(false, false);
       return true;
     }
@@ -1660,8 +1689,8 @@ bool Schematic::redo()
     emit signalUndoState(undoSymbolIdx != 0);
     emit signalRedoState(undoSymbolIdx != undoSymbol.size()-1);
 
-    if(undoSymbol.at(undoSymbolIdx)->at(1) == 'i'
-        && undoAction.at(undoActionIdx)->at(1) == 'i') {
+    if(undoSymbol.at(undoSymbolIdx).at(1) == 'i'
+        && undoAction.at(undoActionIdx).at(1) == 'i') {
       setChanged(false, false);
       return true;
     }
@@ -1681,12 +1710,12 @@ bool Schematic::redo()
   emit signalUndoState(undoActionIdx != 0);
   emit signalRedoState(undoActionIdx != undoAction.size()-1);
 
-  if (undoAction.at(undoActionIdx)->at(1) == 'i') {
+  if (undoAction.at(undoActionIdx).at(1) == 'i') {
     if(undoSymbol.isEmpty()) {
       setChanged(false, false);
       return true;
     }
-    else if(undoSymbol.at(undoSymbolIdx)->at(1) == 'i') {
+    else if(undoSymbol.at(undoSymbolIdx).at(1) == 'i') {
       setChanged(false, false);
       return true;
     }
@@ -1704,21 +1733,23 @@ bool Schematic::elementsOnGrid()
   int x, y, No;
   bool count = false;
   WireLabel *pl, *pLabel;
-  Q3PtrList<WireLabel> LabelCache;
+  QVector<WireLabel *> LabelCache;
 
   // test all components
   Components->setAutoDelete(false);
-  for(Component *pc = Components->last(); pc != 0; pc = Components->prev())
+  for(auto pc = Components->end(); pc != Components->begin(); ) {
+    --pc;
     if(pc->isSelected) {
 
       // rescue non-selected node labels
-      foreach(Port *pp, pc->Ports)
+      for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
         if(pp->Connection->Label)
           if(pp->Connection->Connections.count() < 2) {
             LabelCache.append(pp->Connection->Label);
             pp->Connection->Label->pOwner = 0;
             pp->Connection->Label = 0;
           }
+      }
 
       x = pc->cx;
       y = pc->cy;
@@ -1732,18 +1763,21 @@ bool Schematic::elementsOnGrid()
 
       x -= pc->cx;
       y -= pc->cy;    // re-insert node labels and correct position
-      for(pl = LabelCache.first(); pl != 0; pl = LabelCache.next()) {
+      for(auto l = LabelCache.begin(); l != LabelCache.end(); ++l) {
+        pl = *l;
         pl->cx -= x;
         pl->cy -= y;
         insertNodeLabel(pl);
       }
       LabelCache.clear();
     }
+  }
   Components->setAutoDelete(true);
 
   Wires->setAutoDelete(false);
   // test all wires and wire labels
-  for(Wire *pw = Wires->last(); pw != 0; pw = Wires->prev()) {
+  for(auto pw = Wires->end(); pw != Wires->begin(); ) {
+    --pw;
     pl = pw->Label;
     pw->Label = 0;
 
@@ -1792,7 +1826,7 @@ bool Schematic::elementsOnGrid()
   Wires->setAutoDelete(true);
 
   // test all node labels
-  for(Node *pn = Nodes->first(); pn != 0; pn = Nodes->next())
+  for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn)
     if(pn->Label)
       if(pn->Label->isSelected) {
         setOnGrid(pn->Label->x1, pn->Label->y1);
@@ -1801,7 +1835,8 @@ bool Schematic::elementsOnGrid()
       }
 
   // test all diagrams
-  for(Diagram *pd = Diagrams->last(); pd != 0; pd = Diagrams->prev()) {
+  for(auto pd = Diagrams->end(); pd != Diagrams->begin(); ) {
+    --pd;
     if(pd->isSelected) {
       setOnGrid(pd->cx, pd->cy);
       pd->isSelected = false;
@@ -1823,12 +1858,14 @@ bool Schematic::elementsOnGrid()
   }
 
   // test all paintings
-  for(Painting *pa = Paintings->last(); pa != 0; pa = Paintings->prev())
+  for(auto pa = Paintings->end(); pa != Paintings->begin(); ) {
+    --pa;
     if(pa->isSelected) {
       setOnGrid(pa->cx, pa->cy);
       pa->isSelected = false;
       count = true;
     }
+  }
 
   if(count) setChanged(true, true);
   return count;
@@ -2119,7 +2156,7 @@ void Schematic::contentsDragEnterEvent(QDragEnterEvent *Event)
   {  // only one MIME type ?
 
     // drag component from listview
-	 if (Event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
+    if (Event->mimeData()->hasFormat("application/x-qabstractitemmodeldatalist")) {
       QListWidgetItem *Item = App->CompComps->currentItem();
       if(Item) {
         formerAction = App->activeAction;

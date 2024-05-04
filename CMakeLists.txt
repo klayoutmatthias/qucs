@@ -1,6 +1,5 @@
+cmake_minimum_required(VERSION 3.1.0)
 project(qucs-suite CXX)
-cmake_minimum_required(VERSION 2.8)
-cmake_policy(VERSION 2.8)
 
 file(STRINGS "${qucs-suite_SOURCE_DIR}/VERSION" QUCS_VERSION)
 message(STATUS "Configuring Qucs: VERSION ${QUCS_VERSION}")

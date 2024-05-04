@@ -121,6 +121,7 @@ set(QUCS_SRCS
     projectView.cpp)
 
 set(QUCS_HDRS
+    sharedObjectList.h
     element.h
     messagedock.h
     misc.h
@@ -237,7 +238,7 @@ if(UNIX AND ENABLE_RPATH)
 endif()
 
 # schematic library
-add_library(coreSchematic OBJECT ${QUCS_SRCS} ${QUCS_MOC_SRCS})
+add_library(coreSchematic OBJECT ${QUCS_HDRS} ${QUCS_SRCS} ${QUCS_MOC_SRCS})
 
 target_link_libraries(coreSchematic Qt::Core Qt::Gui Qt::Widgets Qt::PrintSupport ${CMAKE_DL_LIBS})
 

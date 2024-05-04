@@ -31,6 +31,7 @@
 #include "node.h"
 #include "qucsdoc.h"
 #include "viewpainter.h"
+#include "sharedObjectList.h"
 #include "diagrams/diagram.h"
 #include "paintings/painting.h"
 #include "components/component.h"
@@ -38,7 +39,7 @@
 #include <QVector>
 #include <QStringList>
 #include <QFileInfo>
-#include <QScrollArea>
+#include <QAbstractScrollArea>
 
 class QTextStream;
 class QTextEdit;
@@ -60,7 +61,7 @@ struct DigSignal {
   QString Type; // type of signal
 };
 typedef QMap<QString, DigSignal> DigMap;
-typedef enum {_NotRop, _Rect, _Line, _Ellipse, _Arc, _DotLine, _Translate, _Scale}PE;
+typedef enum {_NotRop, _Rect, _Line, _Ellipse, _Arc, _DotLine, _Translate, _Scale} PE;
 typedef struct {PE pe; int x1; int y1;int x2;int y2;int a; int b; bool PaintOnViewport;}PostedPaintEvent;
 
 // subcircuit, vhdl, etc. file structure
@@ -74,25 +75,13 @@ struct SubFile {
 };
 typedef QMap<QString, SubFile> SubMap;
 
-// @@@ does not work this way!!!
-// TODO: refactor here
-class WireList : public QList<QSharedPointer<Wire> > {
-};
-// TODO: refactor here
-class NodeList : public QList<QSharedPointer<Node> > {
-};
-// TODO: refactor here
-class DiagramList : public QList<QSharedPointer<Diagram> > {
-};
-// TODO: refactor here
-class ComponentList : public QList<QSharedPointer<Component> > {
-	// void first(){} // GOAL: hide, still compile.
-};
-// TODO: refactor here
-class PaintingList : public QList<QSharedPointer<Painting> > {
-};
+typedef SharedObjectList<Wire> WireList;
+typedef SharedObjectList<Node> NodeList;
+typedef SharedObjectList<Diagram> DiagramList;
+typedef SharedObjectList<Component> ComponentList;
+typedef SharedObjectList<Painting> PaintingList;
 
-class Schematic : public QScrollArea, public QucsDoc {
+class Schematic : public QAbstractScrollArea, public QucsDoc {
   Q_OBJECT
 public:
   Schematic(QucsApp*, const QString&);
@@ -128,7 +117,7 @@ public:
 
   void    cut();
   void    copy();
-  bool    paste(QTextStream*, const QList<Element> &);
+  bool    paste(QTextStream*, QVector<Element *> &);
   bool    load();
   int     save();
   int     saveSymbolCpp (void);
@@ -192,11 +181,22 @@ signals:
   void signalRedoState(bool);
   void signalFileChanged(bool);
 
+private:
+  void resizeContents(int w, int h);
+  void scrollBy(int dx, int dy);
+  void setContentsPos(int x, int y);
+  int visibleWidth();
+  int visibleHeight();
+  int contentsWidth();
+  int contentsHeight();
+  int contentsX();
+  int contentsY();
+
 protected:
   void paintFrame(ViewPainter*);
 
   // overloaded function to get actions of user
-  void drawContents(QPainter*, int, int, int, int);
+  void paintEvent(QPaintEvent * /*event*/);
   void contentsMouseMoveEvent(QMouseEvent*);
   void contentsMousePressEvent(QMouseEvent*);
   void contentsMouseDoubleClickEvent(QMouseEvent*);
@@ -318,7 +318,7 @@ private:
   bool loadIntoNothing(QTextStream*);
 
   QString createClipboardFile();
-  bool    pasteFromClipboard(QTextStream *, const QList<Element>&);
+  bool    pasteFromClipboard(QTextStream *, QVector<Element *> &);
 
   QString createUndoString(char);
   bool    rebuild(const QString &);
