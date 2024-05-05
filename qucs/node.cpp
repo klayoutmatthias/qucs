@@ -82,3 +82,22 @@ void Node::setName(const QString& Name_, const QString& Value_, int x_, int y_)
   Label->pOwner = this;
   Label->initValue = Value_;
 }
+
+// ----------------------------------------------------------------
+void Node::removeConnection(Element *e)
+{
+  QVector<Element *>::iterator cw = Connections.begin();
+  for (auto c = Connections.begin(); c != Connections.end(); ++c) {
+    if (*c != e) {
+      *cw++ = *c;
+    }
+  }
+  Connections.erase(cw, Connections.end());
+}
+
+// ----------------------------------------------------------------
+void
+Node::appendConnection(Element *e)
+{
+  Connections.push_back(e);
+}

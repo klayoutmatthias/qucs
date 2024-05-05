@@ -1071,11 +1071,11 @@ bool Schematic::rotateElements()
 {
   int x1=INT_MAX, y1=INT_MAX;
   int x2=INT_MIN, y2=INT_MIN;
-  QList<Element *> ElementCache;
-  copyLabels(x1, y1, x2, y2, &ElementCache);   // must be first of all !
-  copyComponents(x1, y1, x2, y2, &ElementCache);
-  copyWires(x1, y1, x2, y2, &ElementCache);
-  copyPaintings(x1, y1, x2, y2, &ElementCache);
+  QVector<Element *> ElementCache; // @@@ should use shared object list
+  copyLabels(x1, y1, x2, y2, ElementCache);   // must be first of all !
+  copyComponents(x1, y1, x2, y2, ElementCache);
+  copyWires(x1, y1, x2, y2, ElementCache);
+  copyPaintings(x1, y1, x2, y2, ElementCache);
   if(y1 == INT_MAX) return false;   // no element selected
 
   x1 = (x1+x2) >> 1;   // center for rotation
@@ -1096,7 +1096,7 @@ bool Schematic::rotateElements()
         pc = (Component*)pe;
         pc->rotate();   //rotate component !before! rotating its center
         pc->setCenter(pc->cy - y1 + x1, x1 - pc->cx + y1);
-        insertRawComponent(pc);
+        insertRawComponent(ComponentList::holder(pc)); // @@@ tmp
         break;
 
       case isWire:
@@ -1116,7 +1116,7 @@ bool Schematic::rotateElements()
             pl->Type = isVWireLabel;
           else pl->Type = isHWireLabel;
         }
-        insertWire(pw);
+        insertWire(WireList::holder(pw)); // @@@ tmp
         break;
 
       case isHWireLabel:
@@ -1163,8 +1163,8 @@ bool Schematic::rotateElements()
 bool Schematic::mirrorXComponents()
 {
   int x1, y1, x2, y2;
-  QList<Element *> ElementCache;
-  if(!copyComps2WiresPaints(x1, y1, x2, y2, &ElementCache))
+  QVector<Element *> ElementCache; // @@@ should use shared object list
+  if(!copyComps2WiresPaints(x1, y1, x2, y2, ElementCache))
     return false;
 
   y1 = (y1+y2) >> 1;   // axis for mirroring
@@ -1185,7 +1185,7 @@ bool Schematic::mirrorXComponents()
 	pc = (Component*)pe;
 	pc->mirrorX();   // mirror component !before! mirroring its center
 	pc->setCenter(pc->cx, y1 - pc->cy);
-	insertRawComponent(pc);
+        insertRawComponent(ComponentList::holder(pc)); // @@@ tmp
 	break;
       case isWire:
 	pw = (Wire*)pe;
@@ -1193,8 +1193,8 @@ bool Schematic::mirrorXComponents()
 	pw->y2 = y1 - pw->y2;
 	pl = pw->Label;
 	if(pl)  pl->cy = y1 - pl->cy;
-	insertWire(pw);
-	break;
+        insertWire(WireList::holder(pw)); // @@@ tmp
+        break;
       case isHWireLabel:
       case isVWireLabel:
 	pl = (WireLabel*)pe;
@@ -1227,8 +1227,8 @@ bool Schematic::mirrorXComponents()
 bool Schematic::mirrorYComponents()
 {
   int x1, y1, x2, y2;
-  QList<Element *> ElementCache;
-  if(!copyComps2WiresPaints(x1, y1, x2, y2, &ElementCache))
+  QVector<Element *> ElementCache; // @@@ should use shared object list
+  if(!copyComps2WiresPaints(x1, y1, x2, y2, ElementCache))
     return false;
 
   x1 = (x1+x2) >> 1;   // axis for mirroring
@@ -1248,7 +1248,7 @@ bool Schematic::mirrorYComponents()
         pc = (Component*)pe;
         pc->mirrorY();   // mirror component !before! mirroring its center
         pc->setCenter(x1 - pc->cx, pc->cy);
-        insertRawComponent(pc);
+        insertRawComponent(ComponentList::holder(pc));  // @@@ tmp
         break;
       case isWire:
         pw = (Wire*)pe;
@@ -1256,7 +1256,7 @@ bool Schematic::mirrorYComponents()
         pw->x2 = x1 - pw->x2;
         pl = pw->Label;
         if(pl)  pl->cx = x1 - pl->cx;
-        insertWire(pw);
+        insertWire(WireList::holder(pw)); // @@@ tmp
         break;
       case isHWireLabel:
       case isVWireLabel:
@@ -1736,8 +1736,8 @@ bool Schematic::elementsOnGrid()
   QVector<WireLabel *> LabelCache;
 
   // test all components
-  Components->setAutoDelete(false);
   for(auto pc = Components->end(); pc != Components->begin(); ) {
+    auto pcNext = pc;
     --pc;
     if(pc->isSelected) {
 
@@ -1753,12 +1753,13 @@ bool Schematic::elementsOnGrid()
 
       x = pc->cx;
       y = pc->cy;
-      No = Components->at();
+      ComponentList::holder compHolder = pc.ref();
       deleteComp(pc);
-      setOnGrid(pc->cx, pc->cy);
-      insertRawComponent(pc);
-      Components->at(No);   // restore current list position
-      pc->isSelected = false;
+      pc = pcNext;
+      --pc;
+      setOnGrid(compHolder->cx, compHolder->cy);
+      insertRawComponent(compHolder);
+      compHolder->isSelected = false;
       count = true;
 
       x -= pc->cx;
@@ -1772,11 +1773,10 @@ bool Schematic::elementsOnGrid()
       LabelCache.clear();
     }
   }
-  Components->setAutoDelete(true);
 
-  Wires->setAutoDelete(false);
   // test all wires and wire labels
   for(auto pw = Wires->end(); pw != Wires->begin(); ) {
+    auto pwNext = pw;
     --pw;
     pl = pw->Label;
     pw->Label = 0;
@@ -1797,13 +1797,12 @@ bool Schematic::elementsOnGrid()
         }
       }
 
-      No = Wires->at();
+      WireList::holder wireHolder = pw.ref();
       deleteWire(pw);
-      setOnGrid(pw->x1, pw->y1);
-      setOnGrid(pw->x2, pw->y2);
-      insertWire(pw);
-      Wires->at(No);   // restore current list position
-      pw->isSelected = false;
+      setOnGrid(wireHolder->x1, wireHolder->y1);
+      setOnGrid(wireHolder->x2, wireHolder->y2);
+      insertWire(wireHolder);
+      wireHolder->isSelected = false;
       count = true;
       if(pl)
         setOnGrid(pl->cx, pl->cy);
@@ -1823,7 +1822,6 @@ bool Schematic::elementsOnGrid()
       }
     }
   }
-  Wires->setAutoDelete(true);
 
   // test all node labels
   for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn)

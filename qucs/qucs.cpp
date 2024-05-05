@@ -819,7 +819,7 @@ void QucsApp::slotSelectComponent(QListWidgetItem *item)
   }
 
   if(view->drawn)
-    ((Q3ScrollView*)DocumentTab->currentWidget())->viewport()->update();
+    dynamic_cast<QAbstractScrollArea *>(DocumentTab->currentWidget())->viewport()->update();
   view->drawn = false;
 
   // toggle last toolbar button off
@@ -1608,7 +1608,7 @@ void QucsApp::slotFileSaveAll()
   QString tabType = DocumentTab->currentWidget()->metaObject()->className();
 
   if (tabType == "Schematic") {
-    ((Q3ScrollView*)DocumentTab->currentWidget())->viewport()->update();
+    dynamic_cast<QAbstractScrollArea *>(DocumentTab->currentWidget())->viewport()->update();
   }
   view->drawn = false;
   statusBar()->showMessage(tr("Ready."));
@@ -1928,19 +1928,22 @@ void QucsApp::updatePortNumber(QucsDoc *currDoc, int No)
 
     // start from the last to omit re-appended components
     Schematic *Doc = (Schematic*)w;
-    for(Component *pc=Doc->Components->last(); pc!=0; ) {
+    for(auto pc = Doc->Components->end(); pc != Doc->Components->begin(); ) {
+      --pc;
       if(pc->obsolete_model_hack() == Model) { // BUG
-        File = pc->Props.getFirst()->Value;
+        File = pc->Props.front().Value;
         if((File == pathName) || (File == Name)) {
+/* @@@ should not be needed as "recreateComponent" doc not delete+append
           pc_tmp = Doc->Components->prev();
           Doc->recreateComponent(pc);  // delete and re-append component
           if(!pc_tmp)  break;
           Doc->Components->findRef(pc_tmp);
           pc = Doc->Components->current();
           continue;
+*/
+          Doc->recreateComponent(pc.operator->()); // @@@ tmp
         }
       }
-      pc = Doc->Components->prev();
     }
   }
 }
@@ -2407,12 +2410,12 @@ void QucsApp::slotSelectSubcircuit(const QModelIndex &idx)
     Comp = new Verilog_File();
   else
     Comp = new Subcircuit();
-  Comp->Props.first()->Value = idx.sibling(idx.row(), 0).data().toString();
+  Comp->Props.front().Value = idx.sibling(idx.row(), 0).data().toString();
   Comp->recreate(0);
   view->selElem = Comp;
 
   if(view->drawn)
-    ((Q3ScrollView*)DocumentTab->currentWidget())->viewport()->update();
+    dynamic_cast<QAbstractScrollArea *>(DocumentTab->currentWidget())->viewport()->update();
   view->drawn = false;
   MouseMoveAction = &MouseActions::MMoveElement;
   MousePressAction = &MouseActions::MPressElement;

@@ -26,6 +26,8 @@ class SharedObjectList
 public:
   typedef T &reference;
   typedef const T &const_reference;
+  typedef std::shared_ptr<T> holder;
+  typedef std::shared_ptr<const T> const_holder;
 
   class Iterator
     : public std::iterator<std::bidirectional_iterator_tag, T, void, T*, T&>
@@ -43,6 +45,7 @@ public:
     Iterator operator--(int) { m_basic--; return *this; }
     reference operator*() const { return **m_basic; }
     T *operator->() const { return (*m_basic).get(); }
+    holder &ref() const { return *m_basic; }
 
   private:
     friend class SharedObjectList<T>;
@@ -67,6 +70,7 @@ public:
     Iterator operator--(int) { m_basic--; return *this; }
     reference operator*() const { return **m_basic; }
     const T *operator->() const { return (*m_basic).get(); }
+    const const_holder &ref() const { return *m_basic; }
 
   private:
     friend class SharedObjectList<T>;
@@ -87,18 +91,21 @@ public:
   const_iterator end() const { return ConstIterator(std::list<std::shared_ptr<T> >::end()); }
 
   //  creates a copy
+  iterator insert(ConstIterator pos, const holder &value) { return Iterator(std::list<std::shared_ptr<T> >::insert(pos.m_basic, value)); }
   iterator insert(ConstIterator pos, const T &value) { return Iterator(std::list<std::shared_ptr<T> >::insert(pos.m_basic, std::shared_ptr<T>(new T(value)))); }
   iterator insert(ConstIterator pos, T &&value) { return Iterator(std::list<std::shared_ptr<T> >::insert(pos.m_basic, std::shared_ptr<T>(new T(value)))); }
   //  takes ownership of the object
   iterator insert(ConstIterator pos, T *value) { return Iterator(std::list<std::shared_ptr<T> >::insert(pos.m_basic, std::shared_ptr<T>(value))); }
 
   //  creates a copy
+  void push_back(const holder &value) { std::list<std::shared_ptr<T> >::push_back(value); }
   void push_back(const T &value) { std::list<std::shared_ptr<T> >::push_back(std::shared_ptr<T>(new T(value))); }
   void push_back(T &&value) { std::list<std::shared_ptr<T> >::push_back(std::shared_ptr<T>(new T(value))); }
   //  takes ownership of the object
   void push_back(T *value) { std::list<std::shared_ptr<T> >::push_back(std::shared_ptr<T>(value)); }
 
   //  creates a copy
+  void push_front(const holder &value) { std::list<std::shared_ptr<T> >::push_front(value); }
   void push_front(const T &value) { std::list<std::shared_ptr<T> >::push_front(std::shared_ptr<T>(new T(value))); }
   void push_front(T &&value) { std::list<std::shared_ptr<T> >::push_front(std::shared_ptr<T>(new T(value))); }
   //  takes ownership of the object
@@ -109,11 +116,57 @@ public:
   void erase(ConstIterator from, ConstIterator to) { std::list<std::shared_ptr<T> >::erase(from.m_basic, to.m_basic); }
   void erase(Iterator from, Iterator to) { std::list<std::shared_ptr<T> >::erase(from.m_basic, to.m_basic); }
 
+  //  finds an element by pointer
+  ConstIterator find(const T *ptr) const
+  {
+    auto i = begin();
+    for ( ; i != end() && i.operator->() != ptr; ++i)
+      ;
+    return i;
+  }
+
+  //  releases an element from the list (release shared pointer and remove from list)
+  void release(const T *ptr)
+  {
+    Iterator i = find(ptr);
+    if (i != end()) {
+      release(i);
+    }
+  }
+
+  //  releases an element from the list (release shared pointer and remove from list)
+  void release(Iterator i)
+  {
+    struct null_deleter { void operator() (T *) {} };
+    i.ref().reset((T *)0, null_deleter());
+    erase(i);
+  }
+
+  //  finds an element by pointer
+  Iterator find(const T *ptr)
+  {
+    auto i = begin();
+    for ( ; i != end() && i.operator->() != ptr; ++i)
+      ;
+    return i;
+  }
+
+  //  removes an element by pointer
+  void erase(const T *ptr)
+  {
+    auto i = find(ptr);
+    if (i != end()) {
+      erase(i);
+    }
+  }
+
   //  compatibility with Qt containers
   size_t count() const { return int(this->size()); }
+  void prepend(const holder &value) { push_front(value); }
   void prepend(const T &value) { push_front(value); }
   void prepend(T &&value) { push_front(value); }
   void prepend(T *value) { push_front(value); }
+  void append(const holder &value) { push_back(value); }
   void append(const T &value) { push_back(value); }
   void append(T &&value) { push_back(value); }
   void append(T *value) { push_back(value); }

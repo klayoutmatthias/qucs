@@ -31,6 +31,8 @@ public:
   void  paint(ViewPainter*);
   bool  getSelected(int, int);
   void  setName(const QString&, const QString&, int x_=0, int y_=0);
+  void  removeConnection(Element *);
+  void  appendConnection(Element *);
 
   QVector<Element *> Connections;
   QString Name;  // node name used by creation of netlist

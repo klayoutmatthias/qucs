@@ -235,30 +235,30 @@ public:
   int   insertWireNode2(Wire*);
   bool  connectHWires2(Wire*);
   bool  connectVWires2(Wire*);
-  int   insertWire(Wire*);
+  int   insertWire(const WireList::holder &);
   void  selectWireLine(Element*, Node*, bool);
   Wire* selectedWire(int, int);
   Wire* splitWire(Wire*, Node*);
   bool  oneTwoWires(Node*);
-  void  deleteWire(Wire*);
+  void  deleteWire(const WireList::iterator &);
 
   Marker* setMarker(int, int);
-  void    markerLeftRight(bool, const QList<Element> &);
-  void    markerUpDown(bool, const QList<Element> &);
+  void    markerLeftRight(bool, const QVector<Element *> &);
+  void    markerUpDown(bool, const QVector<Element *> &);
 
   Element* selectElement(float, float, bool, int *index=0);
   void     deselectElements(Element*);
   int      selectElements(int, int, int, int, bool);
   void     selectMarkers();
-  void     newMovingWires(const QList<Element> &, Node*, int);
-  int      copySelectedElements(const QList<Element> &);
+  void     newMovingWires(QVector<Element *> &, Node*, int);
+  int      copySelectedElements(QVector<Element *> &);
   bool     deleteElements();
   bool     aligning(int);
   bool     distributeHorizontal();
   bool     distributeVertical();
 
   void       setComponentNumber(Component*);
-  void       insertRawComponent(Component*, bool noOptimize=true);
+  void       insertRawComponent(const ComponentList::holder &, bool noOptimize=true);
   void       recreateComponent(Component*);
   void       insertComponent(Component*);
   void       activateCompsWithinRect(int, int, int, int);
@@ -268,25 +268,25 @@ public:
   Component* selectCompText(int, int, int&, int&);
   Component* searchSelSubcircuit();
   Component* selectedComponent(int, int);
-  void       deleteComp(Component*);
+  void       deleteComp(const ComponentList::iterator &);
 
   void     oneLabel(Node*);
   int      placeNodeLabel(WireLabel*);
   Element* getWireLabel(Node*);
   void     insertNodeLabel(WireLabel*);
-  void     copyLabels(int&, int&, int&, int&, QList<Element *> *);
+  void     copyLabels(int&, int&, int&, int&, QVector<Element *> &);
 
   Painting* selectedPainting(float, float);
-  void      copyPaintings(int&, int&, int&, int&, QList<Element *> *);
+  void      copyPaintings(int&, int&, int&, int&, QVector<Element *> &);
 
 
 private:
   void insertComponentNodes(Component*, bool);
-  int  copyWires(int&, int&, int&, int&, QList<Element *> *);
-  int  copyComponents(int&, int&, int&, int&, QList<Element *> *);
-  void copyComponents2(int&, int&, int&, int&, QList<Element *> *);
-  bool copyComps2WiresPaints(int&, int&, int&, int&, QList<Element *> *);
-  int  copyElements(int&, int&, int&, int&, QList<Element *> *);
+  int  copyWires(int&, int&, int&, int&, QVector<Element *> &);
+  int  copyComponents(int&, int&, int&, int&, QVector<Element *> &);
+  void copyComponents2(int&, int&, int&, int&, QVector<Element *> &);
+  bool copyComps2WiresPaints(int&, int&, int&, int&, QVector<Element *> &);
+  int  copyElements(int&, int&, int&, int&, QVector<Element *> &);
 
 
 /* ********************************************************************
