@@ -26,15 +26,15 @@ Logical_Buf::Logical_Buf()
   Description = QObject::tr("logical buffer");
 
   // the list order must be preserved !!!
-  Props.append(new Property("V", "1 V", false,
+  Props.append(Property("V", "1 V", false,
 		QObject::tr("voltage of high level")));
-  Props.append(new Property("t", "0", false,
+  Props.append(Property("t", "0", false,
 		QObject::tr("delay time")));
-  Props.append(new Property("TR", "10", false,
+  Props.append(Property("TR", "10", false,
 		QObject::tr("transfer function scaling factor")));
 
   // this must be the last property in the list !!!
-  Props.append(new Property("Symbol", "old", false,
+  Props.append(Property("Symbol", "old", false,
 		QObject::tr("schematic symbol")+" [old, DIN40900]"));
 
   createSymbol();
@@ -47,11 +47,11 @@ Logical_Buf::Logical_Buf()
 // -------------------------------------------------------
 QString Logical_Buf::vhdlCode(int NumPorts)
 {
-  QString s = "  " + Ports.first()->Connection->Name + " <= " +
-              Ports.last()->Connection->Name;
+  QString s = "  " + Ports.first().Connection->Name + " <= " +
+              Ports.last().Connection->Name;
 
   if(NumPorts <= 0) { // no truth table simulation ?
-    QString td = Props.at(1)->Value;
+    QString td = Props.at(1).Value;
     if(!misc::VHDL_Delay(td, Name)) return td;
     s += td;
   }
@@ -64,21 +64,21 @@ QString Logical_Buf::vhdlCode(int NumPorts)
 QString Logical_Buf::verilogCode(int NumPorts)
 {
   bool synthesize = true;
-  Port *pp = Ports.at(0);
+  Port &pp = Ports[0];
   QString s ("");
 
   if (synthesize) {
     s = "  assign";
 
     if(NumPorts <= 0) { // no truth table simulation ?
-      QString td = Props.at(1)->Value;
+      QString td = Props.at(1).Value;
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
     s += " ";
-    s += pp->Connection->Name + " = ";  // output port
+    s += pp.Connection->Name + " = ";  // output port
     pp = Ports.at(1);
-    s += pp->Connection->Name;          // input port
+    s += pp.Connection->Name;          // input port
     s += ";\n";
   }
   return s;
@@ -89,27 +89,27 @@ void Logical_Buf::createSymbol()
 {
   int xr;
 
-  if(Props.getLast()->Value.at(0) == 'D') {  // DIN symbol
-    Lines.append(new Line( 15,-20, 15, 20,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15,-20, 15,-20,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15, 20, 15, 20,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15,-20,-15, 20,QPen(Qt::darkBlue,2)));
+  if(Props.last().Value.at(0) == 'D') {  // DIN symbol
+    Lines.append(Line( 15,-20, 15, 20,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15,-20, 15,-20,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15, 20, 15, 20,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15,-20,-15, 20,QPen(Qt::darkBlue,2)));
 
-    Texts.append(new Text(-11,-17, "1", Qt::darkBlue, 15.0));
+    Texts.append(Text(-11,-17, "1", Qt::darkBlue, 15.0));
     xr =  15;
   }
   else {   // old symbol
-    Lines.append(new Line(-10,-20,-10,20, QPen(Qt::darkBlue,2)));
-    Arcs.append(new Arc(-30,-20, 40, 30,  0, 16*90,QPen(Qt::darkBlue,2)));
-    Arcs.append(new Arc(-30,-10, 40, 30,  0,-16*90,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 10,-5, 10, 5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-10,-20,-10,20, QPen(Qt::darkBlue,2)));
+    Arcs.append(Arc(-30,-20, 40, 30,  0, 16*90,QPen(Qt::darkBlue,2)));
+    Arcs.append(Arc(-30,-10, 40, 30,  0,-16*90,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 10,-5, 10, 5,QPen(Qt::darkBlue,2)));
     xr =  10;
   }
 
-  Lines.append(new Line( xr, 0, 30, 0, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30, 0,-xr, 0, QPen(Qt::darkBlue,2)));
-  Ports.append(new Port( 30, 0));
-  Ports.append(new Port(-30, 0));
+  Lines.append(Line( xr, 0, 30, 0, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, 0,-xr, 0, QPen(Qt::darkBlue,2)));
+  Ports.append(Port( 30, 0));
+  Ports.append(Port(-30, 0));
 
   x1 = -30; y1 = -23;
   x2 =  30; y2 =  23;
@@ -119,7 +119,7 @@ void Logical_Buf::createSymbol()
 Component* Logical_Buf::newOne()
 {
   Logical_Buf* p = new Logical_Buf();
-  p->Props.getLast()->Value = Props.getLast()->Value;
+  p->Props.last().Value = Props.last().Value;
   p->recreate(0);
   return p;
 }
