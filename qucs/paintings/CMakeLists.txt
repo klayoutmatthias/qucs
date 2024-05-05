@@ -42,3 +42,5 @@ qt5_wrap_cpp(PAINTINGS_MOC_SRCS ${PAINTINGS_MOC_HDRS})
 
 add_library(paintings OBJECT ${PAINTINGS_HDRS} ${PAINTINGS_SRCS}
                              ${PAINTINGS_MOC_SRCS})
+
+target_link_libraries(paintings Qt::Core Qt::Gui Qt::Widgets ${CMAKE_DL_LIBS})

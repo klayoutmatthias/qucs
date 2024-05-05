@@ -240,7 +240,7 @@ endif()
 # schematic library
 add_library(coreSchematic OBJECT ${QUCS_HDRS} ${QUCS_SRCS} ${QUCS_MOC_SRCS})
 
-target_link_libraries(coreSchematic Qt::Core Qt::Gui Qt::Widgets Qt::PrintSupport Qt::Script ${CMAKE_DL_LIBS})
+target_link_libraries(coreSchematic Qt::Core Qt::Gui Qt::Widgets Qt::PrintSupport Qt::Script Qt::Svg ${CMAKE_DL_LIBS})
 
 # create shared library
 add_library(
