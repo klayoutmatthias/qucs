@@ -157,12 +157,12 @@ SpiceDialog::SpiceDialog(QucsApp* App_, SpiceFile *c, Schematic *d)
 
   // insert all properties into the ListBox
   Property *pp = Comp->Props.first();
-  FileEdit->setText(pp->Value);
+  FileEdit->setText(pp.Value);
   FileCheck->setChecked(pp->display);
-  SimCheck->setChecked(Comp->Props.at(2)->Value == "yes");
+  SimCheck->setChecked(Comp->Props.at(2).Value == "yes");
   for(int i=0; i<PrepCombo->count(); i++)
   {
-    if(PrepCombo->itemText(i) == Comp->Props.at(3)->Value)
+    if(PrepCombo->itemText(i) == Comp->Props.at(3).Value)
     {
       PrepCombo->setCurrentIndex(i);
       currentPrep = i;
@@ -170,7 +170,7 @@ SpiceDialog::SpiceDialog(QucsApp* App_, SpiceFile *c, Schematic *d)
     }
   }
 
-  loadSpiceNetList(pp->Value);  // load netlist nodes
+  loadSpiceNetList(pp.Value);  // load netlist nodes
 }
 
 SpiceDialog::~SpiceDialog()
@@ -226,9 +226,9 @@ void SpiceDialog::slotButtApply()
 
   // apply all the new property values
   Property *pp = Comp->Props.first();
-  if(pp->Value != FileEdit->text())
+  if(pp.Value != FileEdit->text())
   {
-    pp->Value = FileEdit->text();
+    pp.Value = FileEdit->text();
     changed = true;
   }
   if(pp->display != FileCheck->isChecked())
@@ -246,25 +246,25 @@ void SpiceDialog::slotButtApply()
     tmp += "_net" + PortsList->item(i)->text();   // chosen ports
   }
   pp = Comp->Props.next();
-  if(pp->Value != tmp)
+  if(pp.Value != tmp)
   {
-    pp->Value = tmp;
+    pp.Value = tmp;
     changed = true;
   }
   pp = Comp->Props.next();
-  if((pp->Value=="yes") != SimCheck->isChecked())
+  if((pp.Value=="yes") != SimCheck->isChecked())
   {
-    pp->Value = ((SimCheck->isChecked())? "yes" : "no");
+    pp.Value = ((SimCheck->isChecked())? "yes" : "no");
     changed = true;
   }
-  if(pp->Value != "yes") {
+  if(pp.Value != "yes") {
     Comp->withSim = false;
   }
 
   pp = Comp->Props.next();
-  if(pp->Value != PrepCombo->currentText())
+  if(pp.Value != PrepCombo->currentText())
   {
-    pp->Value = PrepCombo->currentText();
+    pp.Value = PrepCombo->currentText();
     changed = true;
   }
 
@@ -298,7 +298,7 @@ void SpiceDialog::slotButtBrowse()
   }
   FileEdit->setText(s);
 
-  Comp->Props.at(1)->Value = "";
+  Comp->Props.at(1).Value = "";
   loadSpiceNetList(s);
 }
 
@@ -464,10 +464,10 @@ bool SpiceDialog::loadSpiceNetList(const QString& s)
   }
 
   Property *pp = Comp->Props.at(1);
-  if(!pp->Value.isEmpty())
+  if(!pp.Value.isEmpty())
   {
     PortsList->clear();
-    QStringList ports = pp->Value.split(',');
+    QStringList ports = pp.Value.split(',');
     foreach(QString port, ports) {
       PortsList->addItem(port);
     }

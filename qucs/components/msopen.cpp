@@ -22,13 +22,13 @@ MSopen::MSopen()
 {
   Description = QObject::tr("microstrip open");
 
-  Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-13, -8, 13, -8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-23,  8,  3,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 13, -8,  3,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8, 13, -8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-23,  8,  3,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 13, -8,  3,  8,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
+  Ports.append(Port(-30, 0));
 
   x1 = -30; y1 =-11;
   x2 =  16; y2 = 11;
@@ -38,17 +38,17 @@ MSopen::MSopen()
   Model = "MOPEN";
   Name  = "MS";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 	QObject::tr("name of substrate definition")));
-  Props.append(new Property("W", "1 mm", true,
+  Props.append(Property("W", "1 mm", true,
 	QObject::tr("width of the line")));
-  Props.append(new Property("MSModel", "Hammerstad", false,
+  Props.append(Property("MSModel", "Hammerstad", false,
 	QObject::tr("quasi-static microstrip model")+
 	" [Hammerstad, Wheeler, Schneider]"));
-  Props.append(new Property("MSDispModel", "Kirschning", false,
+  Props.append(Property("MSDispModel", "Kirschning", false,
 	QObject::tr("microstrip dispersion model")+" [Kirschning, Kobayashi, "
 	"Yamashita, Hammerstad, Getsinger, Schneider, Pramanick]"));
-  Props.append(new Property("Model", "Kirschning", false,
+  Props.append(Property("Model", "Kirschning", false,
 	QObject::tr("microstrip open end model")+" [Kirschning, Hammerstad, "
 	"Alexopoulos]"));
 }

@@ -22,22 +22,22 @@ MSgap::MSgap()
 {
   Description = QObject::tr("microstrip gap");
 
-  Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-13, -8,  0, -8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, -8, 23, -8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-23,  8,-10,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0,  8, 13,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8,  0, -8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, -8, 23, -8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-23,  8,-10,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0,  8, 13,  8,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 23, -8, 13,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0, -8,-10,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, -8,  0,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 23, -8, 13,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0, -8,-10,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, -8,  0,  8,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-11;
   x2 =  30; y2 = 11;
@@ -47,18 +47,18 @@ MSgap::MSgap()
   Model = "MGAP";
   Name  = "MS";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 	QObject::tr("name of substrate definition")));
-  Props.append(new Property("W1", "1 mm", true,
+  Props.append(Property("W1", "1 mm", true,
 	QObject::tr("width of the line 1")));
-  Props.append(new Property("W2", "1 mm", true,
+  Props.append(Property("W2", "1 mm", true,
 	QObject::tr("width of the line 2")));
-  Props.append(new Property("S", "1 mm", true,
+  Props.append(Property("S", "1 mm", true,
 	QObject::tr("spacing between the microstrip ends")));
-  Props.append(new Property("MSModel", "Hammerstad", false,
+  Props.append(Property("MSModel", "Hammerstad", false,
 	QObject::tr("quasi-static microstrip model")+
 	" [Hammerstad, Wheeler, Schneider]"));
-  Props.append(new Property("MSDispModel", "Kirschning", false,
+  Props.append(Property("MSDispModel", "Kirschning", false,
 	QObject::tr("microstrip dispersion model")+" [Kirschning, Kobayashi, "
 	"Yamashita, Hammerstad, Getsinger, Schneider, Pramanick]"));
 }

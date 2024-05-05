@@ -33,8 +33,8 @@ MOSFET::MOSFET()
 Component* MOSFET::newOne()
 {
   MOSFET* p = new MOSFET();
-  p->Props.first()->Value = Props.first()->Value;
-  p->Props.next()->Value = Props.next()->Value;
+  p->Props.first().Value = Props.first().Value;
+  p->Props.next().Value = Props.next().Value;
   p->recreate(0);
   return p;
 }
@@ -57,8 +57,8 @@ Element* MOSFET::info_p(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     MOSFET* p = new MOSFET();
-    p->Props.first()->Value = "pfet";
-    p->Props.next()->Value = "-1.0 V";
+    p->Props.first().Value = "pfet";
+    p->Props.next().Value = "-1.0 V";
     p->recreate(0);
     return p;
   }
@@ -74,7 +74,7 @@ Element* MOSFET::info_depl(QString& Name, char* &BitmapFile, bool getNewOne)
   if(getNewOne) {
     MOSFET* p = new MOSFET();
     p->Props.first();
-    p->Props.next()->Value = "-1.0 V";
+    p->Props.next().Value = "-1.0 V";
     p->recreate(0);
     return p;
   }
@@ -84,36 +84,36 @@ Element* MOSFET::info_depl(QString& Name, char* &BitmapFile, bool getNewOne)
 // -------------------------------------------------------
 void MOSFET::createSymbol()
 {
-  Lines.append(new Line(-14,-13,-14, 13,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-14,-13,-14, 13,QPen(Qt::darkBlue,3)));
+  Lines.append(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-10,-11,  0,-11,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0,-11,  0,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 11,  0, 11,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0,  0,  0, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,  0,  0,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-11,  0,-11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0,-11,  0,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 11,  0, 11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0,  0,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,  0,  0,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-10,-16,-10, -7,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line(-10,  7,-10, 16,QPen(Qt::darkBlue,3)));
+  Lines.append(Line(-10,-16,-10, -7,QPen(Qt::darkBlue,3)));
+  Lines.append(Line(-10,  7,-10, 16,QPen(Qt::darkBlue,3)));
 
-  if(Props.first()->Value == "nfet") {
-    Lines.append(new Line( -9,  0, -4, -5,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( -9,  0, -4,  5,QPen(Qt::darkBlue,2)));
+  if(Props.first().Value == "nfet") {
+    Lines.append(Line( -9,  0, -4, -5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( -9,  0, -4,  5,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(new Line( -1,  0, -6, -5,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( -1,  0, -6,  5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( -1,  0, -6, -5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( -1,  0, -6,  5,QPen(Qt::darkBlue,2)));
   }
 
-  if((Props.next()->Value.trimmed().at(0) == '-') ==
-     (Props.first()->Value == "nfet"))
-    Lines.append(new Line(-10, -8,-10,  8,QPen(Qt::darkBlue,3)));
+  if((Props.next().Value.trimmed().at(0) == '-') ==
+     (Props.first().Value == "nfet"))
+    Lines.append(Line(-10, -8,-10,  8,QPen(Qt::darkBlue,3)));
   else
-    Lines.append(new Line(-10, -4,-10,  4,QPen(Qt::darkBlue,3)));
+    Lines.append(Line(-10, -4,-10,  4,QPen(Qt::darkBlue,3)));
   
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port(  0,-30));
-  Ports.append(new Port(  0, 30));
+  Ports.append(Port(-30,  0));
+  Ports.append(Port(  0,-30));
+  Ports.append(Port(  0, 30));
 
   x1 = -30; y1 = -30;
   x2 =   4; y2 =  30;
@@ -125,13 +125,13 @@ QString MOSFET::netlist()
   QString s = "MOSFET:"+Name;
 
   // output all node names
-  foreach(Port *p1, Ports)
-    s += " "+p1->Connection->Name;   // node names
-  s += " "+Ports.at(2)->Connection->Name;  // connect substrate to source
+  for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
+    s += " "+p1.Connection->Name;   // node names
+  s += " "+Ports.at(2).Connection->Name;  // connect substrate to source
 
   // output all properties
   for(Property *p2 = Props.first(); p2 != 0; p2 = Props.next())
-    s += " "+p2->Name+"=\""+p2->Value+"\"";
+    s += " "+p2->Name+"=\""+p2.Value+"\"";
 
   return s + '\n';
 }

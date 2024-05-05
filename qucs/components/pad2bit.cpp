@@ -16,7 +16,7 @@ pad2bit::pad2bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("2bit pattern generator verilog device");
 
-  Props.append (new Property ("Number", "0", false,
+  Props.append (Property ("Number", "0", false,
     QObject::tr ("pad output value")));
 
   createSymbol ();
@@ -29,7 +29,7 @@ pad2bit::pad2bit()
 Component * pad2bit::newOne()
 {
   pad2bit * p = new pad2bit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -45,18 +45,18 @@ Element * pad2bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void pad2bit::createSymbol()
 {
-  Lines.append(new Line(-60, -50, 30,-50,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line( 30, -50, 30, 10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line( 30,  10,-60, 10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-60,  10,-60,-50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-60, -50, 30,-50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line( 30, -50, 30, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line( 30,  10,-60, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-60,  10,-60,-50,QPen(Qt::darkGreen,2)));
 
-  Lines.append(new Line( 40,-30, 30,-30,QPen(Qt::darkGreen,2)));  // A
-  Lines.append(new Line( 40,-10, 30,-10,QPen(Qt::darkGreen,2)));  // B
+  Lines.append(Line( 40,-30, 30,-30,QPen(Qt::darkGreen,2)));  // A
+  Lines.append(Line( 40,-10, 30,-10,QPen(Qt::darkGreen,2)));  // B
  
-  Texts.append(new Text(-58,-33, " 0   1   2    3", Qt::darkGreen, 12.0));
+  Texts.append(Text(-58,-33, " 0   1   2    3", Qt::darkGreen, 12.0));
 
-  Ports.append(new Port(40,-10));  // B
-  Ports.append(new Port(40,-30));  // A
+  Ports.append(Port(40,-10));  // B
+  Ports.append(Port(40,-30));  // A
 
   x1 = -64; y1 = -54;
   x2 =  40; y2 =  14;
@@ -64,11 +64,11 @@ void pad2bit::createSymbol()
 
 QString pad2bit::vhdlCode( int )
 {
-  QString v = Props.at(0)->Value; ;
+  QString v = Props.at(0).Value; ;
   QString s1, s2, s3, s ="";
 
-  QString A    = Ports.at(0)->Connection->Name;
-  QString B    = Ports.at(1)->Connection->Name;
+  QString A    = Ports.at(0).Connection->Name;
+  QString B    = Ports.at(1).Connection->Name;
 
   s1 = "\n  "+Name+":process\n"+
        "  variable n_" + Name + " : integer := " + v + ";\n" +
@@ -87,13 +87,13 @@ QString pad2bit::vhdlCode( int )
 
 QString pad2bit::verilogCode( int )
 {
-  QString v = Props.at(0)->Value;
+  QString v = Props.at(0).Value;
 
   QString l = "";
   QString l1, l2, l3;
 
-  QString A   = Ports.at(0)->Connection->Name;
-  QString B   = Ports.at(1)->Connection->Name;
+  QString A   = Ports.at(0).Connection->Name;
+  QString B   = Ports.at(1).Connection->Name;
 
   QString AR  = "A_reg"  + Name + A;
   QString BR  = "Y_reg"  + Name + B;

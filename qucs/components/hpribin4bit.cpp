@@ -24,9 +24,9 @@ hpribin4bit::hpribin4bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("4bit highest priority encoder (binary form) verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -40,7 +40,7 @@ hpribin4bit::hpribin4bit()
 Component * hpribin4bit::newOne()
 {
   hpribin4bit * p = new hpribin4bit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,37 +56,37 @@ Element * hpribin4bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void hpribin4bit::createSymbol()
 {
-  Lines.append(new Line(-40, -50, 40,-50,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40, -50, 40, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40,  60,-40, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-40,  60,-40, -50,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40, -50, 40,-50,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40, -50, 40, 60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40,  60,-40, 60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40,  60,-40, -50,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // A
-  Lines.append(new Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // B
-  Lines.append(new Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // C
-  Lines.append(new Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // D
-  Lines.append(new Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // V
-  Lines.append(new Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // Y
-  Lines.append(new Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // X
+  Lines.append(Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // A
+  Lines.append(Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // B
+  Lines.append(Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // C
+  Lines.append(Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // D
+  Lines.append(Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // V
+  Lines.append(Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // Y
+  Lines.append(Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // X
 
-  Texts.append(new Text(-35,-45, "HPRI/BIN", Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-45, "HPRI/BIN", Qt::darkBlue, 12.0));
 
-  Texts.append(new Text(-35,-23,  "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, -3,  "1",  Qt::darkBlue, 12.0)); 
-  Texts.append(new Text(-35, 17,  "2",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 37,  "3",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-23,  "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, -3,  "1",  Qt::darkBlue, 12.0)); 
+  Texts.append(Text(-35, 17,  "2",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 37,  "3",  Qt::darkBlue, 12.0));
 
-  Texts.append(new Text( 25, 17,  "V",  Qt::darkBlue, 12.0)); 
-  Texts.append(new Text( 25, -3,  "Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( 25,-23,  "X",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 25, 17,  "V",  Qt::darkBlue, 12.0)); 
+  Texts.append(Text( 25, -3,  "Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 25,-23,  "X",  Qt::darkBlue, 12.0));
 
-  Ports.append(new Port(-60,-10));  // A
-  Ports.append(new Port(-60, 10));  // B
-  Ports.append(new Port(-60, 30));  // C
-  Ports.append(new Port(-60, 50));  // D
-  Ports.append(new Port( 60, 30));  // V
-  Ports.append(new Port( 60, 10));  // Y
-  Ports.append(new Port( 60,-10));  // X
+  Ports.append(Port(-60,-10));  // A
+  Ports.append(Port(-60, 10));  // B
+  Ports.append(Port(-60, 30));  // C
+  Ports.append(Port(-60, 50));  // D
+  Ports.append(Port( 60, 30));  // V
+  Ports.append(Port( 60, 10));  // Y
+  Ports.append(Port( 60,-10));  // X
 
   x1 = -60; y1 = -54;
   x2 =  60; y2 =  64;
@@ -96,17 +96,17 @@ QString hpribin4bit::vhdlCode( int )
 {
   QString s;
 
-  QString td = Props.at(1)->Value;     // delay time
+  QString td = Props.at(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString A    = Ports.at(0)->Connection->Name;
-  QString B    = Ports.at(1)->Connection->Name;
-  QString C    = Ports.at(2)->Connection->Name;
-  QString D    = Ports.at(3)->Connection->Name;
-  QString V    = Ports.at(4)->Connection->Name;
-  QString Y    = Ports.at(5)->Connection->Name;
-  QString X    = Ports.at(6)->Connection->Name;
+  QString A    = Ports.at(0).Connection->Name;
+  QString B    = Ports.at(1).Connection->Name;
+  QString C    = Ports.at(2).Connection->Name;
+  QString D    = Ports.at(3).Connection->Name;
+  QString V    = Ports.at(4).Connection->Name;
+  QString Y    = Ports.at(5).Connection->Name;
+  QString X    = Ports.at(6).Connection->Name;
 
   s = "\n  "+Name+":process ("+A+", "+B+", "+C+", "+D+")\n"+
       "  begin\n" +
@@ -119,18 +119,18 @@ QString hpribin4bit::vhdlCode( int )
 
 QString hpribin4bit::verilogCode( int )
 {
-  QString td = Props.at(1)->Value;        // delay time
+  QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
 
-  QString A    = Ports.at(0)->Connection->Name;
-  QString B    = Ports.at(1)->Connection->Name;
-  QString C    = Ports.at(2)->Connection->Name;
-  QString D    = Ports.at(3)->Connection->Name;
-  QString V    = Ports.at(4)->Connection->Name;
-  QString Y    = Ports.at(5)->Connection->Name;
-  QString X    = Ports.at(6)->Connection->Name;
+  QString A    = Ports.at(0).Connection->Name;
+  QString B    = Ports.at(1).Connection->Name;
+  QString C    = Ports.at(2).Connection->Name;
+  QString D    = Ports.at(3).Connection->Name;
+  QString V    = Ports.at(4).Connection->Name;
+  QString Y    = Ports.at(5).Connection->Name;
+  QString X    = Ports.at(6).Connection->Name;
 
   QString VR  = "V_reg"  + Name + V;
   QString YR  = "Y_reg"  + Name + Y;

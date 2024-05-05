@@ -33,21 +33,21 @@ Subcircuit::Subcircuit()
   Type = isComponent;   // both analog and digital
   Description = QObject::tr("subcircuit");
 
-  Props.append(new Property("File", "", false,
+  Props.append(Property("File", "", false,
 		QObject::tr("name of qucs schematic file")));
 
   Model = "Sub";
   Name  = "SUB";
 
   // Do NOT call createSymbol() here. But create port to let it rotate.
-  Ports.append(new Port(0, 0, false));
+  Ports.append(Port(0, 0, false));
 }
 
 // ---------------------------------------------------------------------
 Component* Subcircuit::newOne()
 {
   Subcircuit *p = new Subcircuit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value;
+  p->Props.first().Value = Props.first().Value;
   p->recreate(0);
   return p;
 }
@@ -72,7 +72,7 @@ Element* Subcircuit::info(QString& Name, char* &BitmapFile, bool getNewOne)
 void Subcircuit::createSymbol()
 {
   int No;
-  QString FileName(Props.getFirst()->Value);
+  QString FileName(Props.first().Value);
   FileName = getSubcircuitFile();
 
   tx = INT_MIN;
@@ -104,24 +104,24 @@ void Subcircuit::createSymbol()
 void Subcircuit::remakeSymbol(int No)
 {
   int h = 30*((No-1)/2) + 15;
-  Lines.append(new Line(-15, -h, 15, -h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 15, -h, 15,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-15,  h, 15,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-15, -h,-15,  h,QPen(Qt::darkBlue,2)));
-  Texts.append(new Text(-10, -6,"sub"));
+  Lines.append(Line(-15, -h, 15, -h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 15, -h, 15,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-15,  h, 15,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-15, -h,-15,  h,QPen(Qt::darkBlue,2)));
+  Texts.append(Text(-10, -6,"sub"));
 
   int i=0, y = 15-h;
   while(i<No) {
     i++;
-    Lines.append(new Line(-30,  y,-15,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port(-30,  y));
-    Texts.append(new Text(-25,y-14,QString::number(i)));
+    Lines.append(Line(-30,  y,-15,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port(-30,  y));
+    Texts.append(Text(-25,y-14,QString::number(i)));
 
     if(i == No) break;
     i++;
-    Lines.append(new Line( 15,  y, 30,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port( 30,  y));
-    Texts.append(new Text( 19,y-14,QString::number(i)));
+    Lines.append(Line( 15,  y, 30,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port( 30,  y));
+    Texts.append(Text( 19,y-14,QString::number(i)));
     y += 60;
   }
 
@@ -203,32 +203,32 @@ QString Subcircuit::netlist()
   QString s = Model+":"+Name;
 
   // output all node names
-  foreach(Port *p1, Ports)
-    s += " "+p1->Connection->Name;   // node names
+  for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
+    s += " "+p1.Connection->Name;   // node names
 
   // type for subcircuit
-  QString f = misc::properFileName(Props.first()->Value);
+  QString f = misc::properFileName(Props.first().Value);
   s += " Type=\""+misc::properName(f)+"\"";
 
   // output all user defined properties
   for(Property *pp = Props.next(); pp != 0; pp = Props.next())
-    s += " "+pp->Name+"=\""+pp->Value+"\"";
+    s += " "+pp->Name+"=\""+pp.Value+"\"";
   return s + '\n';
 }
 
 // -------------------------------------------------------
 QString Subcircuit::vhdlCode(int)
 {
-  QString f = misc::properFileName(Props.first()->Value);
+  QString f = misc::properFileName(Props.first().Value);
   QString s = "  " + Name + ": entity Sub_" + misc::properName(f);
 
   // output all user defined properties
   Property *pr = Props.next();
   if (pr) {
     s += " generic map (";
-    s += pr->Value;
+    s += pr.Value;
     for(pr = Props.next(); pr != 0; pr = Props.next())
-      s += ", " + pr->Value;
+      s += ", " + pr.Value;
     s += ")";
   }
 
@@ -237,10 +237,10 @@ QString Subcircuit::vhdlCode(int)
   QListIterator<Port *> iport(Ports);
   Port *pp = iport.next();
   if(pp)
-    s += pp->Connection->Name;
+    s += pp.Connection->Name;
   while (iport.hasNext()) {
     pp = iport.next();
-    s += ", "+pp->Connection->Name;   // node names
+    s += ", "+pp.Connection->Name;   // node names
   }
 
   s += ");\n";
@@ -250,16 +250,16 @@ QString Subcircuit::vhdlCode(int)
 // -------------------------------------------------------
 QString Subcircuit::verilogCode(int)
 {
-  QString f = misc::properFileName(Props.first()->Value);
+  QString f = misc::properFileName(Props.first().Value);
   QString s = "  Sub_" + misc::properName(f);
 
   // output all user defined properties
   Property *pr = Props.next();
   if (pr) {
     s += " #(";
-    s += misc::Verilog_Param(pr->Value);
+    s += misc::Verilog_Param(pr.Value);
     for(pr = Props.next(); pr != 0; pr = Props.next())
-      s += ", " + misc::Verilog_Param(pr->Value);
+      s += ", " + misc::Verilog_Param(pr.Value);
     s += ")";
   }
 
@@ -268,10 +268,10 @@ QString Subcircuit::verilogCode(int)
   QListIterator<Port *> iport(Ports);
   Port *pp = iport.next();
   if(pp)
-    s += pp->Connection->Name;
+    s += pp.Connection->Name;
   while (iport.hasNext()) {
     pp = iport.next();
-    s += ", "+pp->Connection->Name;   // node names
+    s += ", "+pp.Connection->Name;   // node names
   }
 
   s += ");\n";
@@ -282,7 +282,7 @@ QString Subcircuit::verilogCode(int)
 QString Subcircuit::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.getFirst()->Value;
+  QString FileName = Props.first().Value;
 
   if (FileName.isEmpty())
   {

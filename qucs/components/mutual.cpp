@@ -22,29 +22,29 @@ Mutual::Mutual()
 {
   Description = QObject::tr("two mutual inductors");
 
-  Arcs.append(new Arc(-16,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-18,-10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-30,-30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 18,-10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 30,-30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-18,-10,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-30,-30,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 18,-10, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 30,-30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
 
-  Texts.append(new Text(-21, -22, "1"));
-  Texts.append(new Text( 15, -22, "2"));
-  Lines.append(new Line(  0,-20,  0, 20,QPen(Qt::darkBlue,1,Qt::DashLine)));
+  Texts.append(Text(-21, -22, "1"));
+  Texts.append(Text( 15, -22, "2"));
+  Lines.append(Line(  0,-20,  0, 20,QPen(Qt::darkBlue,1,Qt::DashLine)));
 
-  Ports.append(new Port(-30,-30));
-  Ports.append(new Port( 30,-30));
-  Ports.append(new Port( 30, 30));
-  Ports.append(new Port(-30, 30));
+  Ports.append(Port(-30,-30));
+  Ports.append(Port( 30,-30));
+  Ports.append(Port( 30, 30));
+  Ports.append(Port(-30, 30));
 
   x1 = -33; y1 = -34;
   x2 =  33; y2 =  34;
@@ -54,11 +54,11 @@ Mutual::Mutual()
   Model = "MUT";
   Name  = "Tr";
 
-  Props.append(new Property("L1", "1 mH", false,
+  Props.append(Property("L1", "1 mH", false,
 		QObject::tr("inductance of coil 1")));
-  Props.append(new Property("L2", "1 mH", false,
+  Props.append(Property("L2", "1 mH", false,
 		QObject::tr("inductance of coil 2")));
-  Props.append(new Property("k", "0.9", false,
+  Props.append(Property("k", "0.9", false,
 		QObject::tr("coupling factor between coil 1 and 2")));
 }
 

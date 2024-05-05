@@ -41,10 +41,10 @@ SpiceFile::SpiceFile()
 {
   Description = QObject::tr("SPICE netlist file");
   // Property descriptions not needed, but must not be empty !
-  Props.append(new Property("File", "", true, QString("x")));
-  Props.append(new Property("Ports", "", false, QString("x")));
-  Props.append(new Property("Sim", "yes", false, QString("x")));
-  Props.append(new Property("Preprocessor", "none", false, QString("x")));
+  Props.append(Property("File", "", true, QString("x")));
+  Props.append(Property("Ports", "", false, QString("x")));
+  Props.append(Property("Sim", "yes", false, QString("x")));
+  Props.append(Property("Preprocessor", "none", false, QString("x")));
   withSim = false;
 
   Model = "SPICE";
@@ -52,7 +52,7 @@ SpiceFile::SpiceFile()
   changed = false;
 
   // Do NOT call createSymbol() here. But create port to let it rotate.
-  Ports.append(new Port(0, 0));
+  Ports.append(Port(0, 0));
 }
 
 // -------------------------------------------------------
@@ -88,51 +88,51 @@ void SpiceFile::createSymbol()
   int fHeight = smallmetrics.lineSpacing();
 
   int No = 0;
-  QString tmp, PortNames = Props.at(1)->Value;
+  QString tmp, PortNames = Props.at(1).Value;
   if(!PortNames.isEmpty())  No = PortNames.count(',') + 1;
   
   // draw symbol outline
   #define HALFWIDTH  17
   int h = 30*((No-1)/2) + 15;
-  Lines.append(new Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
 
   int w, i = fHeight/2;
   if(withSim) {
     i = fHeight - 2;
     tmp = QObject::tr("sim");
     w = smallmetrics.width(tmp);
-    Texts.append(new Text(w/-2, 0, tmp, Qt::red));
+    Texts.append(Text(w/-2, 0, tmp, Qt::red));
   }
   tmp = QObject::tr("spice");
   w = smallmetrics.boundingRect(tmp).width();
-  Texts.append(new Text(w/-2, -i, tmp));
+  Texts.append(Text(w/-2, -i, tmp));
 
   i = 0;
   int y = 15-h;
   while(i<No) { // add ports lines and numbers
-    Lines.append(new Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port(-30,  y));
+    Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port(-30,  y));
     tmp = PortNames.section(',', i, i).mid(4);
     w = smallmetrics.width(tmp);
-    Texts.append(new Text(-20-w, y-fHeight-2, tmp)); // text right-aligned
+    Texts.append(Text(-20-w, y-fHeight-2, tmp)); // text right-aligned
     i++;
 
     if(i == No) break; // if odd number of ports there will be one port less on the right side
-    Lines.append(new Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port( 30,  y));
+    Lines.append(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port( 30,  y));
     tmp = PortNames.section(',', i, i).mid(4);
-    Texts.append(new Text( 20, y-fHeight-2, tmp)); // text left-aligned
+    Texts.append(Text( 20, y-fHeight-2, tmp)); // text left-aligned
     y += 60;
     i++;
   }
 
   if(No > 0) {
-    Lines.append(new Line( 0, h, 0,h+15,QPen(Qt::darkBlue,2)));
-    Texts.append(new Text( 4, h,"Ref"));
-    Ports.append(new Port( 0, h+15));    // 'Ref' port
+    Lines.append(Line( 0, h, 0,h+15,QPen(Qt::darkBlue,2)));
+    Texts.append(Text( 4, h,"Ref"));
+    Ports.append(Port( 0, h+15));    // 'Ref' port
   }
 
   x1 = -30; y1 = -h-2;
@@ -150,14 +150,14 @@ void SpiceFile::createSymbol()
 // ---------------------------------------------------
 QString SpiceFile::netlist()
 {
-  if(Props.at(1)->Value.isEmpty())
+  if(Props.at(1).Value.isEmpty())
     return QString("");  // no ports, no subcircuit instance
 
   QString s = "Sub:"+Name;   // SPICE netlist is subcircuit
   foreach(Port *pp, Ports)
-    s += " "+pp->Connection->Name;   // output all node names
+    s += " "+pp.Connection->Name;   // output all node names
 
-  QString f = misc::properFileName(Props.first()->Value);
+  QString f = misc::properFileName(Props.first().Value);
   s += " Type=\""+misc::properName(f)+"\"\n";
   return s;
 }
@@ -166,7 +166,7 @@ QString SpiceFile::netlist()
 QString SpiceFile::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.getFirst()->Value;
+  QString FileName = Props.first().Value;
 
   if (FileName.isEmpty())
   {
@@ -264,7 +264,7 @@ QString SpiceFile::getSubcircuitFile()
 bool SpiceFile::createSubNetlist(QTextStream *stream)
 {
   // check file name
-  QString FileName = Props.first()->Value;
+  QString FileName = Props.first().Value;
   if(FileName.isEmpty()) {
     ErrText += QObject::tr("ERROR: No file name in SPICE component \"%1\".").
       arg(Name);
@@ -325,17 +325,17 @@ bool SpiceFile::recreateSubNetlist(QString *SpiceFile, QString *FileName)
   NetLine = "";
 
   // evaluate properties
-  if(Props.at(1)->Value != "")
+  if(Props.at(1).Value != "")
     makeSubcircuit = true;
   else
     makeSubcircuit = false;
-  if(Props.at(2)->Value == "yes")
+  if(Props.at(2).Value == "yes")
     insertSim = true;
   else
     insertSim = false;
 
   // preprocessor run if necessary
-  QString preprocessor = Props.at(3)->Value;
+  QString preprocessor = Props.at(3).Value;
   if (preprocessor != "none") {
     bool piping = true;
     QStringList script;
@@ -428,7 +428,7 @@ bool SpiceFile::recreateSubNetlist(QString *SpiceFile, QString *FileName)
   if(makeSubcircuit) {
     QString f = misc::properFileName(*FileName);
     NetText += "\n.Def:" + misc::properName(f) + " ";
-    QString PortNames = Props.at(1)->Value;
+    QString PortNames = Props.at(1).Value;
     PortNames.replace(',', ' ');
     NetText += PortNames;
     if(makeSubcircuit) NetText += " _ref";

@@ -24,20 +24,20 @@ Digi_Source::Digi_Source()
   Type = isComponent;   // both analog and digital
   Description = QObject::tr("digital source");
 
-  Lines.append(new Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
 
-  Lines.append(new Line(-32, 5,-28, 5,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-28,-5,-24,-5,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-24, 5,-20, 5,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-28,-5,-28, 5,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-24,-5,-24, 5,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-32, 5,-28, 5,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-28,-5,-24,-5,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-24, 5,-20, 5,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-28,-5,-28, 5,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-24,-5,-24, 5,QPen(Qt::darkGreen,2)));
 
-  Ports.append(new Port(  0,  0));
+  Ports.append(Port(  0,  0));
 
   x1 = -39; y1 = -14;
   x2 =   0; y2 =  14;
@@ -48,13 +48,13 @@ Digi_Source::Digi_Source()
   Name  = "S";
 
   // This property must stay in this order !
-  Props.append(new Property("Num", "1", true,
+  Props.append(Property("Num", "1", true,
 		QObject::tr("number of the port")));
-  Props.append(new Property("init", "low", false,
+  Props.append(Property("init", "low", false,
 		QObject::tr("initial output value")+" [low, high]"));
-  Props.append(new Property("times", "1ns; 1ns", false,
+  Props.append(Property("times", "1ns; 1ns", false,
 		QObject::tr("list of times for changing output value")));
-  Props.append(new Property("V", "1 V", false,
+  Props.append(Property("V", "1 V", false,
 		QObject::tr("voltage of high level")));
 }
 
@@ -85,15 +85,15 @@ QString Digi_Source::netlist()
   QString s = Model+":"+Name;
 
   // output node names
-  s += " "+Ports.first()->Connection->Name;
+  s += " "+Ports.first().Connection->Name;
   
   // output all properties
-  Props.first();   // first property not needed
-  Property *pp = Props.next();
+  auto pp = Props.begin();
+  ++pp;  // first property not needed
   s += " "+pp->Name+"=\""+pp->Value+"\"";
-  pp = Props.next();
+  ++pp;
   s += " "+pp->Name+"=\"["+pp->Value+"]\"";
-  pp = Props.next();
+  ++pp;
   s += " "+pp->Name+"=\""+pp->Value+"\"\n";
 
   return s;
@@ -103,19 +103,19 @@ QString Digi_Source::netlist()
 QString Digi_Source::vhdlCode(int NumPorts)
 {
   QString s, t;
-  QString Out("    " + Ports.first()->Connection->Name + " <= '");
+  QString Out("    " + Ports.first().Connection->Name + " <= '");
 
   s  = "\n  " + Name + ":process\n  begin\n";
 
   int z = 0;
   char State;
   if(NumPorts <= 0) {  // time table simulation ?
-    if(Props.at(1)->Value == "low")
+    if(Props.at(1).Value == "low")
       State = '0';
     else
       State = '1';
 
-    t = Props.at(2)->Value.section(';',z,z).trimmed();
+    t = Props.at(2).Value.section(';',z,z).trimmed();
     while(!t.isEmpty()) {
       s += Out + State + "';";    // next value for signal
 
@@ -125,12 +125,12 @@ QString Digi_Source::vhdlCode(int NumPorts)
       s += t.replace("after","wait for") + ";\n";
       State ^= 1;
       z++;
-      t = Props.at(2)->Value.section(';',z,z).trimmed();
+      t = Props.at(2).Value.section(';',z,z).trimmed();
     }
   }
   else {  // truth table simulation
     State = '0';
-    int Num = Props.at(0)->Value.toInt() - 1;
+    int Num = Props.at(0).Value.toInt() - 1;
     
     s += Out + State + "';";    // first value for signal
     s += "  wait for "+QString::number(1 << Num)+" ns;\n";
@@ -148,7 +148,8 @@ QString Digi_Source::verilogCode(int NumPorts)
 {
   QString s, t, n, r;
 
-  n = Ports.first()->Connection->Name;
+  auto pp = Ports.begin();
+  n = pp->Connection->Name;
   r = "net_src" + Name + n;
   s = "\n  // " + Name + " digital source\n";
   s += "  assign " + n + " = " + r + ";\n";
@@ -157,13 +158,15 @@ QString Digi_Source::verilogCode(int NumPorts)
   int z = 0;
   char State;
   if(NumPorts <= 0) {  // time table simulation ?
-    if(Props.at(1)->Value == "low")
+
+    if(Props[1].Value == "low")
       State = '0';
     else
       State = '1';
     s += "  always begin\n";
 
-    t = Props.next()->Value.section(';',z,z).trimmed();
+    QString pv = Props[2].Value;
+    t = pv.section(';',z,z).trimmed();
     while(!t.isEmpty()) {
       if(!misc::Verilog_Delay(t, Name))
         return t;    // time has not VHDL format
@@ -171,11 +174,11 @@ QString Digi_Source::verilogCode(int NumPorts)
       s += "   " + t + ";\n";
       State ^= 1;
       z++;
-      t = Props.current()->Value.section(';',z,z).trimmed();
+      t = pv.section(';',z,z).trimmed();
     }
   }
   else {  // truth table simulation
-    int Num = Props.getFirst()->Value.toInt() - 1;    
+    int Num = Props.first().Value.toInt() - 1;    
     s += "  always begin\n";
     s += "    " + r + " = 0;\n";
     s += "    #"+ QString::number(1 << Num) + ";\n";

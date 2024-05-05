@@ -29,13 +29,13 @@ circularloop::circularloop()
   Description = QObject::tr("Printed loop inductor");
 
   //Loop
-  Arcs.append(new Arc(-18, -25, 35, 35, -370, 16*230,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-18, -25, 35, 35, -370, 16*230,QPen(Qt::darkBlue,3)));
 
-  Lines.append(new Line(-30,  0, -16,  0,QPen(Qt::darkBlue,4)));
-  Lines.append(new Line(  16,  0, 30,  0,QPen(Qt::darkBlue,4)));
+  Lines.append(Line(-30,  0, -16,  0,QPen(Qt::darkBlue,4)));
+  Lines.append(Line(  16,  0, 30,  0,QPen(Qt::darkBlue,4)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-30;
   x2 =  30; y2 = 5;
@@ -45,13 +45,13 @@ circularloop::circularloop()
   Model = "CIRCULARLOOP";
   Name  = "CIRCULARLOOP";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 		QObject::tr("Substrate")));
-  Props.append(new Property("W", "25 um", false,
+  Props.append(Property("W", "25 um", false,
 		QObject::tr("Width of line")));
-  Props.append(new Property("a", "500 um", false,
+  Props.append(Property("a", "500 um", false,
 		QObject::tr("Radius")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 
 }

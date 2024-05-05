@@ -28,18 +28,18 @@ taperedline::taperedline()
   Description = QObject::tr("Exponential Tapered line");
 
   //Lines connection device and ports
-  Lines.append(new Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-17,  -6,-17, 6,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(18,  -12,18, 12,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-17,  -6,-17, 6,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(18,  -12,18, 12,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-17,  6, 18, 12,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-17,  -6,18, -12,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-17,  6, 18, 12,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-17,  -6,18, -12,QPen(Qt::darkBlue,2)));
 
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-16;
   x2 =  30; y2 = 14;
@@ -49,20 +49,20 @@ taperedline::taperedline()
   Model = "TAPEREDLINE";
   Name  = "Line";
 
-  Props.append(new Property("Z1", "50 Ohm", true,
+  Props.append(Property("Z1", "50 Ohm", true,
 		QObject::tr("Characteristic impedance at port 1")));
-  Props.append(new Property("Z2", "100 Ohm", true,
+  Props.append(Property("Z2", "100 Ohm", true,
 		QObject::tr("Characteristic impedance at port 2")));
-  Props.append(new Property("L", "75 mm", true,
+  Props.append(Property("L", "75 mm", true,
 		QObject::tr("Line length")));
-  Props.append(new Property("Weighting", "Exponential", true,
+  Props.append(Property("Weighting", "Exponential", true,
 		QObject::tr("Taper weighting")+
 		" [Exponential, Linear, Triangular, Klopfenstein]"));
-  Props.append(new Property("Gamma_max", "0.1", false,
+  Props.append(Property("Gamma_max", "0.1", false,
 		QObject::tr("Maximum ripple (Klopfenstein taper only) ")));
-  Props.append(new Property("Alpha", "0 dB", false,
+  Props.append(Property("Alpha", "0 dB", false,
 		QObject::tr("attenuation factor per length in 1/m")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 }
 taperedline::~taperedline()

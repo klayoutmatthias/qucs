@@ -22,15 +22,15 @@ MSline::MSline()
 {
   Description = QObject::tr("microstrip line");
 
-  Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-13, -8, 23, -8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-23,  8, 13,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 23, -8, 13,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8, 23, -8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-23,  8, 13,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-13, -8,-23,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 23, -8, 13,  8,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-11;
   x2 =  30; y2 = 11;
@@ -40,19 +40,19 @@ MSline::MSline()
   Model = "MLIN";
   Name  = "MS";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 	QObject::tr("name of substrate definition")));
-  Props.append(new Property("W", "1 mm", true,
+  Props.append(Property("W", "1 mm", true,
 	QObject::tr("width of the line")));
-  Props.append(new Property("L", "10 mm", true,
+  Props.append(Property("L", "10 mm", true,
 	QObject::tr("length of the line")));
-  Props.append(new Property("Model", "Hammerstad", false,
+  Props.append(Property("Model", "Hammerstad", false,
 	QObject::tr("quasi-static microstrip model")+
 		    " [Hammerstad, Wheeler, Schneider]"));
-  Props.append(new Property("DispModel", "Kirschning", false,
+  Props.append(Property("DispModel", "Kirschning", false,
 	QObject::tr("microstrip dispersion model")+" [Kirschning, Kobayashi, "
 	"Yamashita, Hammerstad, Getsinger, Schneider, Pramanick]"));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature in degree Celsius")));
 }
 

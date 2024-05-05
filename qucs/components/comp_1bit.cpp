@@ -24,9 +24,9 @@ comp_1bit::comp_1bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("1bit comparator verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
  
@@ -40,7 +40,7 @@ comp_1bit::comp_1bit()
 Component * comp_1bit::newOne()
 {
   comp_1bit * p = new comp_1bit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,30 +56,30 @@ Element * comp_1bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void comp_1bit::createSymbol()
 {
-  Lines.append(new Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30, -60, 30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30,  30,-30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30,  30,-30, -60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30, -60, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30,  30,-30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  30,-30, -60,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // X
-  Lines.append(new Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // Y
-  Lines.append(new Line( 30, 20, 50, 20,QPen(Qt::darkBlue,2)));  // L
-  Lines.append(new Line( 30,  0, 50,  0,QPen(Qt::darkBlue,2)));  // G
-  Lines.append(new Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2)));  // E
+  Lines.append(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // X
+  Lines.append(Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // Y
+  Lines.append(Line( 30, 20, 50, 20,QPen(Qt::darkBlue,2)));  // L
+  Lines.append(Line( 30,  0, 50,  0,QPen(Qt::darkBlue,2)));  // G
+  Lines.append(Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2)));  // E
 
-  Texts.append(new Text(-25,-55, "COMP", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-55, "COMP", Qt::darkBlue, 12.0));
 
-  Texts.append(new Text(-25,-23,   "X",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-25, -3,   "Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( -5,  7, "X<Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( -5,-13, "X>Y", Qt::darkBlue, 12.0));
-  Texts.append(new Text( -5,-33, "X=Y", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-23,   "X",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-25, -3,   "Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text( -5,  7, "X<Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text( -5,-13, "X>Y", Qt::darkBlue, 12.0));
+  Texts.append(Text( -5,-33, "X=Y", Qt::darkBlue, 12.0));
 
-  Ports.append(new Port(-50,-10));  // X
-  Ports.append(new Port(-50, 10));  // Y
-  Ports.append(new Port( 50, 20));  // L
-  Ports.append(new Port( 50,  0));  // G
-  Ports.append(new Port( 50,-20));  // E
+  Ports.append(Port(-50,-10));  // X
+  Ports.append(Port(-50, 10));  // Y
+  Ports.append(Port( 50, 20));  // L
+  Ports.append(Port( 50,  0));  // G
+  Ports.append(Port( 50,-20));  // E
 
   x1 = -50; y1 = -64;
   x2 =  50; y2 =  34;
@@ -89,15 +89,15 @@ QString comp_1bit::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1)->Value;     // delay time
+  QString td = Props.at(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
  
-  QString X    = Ports.at(0)->Connection->Name;
-  QString Y    = Ports.at(1)->Connection->Name;
-  QString L    = Ports.at(2)->Connection->Name;
-  QString G    = Ports.at(3)->Connection->Name;
-  QString E    = Ports.at(4)->Connection->Name;
+  QString X    = Ports.at(0).Connection->Name;
+  QString Y    = Ports.at(1).Connection->Name;
+  QString L    = Ports.at(2).Connection->Name;
+  QString G    = Ports.at(3).Connection->Name;
+  QString E    = Ports.at(4).Connection->Name;
  
   s = "\n  "+Name+":process ("+X+", "+Y+")\n"+
       "  begin\n"+
@@ -112,14 +112,14 @@ QString comp_1bit::verilogCode( int )
 {
   QString l="";
 
-  QString td = Props.at(1)->Value;        // delay time
+  QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
 
-  QString X    = Ports.at(0)->Connection->Name;
-  QString Y    = Ports.at(1)->Connection->Name;
-  QString L    = Ports.at(2)->Connection->Name;
-  QString G    = Ports.at(3)->Connection->Name;
-  QString E    = Ports.at(4)->Connection->Name;
+  QString X    = Ports.at(0).Connection->Name;
+  QString Y    = Ports.at(1).Connection->Name;
+  QString L    = Ports.at(2).Connection->Name;
+  QString G    = Ports.at(3).Connection->Name;
+  QString E    = Ports.at(4).Connection->Name;
 
   QString LR  = "L_reg"  + Name + L;
   QString GR  = "G_reg"  + Name + G;

@@ -22,32 +22,32 @@ CCCS::CCCS()
 {
   Description = QObject::tr("current controlled current source");
 
-  Arcs.append(new Arc(0,-11, 22, 22,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 11, -7, 11,  7,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line( 11,  6, 15,  1,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line( 11,  6,  7,  1,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(0,-11, 22, 22,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 11, -7, 11,  7,QPen(Qt::darkBlue,3)));
+  Lines.append(Line( 11,  6, 15,  1,QPen(Qt::darkBlue,3)));
+  Lines.append(Line( 11,  6,  7,  1,QPen(Qt::darkBlue,3)));
 
-  Lines.append(new Line(-30,-30,-12,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30, 30,-12, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 11,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 11, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,-30,-12,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, 30,-12, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 11,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 11, 30, 30, 30,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-12,-30,-12, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 11,-30, 11,-11,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 11, 30, 11, 11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-12,-30,-12, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 11,-30, 11,-11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 11, 30, 11, 11,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-12, 20,-17, 11,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-12, 20, -8, 11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-12, 20,-17, 11,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-12, 20, -8, 11,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-25,-27, 25,-27,QPen(Qt::darkGray,1)));
-  Lines.append(new Line( 25,-27, 25, 27,QPen(Qt::darkGray,1)));
-  Lines.append(new Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
-  Lines.append(new Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
+  Lines.append(Line(-25,-27, 25,-27,QPen(Qt::darkGray,1)));
+  Lines.append(Line( 25,-27, 25, 27,QPen(Qt::darkGray,1)));
+  Lines.append(Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
+  Lines.append(Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
 
-  Ports.append(new Port(-30,-30));
-  Ports.append(new Port( 30,-30));
-  Ports.append(new Port( 30, 30));
-  Ports.append(new Port(-30, 30));
+  Ports.append(Port(-30,-30));
+  Ports.append(Port( 30,-30));
+  Ports.append(Port( 30, 30));
+  Ports.append(Port(-30, 30));
 
   x1 = -30; y1 = -30;
   x2 =  30; y2 =  30;
@@ -57,9 +57,9 @@ CCCS::CCCS()
   Model = "CCCS";
   Name  = "SRC";
 
-  Props.append(new Property("G", "1", true,
+  Props.append(Property("G", "1", true,
 		QObject::tr("forward transfer factor")));
-  Props.append(new Property("T", "0", false, QObject::tr("delay time")));
+  Props.append(Property("T", "0", false, QObject::tr("delay time")));
 }
 
 CCCS::~CCCS()

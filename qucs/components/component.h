@@ -124,7 +124,7 @@ protected:
   bool getBrush(const QString&, QBrush&, int);
 
   void copyComponent(Component*);
-  Property * getProperty(const QString&);
+  Property &getProperty(const QString&);
   Schematic* containingSchematic;
 };
 

@@ -23,53 +23,53 @@ JFET::JFET()
   Description = QObject::tr("junction field-effect transistor");
 
   // this must be the first property in the list !!!
-  Props.append(new Property("Type", "nfet", true,
+  Props.append(Property("Type", "nfet", true,
 	QObject::tr("polarity")+" [nfet, pfet]"));
-  Props.append(new Property("Vt0", "-2.0 V", true,
+  Props.append(Property("Vt0", "-2.0 V", true,
 	QObject::tr("threshold voltage")));
-  Props.append(new Property("Beta", "1e-4", true,
+  Props.append(Property("Beta", "1e-4", true,
 	QObject::tr("transconductance parameter")));
-  Props.append(new Property("Lambda", "0.0", true,
+  Props.append(Property("Lambda", "0.0", true,
 	QObject::tr("channel-length modulation parameter")));
-  Props.append(new Property("Rd", "0.0", false,
+  Props.append(Property("Rd", "0.0", false,
 	QObject::tr("parasitic drain resistance")));
-  Props.append(new Property("Rs", "0.0", false,
+  Props.append(Property("Rs", "0.0", false,
 	QObject::tr("parasitic source resistance")));
-  Props.append(new Property("Is", "1e-14", false,
+  Props.append(Property("Is", "1e-14", false,
 	QObject::tr("gate-junction saturation current")));
-  Props.append(new Property("N", "1.0", false,
+  Props.append(Property("N", "1.0", false,
 	QObject::tr("gate-junction emission coefficient")));
-  Props.append(new Property("Isr", "1e-14", false,
+  Props.append(Property("Isr", "1e-14", false,
 	QObject::tr("gate-junction recombination current parameter")));
-  Props.append(new Property("Nr", "2.0", false,
+  Props.append(Property("Nr", "2.0", false,
 	QObject::tr("Isr emission coefficient")));
-  Props.append(new Property("Cgs", "0.0", false,
+  Props.append(Property("Cgs", "0.0", false,
 	QObject::tr("zero-bias gate-source junction capacitance")));
-  Props.append(new Property("Cgd", "0.0", false,
+  Props.append(Property("Cgd", "0.0", false,
 	QObject::tr("zero-bias gate-drain junction capacitance")));
-  Props.append(new Property("Pb", "1.0", false,
+  Props.append(Property("Pb", "1.0", false,
 	QObject::tr("gate-junction potential")));
-  Props.append(new Property("Fc", "0.5", false,
+  Props.append(Property("Fc", "0.5", false,
 	QObject::tr("forward-bias junction capacitance coefficient")));
-  Props.append(new Property("M", "0.5", false,
+  Props.append(Property("M", "0.5", false,
 	QObject::tr("gate P-N grading coefficient")));
-  Props.append(new Property("Kf", "0.0", false,
+  Props.append(Property("Kf", "0.0", false,
 	QObject::tr("flicker noise coefficient")));
-  Props.append(new Property("Af", "1.0", false,
+  Props.append(Property("Af", "1.0", false,
 	QObject::tr("flicker noise exponent")));
-  Props.append(new Property("Ffe", "1.0", false,
+  Props.append(Property("Ffe", "1.0", false,
 	QObject::tr("flicker noise frequency exponent")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(new Property("Xti", "3.0", false,
+  Props.append(Property("Xti", "3.0", false,
 	QObject::tr("saturation current temperature exponent")));
-  Props.append(new Property("Vt0tc", "0.0", false,
+  Props.append(Property("Vt0tc", "0.0", false,
 	QObject::tr("Vt0 temperature coefficient")));
-  Props.append(new Property("Betatce", "0.0", false,
+  Props.append(Property("Betatce", "0.0", false,
 	QObject::tr("Beta exponential temperature coefficient")));
-  Props.append(new Property("Tnom", "26.85", false,
+  Props.append(Property("Tnom", "26.85", false,
 	QObject::tr("temperature at which parameters were extracted")));
-  Props.append(new Property("Area", "1.0", false,
+  Props.append(Property("Area", "1.0", false,
 	QObject::tr("default area for JFET")));
 
   createSymbol();
@@ -83,7 +83,7 @@ JFET::JFET()
 Component* JFET::newOne()
 {
   JFET* p = new JFET();
-  p->Props.getFirst()->Value = Props.getFirst()->Value;
+  p->Props.first().Value = Props.first().Value;
   p->recreate(0);
   return p;
 }
@@ -106,7 +106,7 @@ Element* JFET::info_p(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     JFET* p = new JFET();
-    p->Props.getFirst()->Value = "pfet";
+    p->Props.first().Value = "pfet";
     p->recreate(0);
     return p;
   }
@@ -116,27 +116,27 @@ Element* JFET::info_p(QString& Name, char* &BitmapFile, bool getNewOne)
 // -------------------------------------------------------
 void JFET::createSymbol()
 {
-  Lines.append(new Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-10,  0,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0,-10,  0,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 10,  0, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0, 10,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
+  Lines.append(Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-10,  0,-10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0,-10,  0,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 10,  0, 10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0, 10,  0, 30,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line( -4, 24,  4, 20,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( -4, 24,  4, 20,QPen(Qt::darkBlue,2)));
 
-  if(Props.getFirst()->Value == "nfet") {
-    Lines.append(new Line(-16, -5,-11,  0,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-16,  5,-11,  0,QPen(Qt::darkBlue,2)));
+  if(Props.first().Value == "nfet") {
+    Lines.append(Line(-16, -5,-11,  0,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-16,  5,-11,  0,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(new Line(-18,  0,-13, -5,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-18,  0,-13,  5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-18,  0,-13, -5,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-18,  0,-13,  5,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port(  0,-30));
-  Ports.append(new Port(  0, 30));
+  Ports.append(Port(-30,  0));
+  Ports.append(Port(  0,-30));
+  Ports.append(Port(  0, 30));
 
   x1 = -30; y1 = -30;
   x2 =   4; y2 =  30;

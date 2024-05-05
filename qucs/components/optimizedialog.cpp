@@ -353,27 +353,27 @@ OptimizeDialog::OptimizeDialog(Optimize_Sim *c_, Schematic *d_)
 
   Property *pp;
   pp = Comp->Props.at(0);
-  if(!pp->Value.isEmpty()) {
+  if(!pp.Value.isEmpty()) {
     // set selected simulation in combo box to the currently used one
-    int i = SimEdit->findText(pp->Value);
+    int i = SimEdit->findText(pp.Value);
     if (i != -1) // current simulation is in the available simulations list (normal case)
       SimEdit->setCurrentIndex(i);
     else  // current simulation not in the available simulations list
-      SimEdit->setEditText(pp->Value);
+      SimEdit->setEditText(pp.Value);
   }
 
   pp = Comp->Props.at(1);
-  if(!pp->Value.isEmpty()) {
-    MethodCombo->setCurrentIndex(pp->Value.section('|',0,0).toInt()-1);
-    IterEdit->setText(pp->Value.section('|',1,1));
-    RefreshEdit->setText(pp->Value.section('|',2,2));
-    ParentsEdit->setText(pp->Value.section('|',3,3));
-    ConstEdit->setText(pp->Value.section('|',4,4));
-    CrossEdit->setText(pp->Value.section('|',5,5));
-    SeedEdit->setText(pp->Value.section('|',6,6));
-    CostVarEdit->setText(pp->Value.section('|',7,7));
-    CostObjEdit->setText(pp->Value.section('|',8,8));
-    CostConEdit->setText(pp->Value.section('|',9,9));
+  if(!pp.Value.isEmpty()) {
+    MethodCombo->setCurrentIndex(pp.Value.section('|',0,0).toInt()-1);
+    IterEdit->setText(pp.Value.section('|',1,1));
+    RefreshEdit->setText(pp.Value.section('|',2,2));
+    ParentsEdit->setText(pp.Value.section('|',3,3));
+    ConstEdit->setText(pp.Value.section('|',4,4));
+    CrossEdit->setText(pp.Value.section('|',5,5));
+    SeedEdit->setText(pp.Value.section('|',6,6));
+    CostVarEdit->setText(pp.Value.section('|',7,7));
+    CostObjEdit->setText(pp.Value.section('|',8,8));
+    CostConEdit->setText(pp.Value.section('|',9,9));
   }
 
   NameEdit->setText(Comp->name());
@@ -381,7 +381,7 @@ OptimizeDialog::OptimizeDialog(Optimize_Sim *c_, Schematic *d_)
   QTableWidgetItem *item;
   for(pp = Comp->Props.at(2); pp != 0; pp = Comp->Props.next()) {
     if(pp->Name == "Var") { // BUG
-      QStringList ValueSplit = pp->Value.split("|");
+      QStringList ValueSplit = pp.Value.split("|");
       int row = VarTable->rowCount();
       VarTable->insertRow(row);
       // Name
@@ -434,7 +434,7 @@ OptimizeDialog::OptimizeDialog(Optimize_Sim *c_, Schematic *d_)
       VarTable->setItem(row, 5, item);
     }
     if(pp->Name == "Goal") { // BUG
-      QStringList GoalSplit = pp->Value.split("|");
+      QStringList GoalSplit = pp.Value.split("|");
       int row = GoalTable->rowCount();
       GoalTable->insertRow(row);
 
@@ -735,8 +735,8 @@ void OptimizeDialog::slotApply()
   }
 
   QString Prop;
-  if(SimEdit->currentText() != Comp->Props.at(0)->Value) {
-    Comp->Props.at(0)->Value = SimEdit->currentText();
+  if(SimEdit->currentText() != Comp->Props.at(0).Value) {
+    Comp->Props.at(0).Value = SimEdit->currentText();
     changed = true;
   }
   Prop = QString::number(MethodCombo->currentIndex()+1) + "|" +
@@ -749,8 +749,8 @@ void OptimizeDialog::slotApply()
     CostVarEdit->text() + "|" +
     CostObjEdit->text() + "|" +
     CostConEdit->text();
-  if(Prop != Comp->Props.at(1)->Value) {
-    Comp->Props.at(1)->Value = Prop;
+  if(Prop != Comp->Props.at(1).Value) {
+    Comp->Props.at(1).Value = Prop;
     changed = true;
   }
 
@@ -795,13 +795,13 @@ void OptimizeDialog::slotApply()
         pp->Name = "Var";
         changed = true;
       }
-      if(pp->Value != Prop) {
-        pp->Value = Prop;
+      if(pp.Value != Prop) {
+        pp.Value = Prop;
         changed = true;
       }
     }
     else {
-      Comp->Props.append(new Property("Var", Prop, false, ""));
+      Comp->Props.append(Property("Var", Prop, false, ""));
       changed = true;
     }
     pp = Comp->Props.next();
@@ -832,13 +832,13 @@ void OptimizeDialog::slotApply()
         pp->Name = "Goal";
         changed = true;
       }
-      if(pp->Value != Prop) {
-        pp->Value = Prop;
+      if(pp.Value != Prop) {
+        pp.Value = Prop;
         changed = true;
       }
     }
     else {
-      Comp->Props.append(new Property("Goal", Prop, false, ""));
+      Comp->Props.append(Property("Goal", Prop, false, ""));
       changed = true;
     }
     pp = Comp->Props.next();
@@ -876,7 +876,7 @@ void OptimizeDialog::slotCreateEqn()
  Property *pp;
  for(pp = Comp->Props.at(2); pp != 0; pp = Comp->Props.next()) {
    if(pp->Name == "Var") { // property is an optimization variable
-      QStringList ValueSplit = pp->Value.split("|");
+      QStringList ValueSplit = pp.Value.split("|");
       // "Name" = "initial (current) value"
       s += "\"" + ValueSplit.at(0) + "=" + ValueSplit.at(2) + "\" 1 ";
    }
@@ -921,7 +921,7 @@ void OptimizeDialog::slotSetPrecision(const QPoint& pos)
     QTableWidgetItem *item;
     for(pp = Comp->Props.at(2); pp != 0; pp = Comp->Props.next()) {
       if(pp->Name == "Var") {
-	QStringList ValueSplit = pp->Value.split("|");
+	QStringList ValueSplit = pp.Value.split("|");
 	// 'initial' column
 	item = VarTable->item(row++, 2);
 	item->setText(QString::number(ValueSplit.at(2).toDouble(), 'g', numPrec));

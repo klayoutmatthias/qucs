@@ -75,7 +75,7 @@ vacomponent::vacomponent(QString filename)
 
       /// \todo what if there are no properties?
 
-      Props.append (new Property (name, value, show, desc));
+      Props.append (Property (name, value, show, desc));
     }
   }
 
@@ -99,7 +99,7 @@ Component *vacomponent::newOne(QString filename)
 {
   vacomponent * p = new vacomponent(filename);
   if (Props.count())
-      p->Props.getFirst()->Value = Props.getFirst()->Value;
+      p->Props.first().Value = Props.first().Value;
   p->recreate(0);
   return p;
 
@@ -200,7 +200,7 @@ void vacomponent::createSymbol(QString filename)
       thick = getDouble(entry, "thick");
       style = getString(entry, "style");
 
-      Lines.append (new Line (x1, y1, x2, y2,
+      Lines.append (Line (x1, y1, x2, y2,
                         QPen (QColor (color), thick, penMap.value(style))));
     }
 
@@ -215,7 +215,7 @@ void vacomponent::createSymbol(QString filename)
       colorfill = getString(entry, "colorfill");
       stylefill = getString(entry, "stylefill");
 
-      Rects.append (new Area (x, y, w, h,
+      Rects.append (Area (x, y, w, h,
                         QPen (QColor (color), thick, penMap.value(style)),
                         QBrush(QColor (colorfill), brushMap.value(stylefill))
                         ));
@@ -232,7 +232,7 @@ void vacomponent::createSymbol(QString filename)
       colorfill = getString(entry, "colorfill");
       stylefill = getString(entry, "stylefill");
 
-      Ellips.append (new Area (x, y, w, h,
+      Ellips.append (Area (x, y, w, h,
                          QPen (QColor (color), thick, penMap.value(style)),
                          QBrush(QColor (colorfill), brushMap.value(stylefill))
                          ));
@@ -249,14 +249,14 @@ void vacomponent::createSymbol(QString filename)
       thick = getDouble(entry, "thick");
       style = getString(entry, "style");
 
-      Arcs.append (new Arc (x, y, w, h, angle, arclen,
+      Arcs.append (Arc (x, y, w, h, angle, arclen,
                        QPen (QColor (color), thick, penMap.value(style))));
     }
 
     if (!type.compare("portsymbol")) {
       x = getDouble(entry, "x");
       y = getDouble(entry, "y");
-      Ports.append (new Port (x, y));
+      Ports.append (Port (x, y));
     }
 
     if (!type.compare("graphictext")) {
@@ -267,7 +267,7 @@ void vacomponent::createSymbol(QString filename)
       size = getDouble(entry, "size");
       cos = getDouble(entry, "cos");
       sin = getDouble(entry, "sin");
-      Texts.append (new Text (x, y, s,
+      Texts.append (Text (x, y, s,
                               QColor (color), size, cos, sin));
     }
 
@@ -279,7 +279,7 @@ void vacomponent::createSymbol(QString filename)
       color = getString(entry, "color");
       thick = getDouble(entry, "thick");
       style = getString(entry, "style");
-      Lines.append (new Line (x1, y1, x2, y2,
+      Lines.append (Line (x1, y1, x2, y2,
                         QPen (QColor (color), thick, penMap.value(style))));
      }
   }

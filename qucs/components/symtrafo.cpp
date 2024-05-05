@@ -34,48 +34,48 @@ symTrafo::symTrafo()
   int w;
   QString stmp;
 
-  Arcs.append(new Arc(-16,-58,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16,-46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16,-34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16, 46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16, 34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-16, 22,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-58,-10,-70,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-70,-30,-70,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 58,-10, 70,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 70,-30, 70,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-10,-30,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-22,-10,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 10,-30, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 10,-10, 22,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16,-58,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16,-46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16,-34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16, 46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16, 34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-16, 22,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-58,-10,-70,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-70,-30,-70,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 58,-10, 70,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 70,-30, 70,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-10,-30,-10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-22,-10,-10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 10,-30, 10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 10,-10, 22,QPen(Qt::darkBlue,2)));
 
   // core lines
-  Lines.append(new Line( -1,-57, -1, 57,QPen(Qt::darkBlue,1)));
-  Lines.append(new Line(  1,-57,  1, 57,QPen(Qt::darkBlue,1)));
+  Lines.append(Line( -1,-57, -1, 57,QPen(Qt::darkBlue,1)));
+  Lines.append(Line(  1,-57,  1, 57,QPen(Qt::darkBlue,1)));
 
   stmp = "T1"; w = smallmetrics.width(stmp); // compute width to right-align
-  Texts.append(new Text(-13-w,-57,stmp));
+  Texts.append(Text(-13-w,-57,stmp));
   stmp = "T2"; w = smallmetrics.width(stmp); // compute width to right-align
-  Texts.append(new Text(-13-w, 22,stmp));
+  Texts.append(Text(-13-w, 22,stmp));
 
   // mark the turn direction
-  Arcs.append(new Arc(-21,-64,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-21, 15,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc( 15,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-21,-64,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-21, 15,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc( 15,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,-70));
-  Ports.append(new Port( 30,-30));
-  Ports.append(new Port( 30, 30));
-  Ports.append(new Port(-30, 70));
-  Ports.append(new Port(-30, 10));
-  Ports.append(new Port(-30,-10));
+  Ports.append(Port(-30,-70));
+  Ports.append(Port( 30,-30));
+  Ports.append(Port( 30, 30));
+  Ports.append(Port(-30, 70));
+  Ports.append(Port(-30, 10));
+  Ports.append(Port(-30,-10));
 
   x1 = -33; y1 = -74;
   x2 =  33; y2 =  74;
@@ -85,9 +85,9 @@ symTrafo::symTrafo()
   Model = "sTr";
   Name  = "Tr";
 
-  Props.append(new Property("T1", "1", true,
+  Props.append(Property("T1", "1", true,
 		QObject::tr("voltage transformation ratio of coil 1")));
-  Props.append(new Property("T2", "1", true,
+  Props.append(Property("T2", "1", true,
 		QObject::tr("voltage transformation ratio of coil 2")));
 }
 

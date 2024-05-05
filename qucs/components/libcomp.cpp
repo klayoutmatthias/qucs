@@ -32,14 +32,14 @@ LibComp::LibComp()
   Type = isComponent;   // both analog and digital
   Description = QObject::tr("Component taken from Qucs library");
 
-  Ports.append(new Port(0,  0));  // dummy port because of being device
+  Ports.append(Port(0,  0));  // dummy port because of being device
 
   Model = "Lib";
   Name  = "X";
 
-  Props.append(new Property("Lib", "", true,
+  Props.append(Property("Lib", "", true,
 		QObject::tr("name of qucs library file")));
-  Props.append(new Property("Comp", "", true,
+  Props.append(Property("Comp", "", true,
 		QObject::tr("name of component in library")));
 }
 
@@ -47,8 +47,8 @@ LibComp::LibComp()
 Component* LibComp::newOne()
 {
   LibComp *p = new LibComp();
-  p->Props.first()->Value = Props.first()->Value;
-  p->Props.next()->Value = Props.next()->Value;
+  p->Props.first().Value = Props.first().Value;
+  p->Props.next().Value = Props.next().Value;
   p->recreate(0);
   return p;
 }
@@ -66,10 +66,10 @@ void LibComp::createSymbol()
   }
   else {
     // only paint a rectangle
-    Lines.append(new Line(-15, -15, 15, -15, QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 15, -15, 15,  15, QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15,  15, 15,  15, QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15, -15,-15,  15, QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15, -15, 15, -15, QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 15, -15, 15,  15, QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15,  15, 15,  15, QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15, -15,-15,  15, QPen(Qt::darkBlue,2)));
 
     x1 = -18; y1 = -18;
     x2 =  18; y2 =  18;
@@ -85,7 +85,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
 			 QStringList *Includes)
 {
   QDir Directory(QucsSettings.LibDir);
-  QFile file(Directory.absoluteFilePath(Props.first()->Value + ".lib"));
+  QFile file(Directory.absoluteFilePath(Props.first().Value + ".lib"));
   if(!file.open(QIODevice::ReadOnly))
     return -1;
 
@@ -118,7 +118,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
   }
 
   // search component
-  Line = "\n<Component " + Props.next()->Value + ">";
+  Line = "\n<Component " + Props.next().Value + ">";
   Start = Section.indexOf(Line);
   if(Start < 0)  return -4;  // component not found
   Start = Section.indexOf('\n', Start);
@@ -222,7 +222,7 @@ int LibComp::loadSymbol()
 QString LibComp::getSubcircuitFile()
 {
   QDir Directory(QucsSettings.LibDir);
-  QString FileName = Directory.absoluteFilePath(Props.first()->Value);
+  QString FileName = Directory.absoluteFilePath(Props.first().Value);
   return misc::properAbsFileName(FileName);
 }
 
@@ -270,8 +270,8 @@ bool LibComp::createSubNetlist(QTextStream *stream, QStringList &FileList,
 // -------------------------------------------------------
 QString LibComp::createType()
 {
-  QString Type = misc::properFileName(Props.first()->Value);
-  return misc::properName(Type + "_" + Props.next()->Value);
+  QString Type = misc::properFileName(Props.first().Value);
+  return misc::properName(Type + "_" + Props.next().Value);
 }
 
 // -------------------------------------------------------
@@ -280,15 +280,15 @@ QString LibComp::netlist()
   QString s = "Sub:"+Name;   // output as subcircuit
 
   // output all node names
-  foreach(Port *p1, Ports)
-    s += " "+p1->Connection->Name;   // node names
+  for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
+    s += " "+p1.Connection->Name;   // node names
 
   // output property
   s += " Type=\""+createType()+"\"";   // type for subcircuit
 
   // output user defined parameters
   for(Property *pp = Props.at(2); pp != 0; pp = Props.next())
-    s += " "+pp->Name+"=\""+pp->Value+"\"";
+    s += " "+pp->Name+"=\""+pp.Value+"\"";
 
   return s + '\n';
 }
@@ -301,10 +301,10 @@ QString LibComp::verilogCode(int)
   // output all node names
   QListIterator<Port *> iport(Ports);
   Port *pp = iport.next();
-  if(pp)  s += pp->Connection->Name;
+  if(pp)  s += pp.Connection->Name;
   while (iport.hasNext()) {
     pp = iport.next();
-    s += ", "+pp->Connection->Name;   // node names
+    s += ", "+pp.Connection->Name;   // node names
   }
 
   s += ");\n";
@@ -319,10 +319,10 @@ QString LibComp::vhdlCode(int)
   // output all node names
   QListIterator<Port *> iport(Ports);
   Port *pp = iport.next();
-  if(pp)  s += pp->Connection->Name;
+  if(pp)  s += pp.Connection->Name;
   while (iport.hasNext()) {
     pp = iport.next();
-    s += ", "+pp->Connection->Name;   // node names
+    s += ", "+pp.Connection->Name;   // node names
   }
 
   s += ");\n";

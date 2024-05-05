@@ -183,32 +183,32 @@ ComponentDialog::ComponentDialog(Component *c, Schematic *d)
           if(pc->obsolete_model_hack()[0] == '.')
             comboSim->insertItem(comboSim->count(), pc->name());
       }
-      qDebug() << "[]" << Comp->Props.first()->Value;
+      qDebug() << "[]" << Comp->Props.first().Value;
       // set selected simulations in combo box to the currently used one
-      int i = comboSim->findText(Comp->Props.first()->Value);
+      int i = comboSim->findText(Comp->Props.first().Value);
       if (i != -1) // current simulation is in the available simulations list (normal case)
 	comboSim->setCurrentIndex(i);
       else  // current simulation not in the available simulations list
-	comboSim->setEditText(Comp->Props.first()->Value);
+	comboSim->setEditText(Comp->Props.first().Value);
 
       checkSim->setChecked(Comp->Props.current()->display);
-      s = Comp->Props.next()->Value;
+      s = Comp->Props.next().Value;
       checkType->setChecked(Comp->Props.current()->display);
-      editParam->setText(Comp->Props.next()->Value);
+      editParam->setText(Comp->Props.next().Value);
       checkParam->setChecked(Comp->Props.current()->display);
     }
     else {
-      s = Comp->Props.first()->Value;
+      s = Comp->Props.first().Value;
       checkType->setChecked(Comp->Props.current()->display);
     }
     pp = Comp->Props.next();
-    editStart->setText(pp->Value);
+    editStart->setText(pp.Value);
     checkStart->setChecked(pp->display);
     pp = Comp->Props.next();
-    editStop->setText(pp->Value);
+    editStop->setText(pp.Value);
     checkStop->setChecked(pp->display);
     pp = Comp->Props.next();  // remember last property for ListView
-    editNumber->setText(pp->Value);
+    editNumber->setText(pp.Value);
     checkNumber->setChecked(pp->display);
 
     int tNum = 0;
@@ -441,7 +441,7 @@ ComponentDialog::ComponentDialog(Component *c, Schematic *d)
         s = tr("no");
 
       // add Props into TableWidget
-      qDebug() << " Loading Comp->Props :" << p->Name << p->Value << p->display << p->Description ;
+      qDebug() << " Loading Comp->Props :" << p->Name << p.Value << p->display << p->Description ;
 
       prop->setRowCount(prop->rowCount()+1);
 
@@ -449,7 +449,7 @@ ComponentDialog::ComponentDialog(Component *c, Schematic *d)
       cell = new QTableWidgetItem(p->Name);
       cell->setFlags(cell->flags() ^ Qt::ItemIsEditable);
       prop->setItem(row, 0, cell);
-      cell = new QTableWidgetItem(p->Value);
+      cell = new QTableWidgetItem(p.Value);
       cell->setFlags(cell->flags() ^ Qt::ItemIsEditable);
       prop->setItem(row, 1, cell);
       cell = new QTableWidgetItem(s);
@@ -533,7 +533,7 @@ void ComponentDialog::updateCompPropsList()
         s = tr("no");
 
       // add Props into TableWidget
-      qDebug() << " Loading Comp->Props :" << p->Name << p->Value << p->display << p->Description ;
+      qDebug() << " Loading Comp->Props :" << p->Name << p.Value << p->display << p->Description ;
 
       if (row > prop->rowCount()-1) { // Add new rows
           prop->setRowCount(prop->rowCount()+1);
@@ -543,7 +543,7 @@ void ComponentDialog::updateCompPropsList()
       cell = new QTableWidgetItem(p->Name);
       cell->setFlags(cell->flags() ^ Qt::ItemIsEditable);
       prop->setItem(row, 0, cell);
-      cell = new QTableWidgetItem(p->Value);
+      cell = new QTableWidgetItem(p.Value);
       cell->setFlags(cell->flags() ^ Qt::ItemIsEditable);
       prop->setItem(row, 1, cell);
       cell = new QTableWidgetItem(s);
@@ -851,8 +851,8 @@ void ComponentDialog::slotApplyInput()
       pp->display = display;
       changed = true;
     }
-    if(pp->Value != comboSim->currentText()) {
-      pp->Value = comboSim->currentText();
+    if(pp.Value != comboSim->currentText()) {
+      pp.Value = comboSim->currentText();
       changed = true;
     }
     pp = Comp->Props.next();
@@ -869,8 +869,8 @@ void ComponentDialog::slotApplyInput()
       case 3:  tmp = "const"; break;
       default: tmp = "lin";   break;
     }
-    if(pp->Value != tmp) {
-      pp->Value = tmp;
+    if(pp.Value != tmp) {
+      pp.Value = tmp;
       changed = true;
     }
     pp = Comp->Props.next();
@@ -881,8 +881,8 @@ void ComponentDialog::slotApplyInput()
       pp->display = display;
       changed = true;
     }
-    if(pp->Value != editParam->text()) {
-      pp->Value = editParam->text();
+    if(pp.Value != editParam->text()) {
+      pp.Value = editParam->text();
       changed = true;
     }
     pp = Comp->Props.next();
@@ -895,8 +895,8 @@ void ComponentDialog::slotApplyInput()
         changed = true;
       }
       pp->Name  = "Start";
-      if(pp->Value != editStart->text()) {
-        pp->Value = editStart->text();
+      if(pp.Value != editStart->text()) {
+        pp.Value = editStart->text();
         changed = true;
       }
       pp = Comp->Props.next();
@@ -907,8 +907,8 @@ void ComponentDialog::slotApplyInput()
         changed = true;
       }
       pp->Name  = "Stop";
-      if(pp->Value != editStop->text()) {
-        pp->Value = editStop->text();
+      if(pp.Value != editStop->text()) {
+        pp.Value = editStop->text();
         changed = true;
       }
       pp = Comp->Props.next();
@@ -918,8 +918,8 @@ void ComponentDialog::slotApplyInput()
         pp->display = display;
         changed = true;
       }
-      if((pp->Value != editNumber->text()) || (pp->Name != "Points")) {
-        pp->Value = editNumber->text();
+      if((pp.Value != editNumber->text()) || (pp->Name != "Points")) {
+        pp.Value = editNumber->text();
         pp->Name  = "Points";
         changed = true;
       }
@@ -944,8 +944,8 @@ void ComponentDialog::slotApplyInput()
         changed = true;
       }
       tmp = "["+editValues->text()+"]";
-      if((pp->Value != tmp) || (pp->Name != "Values")) {
-        pp->Value = tmp;
+      if((pp.Value != tmp) || (pp->Name != "Values")) {
+        pp.Value = tmp;
         pp->Name  = "Values";
         changed = true;
       }
@@ -1001,8 +1001,8 @@ void ComponentDialog::slotApplyInput()
              pp->display = display;
              changed = true;
          }
-         if(pp->Value != value) {
-            pp->Value = value;
+         if(pp.Value != value) {
+            pp.Value = value;
             changed = true;
          }
          if(pp->Name != name) {
@@ -1017,7 +1017,7 @@ void ComponentDialog::slotApplyInput()
          Q_ASSERT(prop->rowCount() >= 0);
          if ( (int) Comp->Props.count() < prop->rowCount() +1) {
              qDebug() << "adding to Comp ";
-             Comp->Props.append(new Property(name, value, display, desc));
+             Comp->Props.append(Property(name, value, display, desc));
              changed = true;
          }
     }

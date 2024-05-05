@@ -29,17 +29,17 @@ spiralinductor::spiralinductor()
   Description = QObject::tr("Planar spiral inductor");
 
   //Spiral
-  Arcs.append(new Arc(-5, 0, 10, 10, -16*90, 16*180,QPen(Qt::darkBlue,3)));
-  Arcs.append(new Arc(-10, -10, 20, 20, 16*90, 16*180,QPen(Qt::darkBlue,3)));
-  Arcs.append(new Arc(-15, -10, 30, 30, -16*90, 16*180,QPen(Qt::darkBlue,3)));
-  Arcs.append(new Arc(-20, -20, 40, 40, 16*90, 16*180,QPen(Qt::darkBlue,3)));
-  Arcs.append(new Arc(-20, -20, 40, 40, 0, 16*90,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-5, 0, 10, 10, -16*90, 16*180,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-10, -10, 20, 20, 16*90, 16*180,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-15, -10, 30, 30, -16*90, 16*180,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-20, -20, 40, 40, 16*90, 16*180,QPen(Qt::darkBlue,3)));
+  Arcs.append(Arc(-20, -20, 40, 40, 0, 16*90,QPen(Qt::darkBlue,3)));
 
-  Lines.append(new Line(-30,  0, 0,  0,QPen(Qt::black,4)));
-  Lines.append(new Line( 20,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0, 0,  0,QPen(Qt::black,4)));
+  Lines.append(Line( 20,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-25;
   x2 =  30; y2 = 25;
@@ -49,20 +49,20 @@ spiralinductor::spiralinductor()
   Model = "SPIRALIND";
   Name  = "SPIRALIND";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 		QObject::tr("Substrate")));
-  Props.append(new Property("Geometry", "Circular", true,
+  Props.append(Property("Geometry", "Circular", true,
 		QObject::tr("Spiral type")+
 +		"[Circular, Square, Hexagonal, Octogonal]"));
-  Props.append(new Property("W", "25 um", false,
+  Props.append(Property("W", "25 um", false,
 		QObject::tr("Width of line")));
-  Props.append(new Property("Di", "200 um", false,
+  Props.append(Property("Di", "200 um", false,
 		QObject::tr("Inner diameter")));
-  Props.append(new Property("S", "25 um", false,
+  Props.append(Property("S", "25 um", false,
 		QObject::tr("Spacing between turns")));
-  Props.append(new Property("N", "3", false,
+  Props.append(Property("N", "3", false,
 		QObject::tr("Number of turns")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 
 }

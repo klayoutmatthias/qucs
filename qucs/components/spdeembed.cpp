@@ -36,18 +36,18 @@ SPDeEmbed::SPDeEmbed()
   Name  = "XD";
 
   // must be the first property !!!
-  Props.append(new Property("File", "test.s2p", true,
+  Props.append(Property("File", "test.s2p", true,
 		QObject::tr("name of the s parameter file")));
-  Props.append(new Property("Data", "rectangular", false,
+  Props.append(Property("Data", "rectangular", false,
 		QObject::tr("data type")+" [rectangular, polar]"));
-  Props.append(new Property("Interpolator", "linear", false,
+  Props.append(Property("Interpolator", "linear", false,
 		QObject::tr("interpolation type")+" [linear, cubic]"));
-  Props.append(new Property("duringDC", "open", false,
+  Props.append(Property("duringDC", "open", false,
 		QObject::tr("representation during DC analysis")+
 			    " [open, short, shortall, unspecified]"));
 
   // must be the last property !!!
-  Props.append(new Property("Ports", "2", false,
+  Props.append(Property("Ports", "2", false,
 		QObject::tr("number of ports")));
 
   createSymbol();
@@ -57,7 +57,7 @@ SPDeEmbed::SPDeEmbed()
 Component* SPDeEmbed::newOne()
 {
   SPDeEmbed* p = new SPDeEmbed();
-  p->Props.getLast()->Value = Props.getLast()->Value;
+  p->Props.last().Value = Props.last().Value;
   p->recreate(0);
   return p;
 }
@@ -71,8 +71,8 @@ Element* SPDeEmbed::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     SPDeEmbed* p = new SPDeEmbed();
-    p->Props.getFirst()->Value = "test.s6p";
-    p->Props.getLast()->Value = "6";
+    p->Props.first().Value = "test.s6p";
+    p->Props.last().Value = "6";
     p->recreate(0);
     return p;
   }
@@ -97,8 +97,8 @@ Element* SPDeEmbed::info4(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     SPDeEmbed* p = new SPDeEmbed();
-    p->Props.getFirst()->Value = "test.s4p";
-    p->Props.getLast()->Value = "4";
+    p->Props.first().Value = "test.s4p";
+    p->Props.last().Value = "4";
     p->recreate(0);
     return p;
   }
@@ -109,7 +109,7 @@ Element* SPDeEmbed::info4(QString& Name, char* &BitmapFile, bool getNewOne)
 QString SPDeEmbed::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.getFirst()->Value;
+  QString FileName = Props.first().Value;
   return misc::properAbsFileName(FileName);
 }
 
@@ -119,8 +119,8 @@ QString SPDeEmbed::netlist()
   QString s = Model+":"+Name;
 
   // output all node names
-  foreach(Port *p1, Ports)
-    s += " "+p1->Connection->Name;   // node names
+  for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
+    s += " "+p1.Connection->Name;   // node names
 
   // output all properties
   Property *p2 = Props.first();
@@ -128,15 +128,15 @@ QString SPDeEmbed::netlist()
 
   // data type
   p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2->Value+"\"";
+  s += " "+p2->Name+"=\""+p2.Value+"\"";
 
   // interpolator type
   p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2->Value+"\"";
+  s += " "+p2->Name+"=\""+p2.Value+"\"";
 
   // DC property
   p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2->Value+"\"\n";
+  s += " "+p2->Name+"=\""+p2.Value+"\"\n";
 
   return s;
 }
@@ -153,7 +153,7 @@ void SPDeEmbed::createSymbol()
   QString stmp;
 
   int w, PortDistance = 60;
-  int Num = Props.getLast()->Value.toInt();
+  int Num = Props.last().Value.toInt();
 
   // adjust number of ports
   // force even port number
@@ -163,40 +163,40 @@ void SPDeEmbed::createSymbol()
     PortDistance = 20;
     if(Num > 40) Num = 40;
   }
-  Props.getLast()->Value = QString::number(Num);
+  Props.last().Value = QString::number(Num);
 
   // draw symbol outline
   int h = (PortDistance/2)*((Num-1)/2) + 15;
   QPen pen(Qt::darkBlue, 2, Qt::DashLine);
-  Lines.append(new Line(-15, -h, 15, -h, pen));
-  Lines.append(new Line( 15, -h, 15,  h, pen));
-  Lines.append(new Line(-15,  h, 15,  h, pen));
-  Lines.append(new Line(-15, -h,-15,  h, pen));
+  Lines.append(Line(-15, -h, 15, -h, pen));
+  Lines.append(Line( 15, -h, 15,  h, pen));
+  Lines.append(Line(-15,  h, 15,  h, pen));
+  Lines.append(Line(-15, -h,-15,  h, pen));
   stmp = QObject::tr("file");
   w = smallmetrics.width(stmp); // compute text size to center it
-  Texts.append(new Text(-w/2, -fHeight/2, stmp));
+  Texts.append(Text(-w/2, -fHeight/2, stmp));
 
   int i=0, y = 15-h;
   while(i<Num) { // add ports lines and numbers
     i++;
-    Lines.append(new Line(-30, y,-15, y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port(-30, y));
+    Lines.append(Line(-30, y,-15, y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port(-30, y));
     stmp = QString::number(i);
     w = smallmetrics.width(stmp);
-    Texts.append(new Text(-25-w, y-fHeight-2, stmp)); // text right-aligned
+    Texts.append(Text(-25-w, y-fHeight-2, stmp)); // text right-aligned
 
     if(i == Num) break; // if odd number of ports there will be one port less on the right side
     i++;
-    Lines.append(new Line( 15, y, 30, y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port( 30, y));
+    Lines.append(Line( 15, y, 30, y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port( 30, y));
     stmp = QString::number(i);
-    Texts.append(new Text(25, y-fHeight-2, stmp)); // text left-aligned
+    Texts.append(Text(25, y-fHeight-2, stmp)); // text left-aligned
     y += PortDistance;
   }
 
-  Lines.append(new Line( 0, h, 0,h+15,QPen(Qt::darkBlue,2)));
-  Texts.append(new Text( 4, h,"Ref"));
-  Ports.append(new Port( 0,h+15));    // 'Ref' port
+  Lines.append(Line( 0, h, 0,h+15,QPen(Qt::darkBlue,2)));
+  Texts.append(Text( 4, h,"Ref"));
+  Ports.append(Port( 0,h+15));    // 'Ref' port
 
   x1 = -30; y1 = -h-2;
   x2 =  30; y2 =  h+15;

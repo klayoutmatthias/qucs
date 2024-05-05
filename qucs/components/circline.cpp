@@ -28,17 +28,17 @@ CircLine::CircLine()
 {
   Description = QObject::tr("Circular Waveguide");
 
-  Arcs.append(new Arc(-20, -9, 18, 18,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc(-18, -7, 14, 14,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc( 4, -9, 18, 18,16*270, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-20, -9, 18, 18,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-18, -7, 14, 14,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc( 4, -9, 18, 18,16*270, 16*180,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 19,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-12, -9, 12, -9,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-12,  9, 12,  9,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 19,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-12, -9, 12, -9,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-12,  9, 12,  9,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-16;
   x2 =  30; y2 = 14;
@@ -48,21 +48,21 @@ CircLine::CircLine()
   Model = "CIRCLINE";
   Name  = "Line";
 
-  Props.append(new Property("a", "2.95 mm", true,
+  Props.append(Property("a", "2.95 mm", true,
 		QObject::tr("Radius")));
-  Props.append(new Property("L", "1500 mm", true,
+  Props.append(Property("L", "1500 mm", true,
 		QObject::tr("Mechanical length of the line")));
-  Props.append(new Property("er", "1", false,
+  Props.append(Property("er", "1", false,
 		QObject::tr("Relative permittivity of dielectric")));
-  Props.append(new Property("mur", "1", false,
+  Props.append(Property("mur", "1", false,
 		QObject::tr("Relative permeability of conductor")));
-  Props.append(new Property("tand", "0", false,
+  Props.append(Property("tand", "0", false,
 		QObject::tr("Loss tangent")));
-  Props.append(new Property("rho", "0.022e-6", false,
+  Props.append(Property("rho", "0.022e-6", false,
 		QObject::tr("Specific resistance of conductor")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("Simulation temperature in degree Celsius")));
-  Props.append(new Property("Material", "unspecified", false,
+  Props.append(Property("Material", "unspecified", false,
 		QObject::tr("Material parameter for temperature model")+
 			    " [unspecified, Copper, StainlessSteel, Gold]"));
 }

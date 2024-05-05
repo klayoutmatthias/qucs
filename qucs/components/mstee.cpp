@@ -34,23 +34,23 @@ MStee::MStee()
   Model = "MTEE";
   Name  = "MS";
 
-  Props.append(new Property("Subst", "Subst1", true,
+  Props.append(Property("Subst", "Subst1", true,
 		QObject::tr("substrate")));
-  Props.append(new Property("W1", "1 mm", true,
+  Props.append(Property("W1", "1 mm", true,
 		QObject::tr("width of line 1")));
-  Props.append(new Property("W2", "1 mm", true,
+  Props.append(Property("W2", "1 mm", true,
 		QObject::tr("width of line 2")));
-  Props.append(new Property("W3", "2 mm", true,
+  Props.append(Property("W3", "2 mm", true,
 		QObject::tr("width of line 3")));
-  Props.append(new Property("MSModel", "Hammerstad", false,
+  Props.append(Property("MSModel", "Hammerstad", false,
 	QObject::tr("quasi-static microstrip model")+
 	" [Hammerstad, Wheeler, Schneider]"));
-  Props.append(new Property("MSDispModel", "Kirschning", false,
+  Props.append(Property("MSDispModel", "Kirschning", false,
 	QObject::tr("microstrip dispersion model")+" [Kirschning, Kobayashi, "
 	"Yamashita, Hammerstad, Getsinger, Schneider, Pramanick]"));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("temperature in degree Celsius")));
-  Props.append(new Property("Symbol", "showNumbers", false,
+  Props.append(Property("Symbol", "showNumbers", false,
 	QObject::tr("show port numbers in symbol or not")+
 	" [showNumbers, noNumbers]"));
 
@@ -83,30 +83,30 @@ void MStee::createSymbol()
   // get the small font size; use the screen-compatible metric
   QFontMetrics smallmetrics(Font, 0); 
   
-  Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  0, 18,  0, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-18, -8, 18, -8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-18,  8, -8,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  8,  8, 18,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-18, -8,-18,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 18, -8, 18,  8,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( -8,  8, -8, 18,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  8,  8,  8, 18,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( -8, 18,  8, 18,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  0, 18,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-18, -8, 18, -8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-18,  8, -8,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  8,  8, 18,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-18, -8,-18,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18, -8, 18,  8,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( -8,  8, -8, 18,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  8,  8,  8, 18,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( -8, 18,  8, 18,QPen(Qt::darkBlue,2)));
 
-  if(Props.getLast()->Value.at(0) != 'n') {
+  if(Props.last().Value.at(0) != 'n') {
     QString stmp = "1"; 
     int w = smallmetrics.width(stmp);
     int d = smallmetrics.descent();
     int a = smallmetrics.ascent();
     
-    Texts.append(new Text(-25-w, -d+6, stmp)); // right-aligned, top-aligned
-    Texts.append(new Text( 25, -d+6, "2")); // left-aligned, top-aligned
-    Texts.append(new Text(  5, 30-a-1, "3")); // bottom-aligned
+    Texts.append(Text(-25-w, -d+6, stmp)); // right-aligned, top-aligned
+    Texts.append(Text( 25, -d+6, "2")); // left-aligned, top-aligned
+    Texts.append(Text(  5, 30-a-1, "3")); // bottom-aligned
   }
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
-  Ports.append(new Port(  0,30));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
+  Ports.append(Port(  0,30));
 }

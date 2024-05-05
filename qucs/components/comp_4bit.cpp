@@ -24,9 +24,9 @@ comp_4bit::comp_4bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("4bit comparator verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -40,7 +40,7 @@ comp_4bit::comp_4bit()
 Component * comp_4bit::newOne()
 {
   comp_4bit * p = new comp_4bit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,52 +56,52 @@ Element * comp_4bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void comp_4bit::createSymbol()
 {
-  Lines.append(new Line(-40, -90, 40,-90,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40, -90, 40,100,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40, 100,-40,100,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-40, 100,-40,-90,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40, -90, 40,-90,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40, -90, 40,100,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40, 100,-40,100,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40, 100,-40,-90,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-60,-50,-40,-50,QPen(Qt::darkBlue,2)));  // X0
-  Lines.append(new Line(-60,-30,-40,-30,QPen(Qt::darkBlue,2)));  // X1
-  Lines.append(new Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // X2
-  Lines.append(new Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // X3
-  Lines.append(new Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // Y0
-  Lines.append(new Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // Y1
-  Lines.append(new Line(-60, 70,-40, 70,QPen(Qt::darkBlue,2)));  // Y2
-  Lines.append(new Line(-60, 90,-40, 90,QPen(Qt::darkBlue,2)));  // Y3
-  Lines.append(new Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // L
-  Lines.append(new Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // G
-  Lines.append(new Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // E
+  Lines.append(Line(-60,-50,-40,-50,QPen(Qt::darkBlue,2)));  // X0
+  Lines.append(Line(-60,-30,-40,-30,QPen(Qt::darkBlue,2)));  // X1
+  Lines.append(Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // X2
+  Lines.append(Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // X3
+  Lines.append(Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // Y0
+  Lines.append(Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // Y1
+  Lines.append(Line(-60, 70,-40, 70,QPen(Qt::darkBlue,2)));  // Y2
+  Lines.append(Line(-60, 90,-40, 90,QPen(Qt::darkBlue,2)));  // Y3
+  Lines.append(Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // L
+  Lines.append(Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // G
+  Lines.append(Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // E
 
-  Texts.append(new Text(-25,-85, "COMP", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-85, "COMP", Qt::darkBlue, 12.0));
 
-  Texts.append(new Text(-25,-40,   "{",  Qt::darkBlue, 16.0));
-  Texts.append(new Text(-15,-35,   "X",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35,-63,   "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35,-43,   "1",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35,-23,   "2",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, -3,   "3",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-25, 42,   "{",  Qt::darkBlue, 16.0));
-  Texts.append(new Text(-15, 47,   "Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 17,   "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 37,   "1",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 57,   "2",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 77,   "3",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(  5, 17, "X<Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(  5, -3, "X>Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(  5,-23, "X=Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-40,   "{",  Qt::darkBlue, 16.0));
+  Texts.append(Text(-15,-35,   "X",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-63,   "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-43,   "1",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-23,   "2",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, -3,   "3",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-25, 42,   "{",  Qt::darkBlue, 16.0));
+  Texts.append(Text(-15, 47,   "Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 17,   "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 37,   "1",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 57,   "2",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 77,   "3",  Qt::darkBlue, 12.0));
+  Texts.append(Text(  5, 17, "X<Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text(  5, -3, "X>Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text(  5,-23, "X=Y",  Qt::darkBlue, 12.0));
 
-  Ports.append(new Port(-60,-50));  // X0
-  Ports.append(new Port(-60,-30));  // X1
-  Ports.append(new Port(-60,-10));  // X2
-  Ports.append(new Port(-60, 10));  // X3
-  Ports.append(new Port(-60, 30));  // Y0
-  Ports.append(new Port(-60, 50));  // Y1
-  Ports.append(new Port(-60, 70));  // Y2
-  Ports.append(new Port(-60, 90));  // Y3
-  Ports.append(new Port( 60, 30));  // L
-  Ports.append(new Port( 60, 10));  // G
-  Ports.append(new Port( 60,-10));  // E
+  Ports.append(Port(-60,-50));  // X0
+  Ports.append(Port(-60,-30));  // X1
+  Ports.append(Port(-60,-10));  // X2
+  Ports.append(Port(-60, 10));  // X3
+  Ports.append(Port(-60, 30));  // Y0
+  Ports.append(Port(-60, 50));  // Y1
+  Ports.append(Port(-60, 70));  // Y2
+  Ports.append(Port(-60, 90));  // Y3
+  Ports.append(Port( 60, 30));  // L
+  Ports.append(Port( 60, 10));  // G
+  Ports.append(Port( 60,-10));  // E
 
   x1 = -60; y1 = -94;
   x2 =  60; y2 =  104;
@@ -111,21 +111,21 @@ QString comp_4bit::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1)->Value;     // delay time
+  QString td = Props.at(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString X0    = Ports.at(0)->Connection->Name;
-  QString X1    = Ports.at(1)->Connection->Name;
-  QString X2    = Ports.at(2)->Connection->Name;
-  QString X3    = Ports.at(3)->Connection->Name;
-  QString Y0    = Ports.at(4)->Connection->Name;
-  QString Y1    = Ports.at(5)->Connection->Name;
-  QString Y2    = Ports.at(6)->Connection->Name;
-  QString Y3    = Ports.at(7)->Connection->Name;
-  QString L     = Ports.at(8)->Connection->Name;
-  QString G     = Ports.at(9)->Connection->Name;
-  QString E     = Ports.at(10)->Connection->Name;
+  QString X0    = Ports.at(0).Connection->Name;
+  QString X1    = Ports.at(1).Connection->Name;
+  QString X2    = Ports.at(2).Connection->Name;
+  QString X3    = Ports.at(3).Connection->Name;
+  QString Y0    = Ports.at(4).Connection->Name;
+  QString Y1    = Ports.at(5).Connection->Name;
+  QString Y2    = Ports.at(6).Connection->Name;
+  QString Y3    = Ports.at(7).Connection->Name;
+  QString L     = Ports.at(8).Connection->Name;
+  QString G     = Ports.at(9).Connection->Name;
+  QString E     = Ports.at(10).Connection->Name;
  
   s = "\n  "+Name+":process ("+X0+", "+X1+", "+X2+", "+X3+", "+Y0+", "+Y1+", "+Y2+", "+Y3+")\n"+
       "  variable P0, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11 : std_logic;\n"+
@@ -153,20 +153,20 @@ QString comp_4bit::verilogCode( int )
 {
   QString l="";
 
-  QString td = Props.at(1)->Value;        // delay time
+  QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
 
-  QString X0    = Ports.at(0)->Connection->Name;
-  QString X1    = Ports.at(1)->Connection->Name;
-  QString X2    = Ports.at(2)->Connection->Name;
-  QString X3    = Ports.at(3)->Connection->Name;
-  QString Y0    = Ports.at(4)->Connection->Name;
-  QString Y1    = Ports.at(5)->Connection->Name;
-  QString Y2    = Ports.at(6)->Connection->Name;
-  QString Y3    = Ports.at(7)->Connection->Name;
-  QString L     = Ports.at(8)->Connection->Name;
-  QString G     = Ports.at(9)->Connection->Name;
-  QString E     = Ports.at(10)->Connection->Name; 
+  QString X0    = Ports.at(0).Connection->Name;
+  QString X1    = Ports.at(1).Connection->Name;
+  QString X2    = Ports.at(2).Connection->Name;
+  QString X3    = Ports.at(3).Connection->Name;
+  QString Y0    = Ports.at(4).Connection->Name;
+  QString Y1    = Ports.at(5).Connection->Name;
+  QString Y2    = Ports.at(6).Connection->Name;
+  QString Y3    = Ports.at(7).Connection->Name;
+  QString L     = Ports.at(8).Connection->Name;
+  QString G     = Ports.at(9).Connection->Name;
+  QString E     = Ports.at(10).Connection->Name; 
 
   QString LR  = "L_reg"  + Name + L;
   QString GR  = "G_reg"  + Name + G;

@@ -28,28 +28,28 @@ capq::capq()
   Description = QObject::tr("Lossy capacitor");
 
   //Lines connection device and ports
-  Lines.append(new Line( -4,-11, -4, 11,QPen(Qt::darkBlue,4)));
-  Lines.append(new Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
+  Lines.append(Line( -4,-11, -4, 11,QPen(Qt::darkBlue,4)));
+  Lines.append(Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
 
 
-  Lines.append(new Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
 
   //Draw Q
   //Horizontal lines
-  Lines.append(new Line( 10,  -10, 17,  -10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,  -17, 17,  -17,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,  -10, 17,  -10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,  -17, 17,  -17,QPen(Qt::darkBlue,2)));
   //Vertical lines
-  Lines.append(new Line( 17,  -10, 17,  -17,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 10,  -10, 10,  -17,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 17,  -10, 17,  -17,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 10,  -10, 10,  -17,QPen(Qt::darkBlue,2)));
   //Middle line
-  Lines.append(new Line( 18,  -9, 14,  -13,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 18,  -9, 14,  -13,QPen(Qt::darkBlue,2)));
 
 
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(Port(-30,  0));
+  Ports.append(Port( 30,  0));
 
   x1 = -30; y1 = -13;
   x2 =  30; y2 =  13;
@@ -59,16 +59,16 @@ capq::capq()
   Model = "CAPQ";
   Name  = "CAPQ";
 
-  Props.append(new Property("C", "1 pF", true,
+  Props.append(Property("C", "1 pF", true,
 		QObject::tr("Capacitance")));
-  Props.append(new Property("Q", "100", true,
+  Props.append(Property("Q", "100", true,
 		QObject::tr("Quality factor")));
-  Props.append(new Property("f", "100 MHz", false,
+  Props.append(Property("f", "100 MHz", false,
 		QObject::tr("Frequency at which Q is measured")));
-  Props.append(new Property("Mode", "Linear", false,
+  Props.append(Property("Mode", "Linear", false,
 		QObject::tr("Q frequency profile")+
 		" [Linear, SquareRoot, Constant]"));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
                 QObject::tr("simulation temperature in degree Celsius")));
 }
 capq::~capq()

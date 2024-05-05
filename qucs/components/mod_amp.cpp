@@ -14,39 +14,39 @@ mod_amp::mod_amp()
 {
   Description = QObject::tr ("Modular Operational Amplifier verilog device");
 
-  Props.append (new Property ("GBP", "1e6", false,
+  Props.append (Property ("GBP", "1e6", false,
     QObject::tr ("Gain bandwidth product (Hz)")));
-  Props.append (new Property ("AOLDC", "106.0", false,
+  Props.append (Property ("AOLDC", "106.0", false,
     QObject::tr ("Open-loop differential gain at DC (dB)")));
-  Props.append (new Property ("FP2", "3e6", false,
+  Props.append (Property ("FP2", "3e6", false,
     QObject::tr ("Second pole frequency (Hz)")));
-  Props.append (new Property ("RO", "75", false,
+  Props.append (Property ("RO", "75", false,
     QObject::tr ("Output resistance (Ohm)")));
-  Props.append (new Property ("CD", "1e-12", false,
+  Props.append (Property ("CD", "1e-12", false,
     QObject::tr ("Differential input capacitance (F)")));
-  Props.append (new Property ("RD", "2e6", false,
+  Props.append (Property ("RD", "2e6", false,
     QObject::tr ("Differential input resistance (Ohm)")));
-  Props.append (new Property ("IOFF", "20e-9", false,
+  Props.append (Property ("IOFF", "20e-9", false,
     QObject::tr ("Input offset current (A)")));
-  Props.append (new Property ("IB", "80e-9", false,
+  Props.append (Property ("IB", "80e-9", false,
     QObject::tr ("Input bias current (A)")));
-  Props.append (new Property ("VOFF", "7e-4", false,
+  Props.append (Property ("VOFF", "7e-4", false,
     QObject::tr ("Input offset voltage (V)")));
-  Props.append (new Property ("CMRRDC", "90.0", false,
+  Props.append (Property ("CMRRDC", "90.0", false,
     QObject::tr ("Common-mode rejection ratio at DC (dB)")));
-  Props.append (new Property ("FCM", "200.0", false,
+  Props.append (Property ("FCM", "200.0", false,
     QObject::tr ("Common-mode zero corner frequency (Hz)")));
-  Props.append (new Property ("PSRT", "5e5", false,
+  Props.append (Property ("PSRT", "5e5", false,
     QObject::tr ("Positive slew rate (V/s)")));
-  Props.append (new Property ("NSRT", "5e5", false,
+  Props.append (Property ("NSRT", "5e5", false,
     QObject::tr ("Negative slew rate (V/s)")));
-  Props.append (new Property ("VLIMP", "14", false,
+  Props.append (Property ("VLIMP", "14", false,
     QObject::tr ("Positive output voltage limit (V)")));
-  Props.append (new Property ("VLIMN", "-14", false,
+  Props.append (Property ("VLIMN", "-14", false,
     QObject::tr ("Negative output voltage limit (V)")));
-  Props.append (new Property ("ILMAX", "35e-3", false,
+  Props.append (Property ("ILMAX", "35e-3", false,
     QObject::tr ("Maximum DC output current (A)")));
- Props.append (new Property ("CSCALE", "50", false,
+ Props.append (Property ("CSCALE", "50", false,
     QObject::tr ("Current limit scale factor")));
   createSymbol ();
   tx = x2 + 4;
@@ -58,7 +58,7 @@ mod_amp::mod_amp()
 Component * mod_amp::newOne()
 {
   mod_amp * p = new mod_amp();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -75,26 +75,26 @@ Element * mod_amp::info(QString& Name, char * &BitmapFile, bool getNewOne)
 void mod_amp::createSymbol()
 {
 
-  Lines.append(new Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30,  0, 40,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30,  0, 40,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-20,-35,-20, 35,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-20,-35, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-20, 35, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-20,-35,-20, 35,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-20,-35, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-20, 35, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-16, 19, -9, 19,QPen(Qt::black,2)));
-  Lines.append(new Line(-16,-19, -9,-19,QPen(Qt::red,2)));
-  Lines.append(new Line(-13,-22,-13,-15,QPen(Qt::red,2)));
+  Lines.append(Line(-16, 19, -9, 19,QPen(Qt::black,2)));
+  Lines.append(Line(-16,-19, -9,-19,QPen(Qt::red,2)));
+  Lines.append(Line(-13,-22,-13,-15,QPen(Qt::red,2)));
 
-  Lines.append(new Line(-10, -10, -10, 10,QPen(Qt::red,2)));
-  Lines.append(new Line(-10, -10,  0,   0,QPen(Qt::red,2)));
-  Lines.append(new Line(  0,  0,  10, -10,QPen(Qt::red,2)));
-  Lines.append(new Line( 10, -10, 10,  10,QPen(Qt::red,2)));
+  Lines.append(Line(-10, -10, -10, 10,QPen(Qt::red,2)));
+  Lines.append(Line(-10, -10,  0,   0,QPen(Qt::red,2)));
+  Lines.append(Line(  0,  0,  10, -10,QPen(Qt::red,2)));
+  Lines.append(Line( 10, -10, 10,  10,QPen(Qt::red,2)));
   
-  Ports.append(new Port(-30,-20));
-  Ports.append(new Port(-30, 20));
-  Ports.append(new Port( 40,  0));
+  Ports.append(Port(-30,-20));
+  Ports.append(Port(-30, 20));
+  Ports.append(Port( 40,  0));
 
   x1 = -30; y1 = -38;
   x2 =  40; y2 =  38;

@@ -29,22 +29,22 @@ RFedd::RFedd()
   Name  = "RF";
 
   // first properties !!!
-  Props.append(new Property("Type", "Y", false,
+  Props.append(Property("Type", "Y", false,
 		QObject::tr("type of parameters")+" [Y, Z, S]"));
-  Props.append(new Property("Ports", "2", false,
+  Props.append(Property("Ports", "2", false,
 		QObject::tr("number of ports")));
-  Props.append(new Property("duringDC", "open", false,
+  Props.append(Property("duringDC", "open", false,
 		QObject::tr("representation during DC analysis")+
 			    " [open, short, unspecified, zerofrequency]"));
 
   // last properties
-  Props.append(new Property("P11", "0", false,
+  Props.append(Property("P11", "0", false,
 		QObject::tr("parameter equation") + " 11"));
-  Props.append(new Property("P12", "0", false,
+  Props.append(Property("P12", "0", false,
 		QObject::tr("parameter equation") + " 12"));
-  Props.append(new Property("P21", "0", false,
+  Props.append(Property("P21", "0", false,
 		QObject::tr("parameter equation") + " 21"));
-  Props.append(new Property("P22", "0", false,
+  Props.append(Property("P22", "0", false,
 		QObject::tr("parameter equation") + " 22"));
 
   createSymbol();
@@ -54,8 +54,8 @@ RFedd::RFedd()
 Component* RFedd::newOne()
 {
   RFedd* p = new RFedd();
-  p->Props.at(0)->Value = Props.at(0)->Value;
-  p->Props.at(1)->Value = Props.at(1)->Value;
+  p->Props[0].Value = Props[0].Value;
+  p->Props[1].Value = Props[1].Value;
   p->recreate(0);
   return p;
 }
@@ -68,8 +68,8 @@ Element* RFedd::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     RFedd* p = new RFedd();
-    p->Props.at(0)->Value = "Y";
-    p->Props.at(1)->Value = "2";
+    p->Props[0].Value = "Y";
+    p->Props[1].Value = "2";
     p->recreate(0);
     return p;
   }
@@ -84,23 +84,18 @@ QString RFedd::netlist()
   QString n, p;
 
   // output all node names
-  foreach(Port *p1, Ports)
+  for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
     s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  Property *p2;
-  p2 = Props.at(0);
-  s += " "+p2->Name+"=\""+p2->Value+"\"";
-  p = p2->Value;
-  p2 = Props.at(2);
-  s += " "+p2->Name+"=\""+p2->Value+"\"";
-  p2 = Props.at(3);
-  while(p2) {
-    n = p2->Name.mid(1);
-    s += " "+p2->Name+"=\""+Name+"."+p+n+"\"";
-    e += "  Eqn:Eqn"+Name+p2->Name+" "+
-      Name+"."+p+n+"=\""+p2->Value+"\" Export=\"no\"\n";
-    p2 = Props.next();
+  s += " "+Props[0].Name+"=\""+Props[0].Value+"\"";
+  p = Props[0].Value;
+  s += " "+Props[2].Name+"=\""+Props[2].Value+"\"";
+  for (int i = 3; i < Props.count(); ++i) {
+    n = Props[i].Name.mid(1);
+    s += " "+Props[i].Name+"=\""+Name+"."+p+n+"\"";
+    e += "  Eqn:Eqn"+Name+Props[i].Name+" "+
+      Name+"."+p+n+"=\""+Props[i].Value+"\" Export=\"no\"\n";
   }
 
   return s+e;
@@ -119,22 +114,22 @@ void RFedd::createSymbol()
   int w, i;
 
   // adjust port number
-  int No = Props.at(1)->Value.toInt();
+  int No = Props.at(1).Value.toInt();
   if(No < 1) No = 1;
   if(No > 8) No = 8;
-  Props.at(1)->Value = QString::number(No);
+  Props[1].Value = QString::number(No);
 
   // adjust property number and names
   int NumProps = Props.count() - 3; // Type, Ports, duringDC
   if (NumProps < No * No) { // number of ports was increased, add properties
     for(i = 0; i < NumProps; i++) {
       tmp=QString::number((i)/No+1)+QString::number((i)%No+1);
-      Props.at(i+3)->Name="P"+tmp;
-      Props.at(i+3)->Description=QObject::tr("parameter equation") + " " +tmp;
+      Props[i+3].Name="P"+tmp;
+      Props[i+3].Description=QObject::tr("parameter equation") + " " +tmp;
     }
     for(i = NumProps; i < No * No; i++) {
       tmp=QString::number((i)/No+1)+QString::number((i)%No+1);
-      Props.append(new Property("P"+tmp, "0", false,
+      Props.append(Property("P"+tmp, "0", false,
 		QObject::tr("parameter equation") + " " +tmp));
     }
   } else { // number of ports was decreased, remove properties
@@ -143,41 +138,41 @@ void RFedd::createSymbol()
     }
     for(i = 0; i < No * No; i++) {
       tmp=QString::number((i)/No+1)+QString::number((i)%No+1);
-      Props.at(i+3)->Name="P"+tmp;
-      Props.at(i+3)->Description=QObject::tr("parameter equation") + " " +tmp;
+      Props[i+3].Name="P"+tmp;
+      Props[i+3].Description=QObject::tr("parameter equation") + " " +tmp;
     }
   }
 
   // draw symbol
   #define HALFWIDTH  17
   int h = 30*((No-1)/2) + 15;
-  Lines.append(new Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
 
   // component text name, centered
   tmp = QObject::tr("RF");
   w = smallmetrics.width(tmp);
-  Texts.append(new Text(-w/2, -fHeight/2, tmp)); // text centered in box
+  Texts.append(Text(-w/2, -fHeight/2, tmp)); // text centered in box
 
   i = 0;
   int y = 15-h;
   while(i<No) { // add ports lines and numbers
     // left side
-    Lines.append(new Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port(-30,  y));
+    Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port(-30,  y));
     tmp = QString::number(i+1);
     w = smallmetrics.width(tmp);
-    Texts.append(new Text(-25-w, y-fHeight-2, tmp)); // text right-aligned
+    Texts.append(Text(-25-w, y-fHeight-2, tmp)); // text right-aligned
     i++;
 
     if(i == No) break; // if odd number of ports there will be one port less on the right side
     // right side
-    Lines.append(new Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
-    Ports.append(new Port( 30,  y));
+    Lines.append(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
+    Ports.append(Port( 30,  y));
     tmp = QString::number(i+1);
-    Texts.append(new Text(25, y-fHeight-2, tmp)); // text left-aligned
+    Texts.append(Text(25, y-fHeight-2, tmp)); // text left-aligned
     y += 60;
     i++;
   }

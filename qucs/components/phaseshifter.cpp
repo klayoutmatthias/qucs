@@ -22,18 +22,18 @@ Phaseshifter::Phaseshifter()
 {
   Description = QObject::tr("phase shifter");
 
-  Lines.append(new Line(-14,-14, 14,-14,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-14, 14, 14, 14,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-14,-14,-14, 14,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 14,-14, 14, 14,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc( -9, -9, 17, 17, 0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10, 10, 10,-10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-14,-14, 14,-14,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-14, 14, 14, 14,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-14,-14,-14, 14,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 14,-14, 14, 14,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc( -9, -9, 17, 17, 0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10, 10, 10,-10,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 14,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 14,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(Port(-30,  0));
+  Ports.append(Port( 30,  0));
 
   x1 = -30; y1 = -17;
   x2 =  30; y2 =  17;
@@ -43,9 +43,9 @@ Phaseshifter::Phaseshifter()
   Model = "PShift";
   Name  = "X";
 
-  Props.append(new Property("phi", "90", true,
+  Props.append(Property("phi", "90", true,
 		QObject::tr("phase shift in degree")));
-  Props.append(new Property("Zref", "50 Ohm", false,
+  Props.append(Property("Zref", "50 Ohm", false,
 		QObject::tr("reference impedance")));
 }
 

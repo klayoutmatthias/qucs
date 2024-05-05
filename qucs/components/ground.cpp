@@ -24,12 +24,12 @@ Ground::Ground()
   Type = isComponent;   // both analog and digital
   Description = QObject::tr("ground (reference potential)");
 
-  Lines.append(new Line(  0,  0,  0, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-11, 10, 11, 10,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line( -7, 16,  7, 16,QPen(Qt::darkBlue,3)));
-  Lines.append(new Line( -3, 22,  3, 22,QPen(Qt::darkBlue,3)));
+  Lines.append(Line(  0,  0,  0, 10,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-11, 10, 11, 10,QPen(Qt::darkBlue,3)));
+  Lines.append(Line( -7, 16,  7, 16,QPen(Qt::darkBlue,3)));
+  Lines.append(Line( -3, 22,  3, 22,QPen(Qt::darkBlue,3)));
 
-  Ports.append(new Port(  0,  0));
+  Ports.append(Port(  0,  0));
 
   x1 = -12; y1 =  0;
   x2 =  12; y2 = 25;

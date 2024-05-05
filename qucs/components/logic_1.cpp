@@ -23,7 +23,7 @@ logic_1::logic_1()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("logic 1 verilog device");
 
- Props.append (new Property ("LEVEL", "1", false,
+ Props.append (Property ("LEVEL", "1", false,
     QObject::tr ("logic 1 voltage level")
     +" ("+QObject::tr ("V")+")"));
   createSymbol ();
@@ -36,7 +36,7 @@ logic_1::logic_1()
 Component * logic_1::newOne()
 {
   logic_1 * p = new logic_1();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 
@@ -54,16 +54,16 @@ Element * logic_1::info(QString& Name, char * &BitmapFile, bool getNewOne)
 void logic_1::createSymbol()
 {
 
-  Lines.append(new Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
 
-  Texts.append(new Text(-30,-12, "1", Qt::darkGreen, 12.0));
+  Texts.append(Text(-30,-12, "1", Qt::darkGreen, 12.0));
 
-  Ports.append(new Port(  0,  0)); // L1
+  Ports.append(Port(  0,  0)); // L1
 
   x1 = -39; y1 = -14;
   x2 = 0;   y2 =  14;
@@ -73,7 +73,7 @@ QString logic_1::vhdlCode( int )
 {
   QString s = "";
 
-  QString L1 = Ports.at(0)->Connection->Name;
+  QString L1 = Ports.at(0).Connection->Name;
  
   s = "\n  " + Name + ":process\n" +
      "  begin\n    " +
@@ -87,7 +87,7 @@ QString logic_1::verilogCode( int )
    
   QString l = "";
 
-  QString L1 = Ports.at(0)->Connection->Name;
+  QString L1 = Ports.at(0).Connection->Name;
   
   QString v = "net_reg" + Name + L1;
   

@@ -24,9 +24,9 @@ mux2to1::mux2to1()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("2to1 multiplexer verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
  
@@ -40,7 +40,7 @@ mux2to1::mux2to1()
 Component * mux2to1::newOne()
 {
   mux2to1 * p = new mux2to1();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -57,40 +57,40 @@ Element * mux2to1::info(QString& Name, char * &BitmapFile, bool getNewOne)
 void mux2to1::createSymbol()
 {
   // put in here symbol drawing code and terminal definitions
-  Lines.append(new Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30, -60, 30, 50,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30,  50,-30, 50,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30,  50,-30,-60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30, -60, 30, 50,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30,  50,-30, 50,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  50,-30,-60,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-50,-20,-40,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-50,  0,-30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-50, 40,-30, 40,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-50,-20,-40,-20,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-50,  0,-30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-50, 40,-30, 40,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line( 30, 0, 50, 0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30, 0, 50, 0,QPen(Qt::darkBlue,2)));
 
-  Arcs.append(new Arc(-40, -25, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-40, -25, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
  
-  Texts.append(new Text(-17,-55, "MUX", Qt::darkBlue, 12.0));
+  Texts.append(Text(-17,-55, "MUX", Qt::darkBlue, 12.0));
 
-  Texts.append(new Text(-25,-33, "En", Qt::darkBlue, 12.0));
-  Texts.append(new Text(-25,-13, "0", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-33, "En", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-13, "0", Qt::darkBlue, 12.0));
 
-  Texts.append(new Text(-15,-15, "G", Qt::darkBlue, 12.0));
-  Texts.append(new Text( -1,-21, "}", Qt::darkBlue, 16.0));
-  Texts.append(new Text( 12,-22, "0", Qt::darkBlue, 12.0));
-  Texts.append(new Text( 12, -2, "1", Qt::darkBlue, 12.0));
+  Texts.append(Text(-15,-15, "G", Qt::darkBlue, 12.0));
+  Texts.append(Text( -1,-21, "}", Qt::darkBlue, 16.0));
+  Texts.append(Text( 12,-22, "0", Qt::darkBlue, 12.0));
+  Texts.append(Text( 12, -2, "1", Qt::darkBlue, 12.0));
 
-  Lines.append(new Line(11, 0, 23, 0, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(11, 0, 23, 0, QPen(Qt::darkBlue,2)));
 
-  Texts.append(new Text(-25,  7, "0", Qt::darkBlue, 12.0));
-  Texts.append(new Text(-25, 27, "1", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,  7, "0", Qt::darkBlue, 12.0));
+  Texts.append(Text(-25, 27, "1", Qt::darkBlue, 12.0));
 
-  Ports.append(new Port(-50,-20));  // En
-  Ports.append(new Port(-50,  0));  // A
-  Ports.append(new Port(-50, 20));  // D0
-  Ports.append(new Port(-50, 40));  // D1
-  Ports.append(new Port( 50, 0 ));  // Y
+  Ports.append(Port(-50,-20));  // En
+  Ports.append(Port(-50,  0));  // A
+  Ports.append(Port(-50, 20));  // D0
+  Ports.append(Port(-50, 40));  // D1
+  Ports.append(Port( 50, 0 ));  // Y
 
   x1 = -50; y1 = -64;
   x2 =  50; y2 =  54;
@@ -100,16 +100,16 @@ QString mux2to1::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1)->Value;
+  QString td = Props.at(1).Value;
   if(!misc::VHDL_Delay(td, Name))
     return td;      // Time does not have VHDL format.
   td += ";\n";
 
-  QString En = Ports.at(0)->Connection->Name;
-  QString A  = Ports.at(1)->Connection->Name;
-  QString D0 = Ports.at(2)->Connection->Name;
-  QString D1 = Ports.at(3)->Connection->Name;
-  QString y  = Ports.at(4)->Connection->Name;
+  QString En = Ports.at(0).Connection->Name;
+  QString A  = Ports.at(1).Connection->Name;
+  QString D0 = Ports.at(2).Connection->Name;
+  QString D1 = Ports.at(3).Connection->Name;
+  QString y  = Ports.at(4).Connection->Name;
 
   s = "\n  " + Name + ":process (" + En + ", " +  A + ", " + D0 + ", " +  D1 + ")\n" +
      "  begin\n" +
@@ -121,18 +121,18 @@ QString mux2to1::vhdlCode( int )
 
 QString mux2to1::verilogCode( int )
 {
-  QString td = Props.at(1)->Value;
+  QString td = Props.at(1).Value;
   if(!misc::Verilog_Delay(td, Name))
     return td;      // Time does not have VHDL format.
   td += " ";
   
   QString l = "";
 
-  QString En = Ports.at(0)->Connection->Name;
-  QString A  = Ports.at(1)->Connection->Name;
-  QString D0 = Ports.at(2)->Connection->Name;
-  QString D1 = Ports.at(3)->Connection->Name;
-  QString y  = Ports.at(4)->Connection->Name;
+  QString En = Ports.at(0).Connection->Name;
+  QString A  = Ports.at(1).Connection->Name;
+  QString D0 = Ports.at(2).Connection->Name;
+  QString D1 = Ports.at(3).Connection->Name;
+  QString y  = Ports.at(4).Connection->Name;
 
   QString v = "net_reg" + Name + y;
   

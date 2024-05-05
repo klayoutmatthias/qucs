@@ -23,21 +23,21 @@ Resistor::Resistor(bool european)
 {
   Description = QObject::tr("resistor");
 
-  Props.append(new Property("R", "50 Ohm", true,
+  Props.append(Property("R", "50 Ohm", true,
 	QObject::tr("ohmic resistance in Ohms")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(new Property("Tc1", "0.0", false,
+  Props.append(Property("Tc1", "0.0", false,
 	QObject::tr("first order temperature coefficient")));
-  Props.append(new Property("Tc2", "0.0", false,
+  Props.append(Property("Tc2", "0.0", false,
 	QObject::tr("second order temperature coefficient")));
-  Props.append(new Property("Tnom", "26.85", false,
+  Props.append(Property("Tnom", "26.85", false,
 	QObject::tr("temperature at which parameters were extracted")));
 
   // this must be the last property in the list !!!
-  Props.append(new Property("Symbol", "european", false,
+  Props.append(Property("Symbol", "european", false,
 		QObject::tr("schematic symbol")+" [european, US]"));
-  if(!european)  Props.getLast()->Value = "US";
+  if(!european)  Props.last().Value = "US";
 
   createSymbol();
   tx = x1+4;
@@ -49,34 +49,34 @@ Resistor::Resistor(bool european)
 // -------------------------------------------------------
 Component* Resistor::newOne()
 {
-  return new Resistor(Props.getLast()->Value != "US");
+  return new Resistor(Props.last().Value != "US");
 }
 
 // -------------------------------------------------------
 void Resistor::createSymbol()
 {
-  if(Props.getLast()->Value != "US") {
-    Lines.append(new Line(-18, -9, 18, -9,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 18, -9, 18,  9,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 18,  9,-18,  9,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-18,  9,-18, -9,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  if(Props.last().Value != "US") {
+    Lines.append(Line(-18, -9, 18, -9,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 18, -9, 18,  9,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 18,  9,-18,  9,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-18,  9,-18, -9,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(new Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-18,  0,-15, -7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(-15, -7, -9,  7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( -9,  7, -3, -7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( -3, -7,  3,  7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(  3,  7,  9, -7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line(  9, -7, 15,  7,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 15,  7, 18,  0,QPen(Qt::darkBlue,2)));
-    Lines.append(new Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-18,  0,-15, -7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(-15, -7, -9,  7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( -9,  7, -3, -7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( -3, -7,  3,  7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(  3,  7,  9, -7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line(  9, -7, 15,  7,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 15,  7, 18,  0,QPen(Qt::darkBlue,2)));
+    Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(new Port(-30,  0));
-  Ports.append(new Port( 30,  0));
+  Ports.append(Port(-30,  0));
+  Ports.append(Port( 30,  0));
 
   x1 = -30; y1 = -11;
   x2 =  30; y2 =  11;

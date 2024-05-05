@@ -24,9 +24,9 @@ fa2b::fa2b()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("2bit full adder verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
  
@@ -40,7 +40,7 @@ fa2b::fa2b()
 Component * fa2b::newOne()
 {
   fa2b * p = new fa2b();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,49 +56,49 @@ Element * fa2b::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void fa2b::createSymbol()
 {
-  Lines.append(new Line(-40, -60, 40,-60,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40, -60, 40, 90,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 40,  90,-40, 90,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-40,  90,-40, -60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40, -60, 40,-60,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40, -60, 40, 90,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 40,  90,-40, 90,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-40,  90,-40, -60,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // X0
-  Lines.append(new Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // X1
-  Lines.append(new Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // Y0
-  Lines.append(new Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // Y1
-  Lines.append(new Line(-60, 70,-40, 70,QPen(Qt::darkBlue,2)));  // CI
+  Lines.append(Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // X0
+  Lines.append(Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // X1
+  Lines.append(Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // Y0
+  Lines.append(Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // Y1
+  Lines.append(Line(-60, 70,-40, 70,QPen(Qt::darkBlue,2)));  // CI
 
-  Lines.append(new Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // C0
-  Lines.append(new Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // S1
-  Lines.append(new Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // S0
+  Lines.append(Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // C0
+  Lines.append(Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // S1
+  Lines.append(Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // S0
 
-  Lines.append(new Line( -10, -55, 10, -55, QPen(Qt::darkBlue,2)));  
-  Lines.append(new Line( -10, -55,  0, -45, QPen(Qt::darkBlue,2)));  
-  Lines.append(new Line(  0,  -45,-10, -35, QPen(Qt::darkBlue,2)));  
-  Lines.append(new Line( -10, -35, 10, -35, QPen(Qt::darkBlue,2)));  
+  Lines.append(Line( -10, -55, 10, -55, QPen(Qt::darkBlue,2)));  
+  Lines.append(Line( -10, -55,  0, -45, QPen(Qt::darkBlue,2)));  
+  Lines.append(Line(  0,  -45,-10, -35, QPen(Qt::darkBlue,2)));  
+  Lines.append(Line( -10, -35, 10, -35, QPen(Qt::darkBlue,2)));  
 
-  Texts.append(new Text(-25,-20,   "{",  Qt::darkBlue, 16.0));
-  Texts.append(new Text(-15,-13,   "X",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35,-23,   "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, -3,   "1",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-25, 22,   "{",  Qt::darkBlue, 16.0));
-  Texts.append(new Text(-15, 29,   "Y",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 17,   "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 37,   "1",  Qt::darkBlue, 12.0));
-  Texts.append(new Text(-35, 57,  "CI",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( 17,-20,   "}",  Qt::darkBlue, 16.0));
-  Texts.append(new Text( 3, -13,   "S",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( 28,-23,   "0",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( 28, -3,   "1",  Qt::darkBlue, 12.0));
-  Texts.append(new Text( 10, 17,  "CO",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-25,-20,   "{",  Qt::darkBlue, 16.0));
+  Texts.append(Text(-15,-13,   "X",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35,-23,   "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, -3,   "1",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-25, 22,   "{",  Qt::darkBlue, 16.0));
+  Texts.append(Text(-15, 29,   "Y",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 17,   "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 37,   "1",  Qt::darkBlue, 12.0));
+  Texts.append(Text(-35, 57,  "CI",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 17,-20,   "}",  Qt::darkBlue, 16.0));
+  Texts.append(Text( 3, -13,   "S",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 28,-23,   "0",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 28, -3,   "1",  Qt::darkBlue, 12.0));
+  Texts.append(Text( 10, 17,  "CO",  Qt::darkBlue, 12.0));
 
-  Ports.append(new Port(-60,-10));  // X0 -> D
-  Ports.append(new Port(-60, 10));  // X1 -> C
-  Ports.append(new Port(-60, 30));  // Y0 -> B
-  Ports.append(new Port(-60, 50));  // Y1 -> A
-  Ports.append(new Port(-60, 70));  // CI -> E
-  Ports.append(new Port( 60, 30));  // CO
-  Ports.append(new Port( 60, 10));  // S1
-  Ports.append(new Port( 60,-10));  // S0
+  Ports.append(Port(-60,-10));  // X0 -> D
+  Ports.append(Port(-60, 10));  // X1 -> C
+  Ports.append(Port(-60, 30));  // Y0 -> B
+  Ports.append(Port(-60, 50));  // Y1 -> A
+  Ports.append(Port(-60, 70));  // CI -> E
+  Ports.append(Port( 60, 30));  // CO
+  Ports.append(Port( 60, 10));  // S1
+  Ports.append(Port( 60,-10));  // S0
 
   x1 = -60; y1 = -64;
   x2 =  60; y2 =  94;
@@ -108,18 +108,18 @@ QString fa2b::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1)->Value;     // delay time
+  QString td = Props.at(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString D    = Ports.at(0)->Connection->Name;
-  QString C    = Ports.at(1)->Connection->Name;
-  QString B    = Ports.at(2)->Connection->Name;
-  QString A    = Ports.at(3)->Connection->Name;
-  QString E   = Ports.at(4)->Connection->Name;
-  QString CO   = Ports.at(5)->Connection->Name;
-  QString S1   = Ports.at(6)->Connection->Name;
-  QString S0   = Ports.at(7)->Connection->Name; 
+  QString D    = Ports.at(0).Connection->Name;
+  QString C    = Ports.at(1).Connection->Name;
+  QString B    = Ports.at(2).Connection->Name;
+  QString A    = Ports.at(3).Connection->Name;
+  QString E   = Ports.at(4).Connection->Name;
+  QString CO   = Ports.at(5).Connection->Name;
+  QString S1   = Ports.at(6).Connection->Name;
+  QString S0   = Ports.at(7).Connection->Name; 
 
   s = "\n  "+Name+":process ("+A+", "+B+", "+C+", "+D+", "+E+ ")\n"+
       "  begin\n" +
@@ -132,19 +132,19 @@ QString fa2b::vhdlCode( int )
 
 QString fa2b::verilogCode( int )
 {
-  QString td = Props.at(1)->Value;        // delay time
+  QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
 
   QString l = "";
 
-  QString D    = Ports.at(0)->Connection->Name;
-  QString C    = Ports.at(1)->Connection->Name;
-  QString B    = Ports.at(2)->Connection->Name;
-  QString A    = Ports.at(3)->Connection->Name;
-  QString E   = Ports.at(4)->Connection->Name;
-  QString CO   = Ports.at(5)->Connection->Name;
-  QString S1   = Ports.at(6)->Connection->Name;
-  QString S0   = Ports.at(7)->Connection->Name; 
+  QString D    = Ports.at(0).Connection->Name;
+  QString C    = Ports.at(1).Connection->Name;
+  QString B    = Ports.at(2).Connection->Name;
+  QString A    = Ports.at(3).Connection->Name;
+  QString E   = Ports.at(4).Connection->Name;
+  QString CO   = Ports.at(5).Connection->Name;
+  QString S1   = Ports.at(6).Connection->Name;
+  QString S0   = Ports.at(7).Connection->Name; 
 
   QString COR  = "CO_reg" + Name + CO;
   QString S1R  = "S1_reg" + Name + S1;

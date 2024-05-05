@@ -16,7 +16,7 @@ pad4bit::pad4bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("4bit pattern generator verilog device");
 
-  Props.append (new Property ("Number", "0", false,
+  Props.append (Property ("Number", "0", false,
     QObject::tr ("pad output value")));
 
   createSymbol ();
@@ -29,7 +29,7 @@ pad4bit::pad4bit()
 Component * pad4bit::newOne()
 {
   pad4bit * p = new pad4bit();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -45,25 +45,25 @@ Element * pad4bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void pad4bit::createSymbol()
 {
-  Lines.append(new Line(-60, -50, 30,-50,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line( 30, -50, 30, 50,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line( 30,  50,-60, 50,QPen(Qt::darkGreen,2)));
-  Lines.append(new Line(-60,  50,-60,-50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-60, -50, 30,-50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line( 30, -50, 30, 50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line( 30,  50,-60, 50,QPen(Qt::darkGreen,2)));
+  Lines.append(Line(-60,  50,-60,-50,QPen(Qt::darkGreen,2)));
 
-  Lines.append(new Line( 40,-30, 30,-30,QPen(Qt::darkGreen,2)));  // A
-  Lines.append(new Line( 40,-10, 30,-10,QPen(Qt::darkGreen,2)));  // B
-  Lines.append(new Line( 40, 10, 30, 10,QPen(Qt::darkGreen,2))); // C
-  Lines.append(new Line( 40, 30, 30, 30,QPen(Qt::darkGreen,2))); // D
+  Lines.append(Line( 40,-30, 30,-30,QPen(Qt::darkGreen,2)));  // A
+  Lines.append(Line( 40,-10, 30,-10,QPen(Qt::darkGreen,2)));  // B
+  Lines.append(Line( 40, 10, 30, 10,QPen(Qt::darkGreen,2))); // C
+  Lines.append(Line( 40, 30, 30, 30,QPen(Qt::darkGreen,2))); // D
  
-  Texts.append(new Text(-58,-46, " 0   1   2    3", Qt::darkGreen, 12.0));
-  Texts.append(new Text(-58,-23, " 4   5   6    7", Qt::darkGreen, 12.0));
-  Texts.append(new Text(-58,  0, " 8   9  10 11", Qt::darkGreen, 12.0));
-  Texts.append(new Text(-58, 23, "12 13 14 15", Qt::darkGreen, 12.0));
+  Texts.append(Text(-58,-46, " 0   1   2    3", Qt::darkGreen, 12.0));
+  Texts.append(Text(-58,-23, " 4   5   6    7", Qt::darkGreen, 12.0));
+  Texts.append(Text(-58,  0, " 8   9  10 11", Qt::darkGreen, 12.0));
+  Texts.append(Text(-58, 23, "12 13 14 15", Qt::darkGreen, 12.0));
  
-  Ports.append(new Port(40, 30));  // D
-  Ports.append(new Port(40, 10));  // C
-  Ports.append(new Port(40,-10));  // B
-  Ports.append(new Port(40,-30));  // A
+  Ports.append(Port(40, 30));  // D
+  Ports.append(Port(40, 10));  // C
+  Ports.append(Port(40,-10));  // B
+  Ports.append(Port(40,-30));  // A
 
   x1 = -64; y1 = -54;
   x2 =  40; y2 =  54;
@@ -71,13 +71,13 @@ void pad4bit::createSymbol()
 
 QString pad4bit::vhdlCode( int )
 {
-  QString v = Props.at(0)->Value;
+  QString v = Props.at(0).Value;
   QString s1, s2, s3, s ="";
 
-  QString A    = Ports.at(0)->Connection->Name;
-  QString B    = Ports.at(1)->Connection->Name;
-  QString C    = Ports.at(2)->Connection->Name;
-  QString D    = Ports.at(3)->Connection->Name;
+  QString A    = Ports.at(0).Connection->Name;
+  QString B    = Ports.at(1).Connection->Name;
+  QString C    = Ports.at(2).Connection->Name;
+  QString D    = Ports.at(3).Connection->Name;
 
   s1 = "\n  "+Name+":process\n"+
        "  variable n_" + Name + " : integer := " + v + ";\n" +
@@ -108,15 +108,15 @@ QString pad4bit::vhdlCode( int )
 
 QString pad4bit::verilogCode( int )
 {
-  QString v = Props.at(0)->Value;
+  QString v = Props.at(0).Value;
 
   QString l = "";
   QString l1, l2, l3;
 
-  QString A   = Ports.at(0)->Connection->Name;
-  QString B   = Ports.at(1)->Connection->Name;
-  QString C   = Ports.at(2)->Connection->Name;
-  QString D   = Ports.at(3)->Connection->Name;
+  QString A   = Ports.at(0).Connection->Name;
+  QString B   = Ports.at(1).Connection->Name;
+  QString C   = Ports.at(2).Connection->Name;
+  QString D   = Ports.at(3).Connection->Name;
 
   QString AR  = "A_reg"  + Name + A;
   QString BR  = "B_reg"  + Name + B;

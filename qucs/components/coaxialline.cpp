@@ -22,16 +22,16 @@ CoaxialLine::CoaxialLine()
 {
   Description = QObject::tr("coaxial transmission line");
 
-  Arcs.append(new Arc(-20, -9, 8, 18,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(new Arc( 11, -9, 8, 18,16*270, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc(-20, -9, 8, 18,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.append(Arc( 11, -9, 8, 18,16*270, 16*180,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-30,  0,-16,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 19,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-16, -9, 16, -9,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-16,  9, 16,  9,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  0,-16,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 19,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-16, -9, 16, -9,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-16,  9, 16,  9,QPen(Qt::darkBlue,2)));
 
-  Ports.append(new Port(-30, 0));
-  Ports.append(new Port( 30, 0));
+  Ports.append(Port(-30, 0));
+  Ports.append(Port( 30, 0));
 
   x1 = -30; y1 =-12;
   x2 =  30; y2 = 12;
@@ -41,21 +41,21 @@ CoaxialLine::CoaxialLine()
   Model = "COAX";
   Name  = "Line";
 
-  Props.append(new Property("er", "2.29", true,
+  Props.append(Property("er", "2.29", true,
 		QObject::tr("relative permittivity of dielectric")));
-  Props.append(new Property("rho", "0.022e-6", false,
+  Props.append(Property("rho", "0.022e-6", false,
 		QObject::tr("specific resistance of conductor")));
-  Props.append(new Property("mur", "1", false,
+  Props.append(Property("mur", "1", false,
 		QObject::tr("relative permeability of conductor")));
-  Props.append(new Property("D", "2.95 mm", false,
+  Props.append(Property("D", "2.95 mm", false,
 		QObject::tr("inner diameter of shield")));
-  Props.append(new Property("d", "0.9 mm", false,
+  Props.append(Property("d", "0.9 mm", false,
 		QObject::tr("diameter of inner conductor")));
-  Props.append(new Property("L", "1500 mm", true,
+  Props.append(Property("L", "1500 mm", true,
 		QObject::tr("mechanical length of the line")));
-  Props.append(new Property("tand", "4e-4", false,
+  Props.append(Property("tand", "4e-4", false,
 		QObject::tr("loss tangent")));
-  Props.append(new Property("Temp", "26.85", false,
+  Props.append(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 }
 

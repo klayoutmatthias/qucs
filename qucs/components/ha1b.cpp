@@ -24,9 +24,9 @@ ha1b::ha1b()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("1bit half adder verilog device");
 
-  Props.append (new Property ("TR", "6", false,
+  Props.append (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (new Property ("Delay", "1 ns", false,
+  Props.append (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -40,7 +40,7 @@ ha1b::ha1b()
 Component * ha1b::newOne()
 {
   ha1b * p = new ha1b();
-  p->Props.getFirst()->Value = Props.getFirst()->Value; 
+  p->Props.first().Value = Props.first().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,27 +56,27 @@ Element * ha1b::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void ha1b::createSymbol()
 {
-  Lines.append(new Line(-30, -40, 30,-40,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30, -40, 30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line( 30,  30,-30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-30,  30,-30,-40,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30, -40, 30,-40,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30, -40, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line( 30,  30,-30, 30,QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-30,  30,-30,-40,QPen(Qt::darkBlue,2)));
 
-  Lines.append(new Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // A
-  Lines.append(new Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // B
-  Lines.append(new Line( 30, 10, 50, 10,QPen(Qt::darkBlue,2)));  // CO
-  Lines.append(new Line( 30,-10, 50,-10,QPen(Qt::darkBlue,2)));  // S
+  Lines.append(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // A
+  Lines.append(Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // B
+  Lines.append(Line( 30, 10, 50, 10,QPen(Qt::darkBlue,2)));  // CO
+  Lines.append(Line( 30,-10, 50,-10,QPen(Qt::darkBlue,2)));  // S
 
-  Texts.append(new Text(0, -3, "CO", Qt::darkBlue, 12.0));
+  Texts.append(Text(0, -3, "CO", Qt::darkBlue, 12.0));
 
-  Lines.append(new Line(-10,-35, 10, -35, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-35,  5, -25, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(  5,-25,-10, -15, QPen(Qt::darkBlue,2)));
-  Lines.append(new Line(-10,-15, 10, -15, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-35, 10, -35, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-35,  5, -25, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(  5,-25,-10, -15, QPen(Qt::darkBlue,2)));
+  Lines.append(Line(-10,-15, 10, -15, QPen(Qt::darkBlue,2)));
  
-  Ports.append(new Port(-50,-10));  // A
-  Ports.append(new Port(-50, 10));  // B
-  Ports.append(new Port( 50, 10));  // CO
-  Ports.append(new Port( 50,-10));  // S
+  Ports.append(Port(-50,-10));  // A
+  Ports.append(Port(-50, 10));  // B
+  Ports.append(Port( 50, 10));  // CO
+  Ports.append(Port( 50,-10));  // S
 
   x1 = -50; y1 = -44;
   x2 =  50; y2 =  34;
@@ -86,14 +86,14 @@ QString ha1b::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1)->Value;     // delay time
+  QString td = Props.at(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString A  = Ports.at(0)->Connection->Name;
-  QString B  = Ports.at(1)->Connection->Name;
-  QString CO = Ports.at(2)->Connection->Name;
-  QString S  = Ports.at(3)->Connection->Name;
+  QString A  = Ports.at(0).Connection->Name;
+  QString B  = Ports.at(1).Connection->Name;
+  QString CO = Ports.at(2).Connection->Name;
+  QString S  = Ports.at(3).Connection->Name;
 
   s = "\n  " + Name + ":process (" + A + ", " +  B + ")\n"  +
       "  begin\n" +
@@ -105,15 +105,15 @@ QString ha1b::vhdlCode( int )
 
 QString ha1b::verilogCode( int )
 {
-  QString td = Props.at(1)->Value;        // delay time
+  QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
 
-  QString A  = Ports.at(0)->Connection->Name;
-  QString B  = Ports.at(1)->Connection->Name;
-  QString CO = Ports.at(2)->Connection->Name;
-  QString S  = Ports.at(3)->Connection->Name;
+  QString A  = Ports.at(0).Connection->Name;
+  QString B  = Ports.at(1).Connection->Name;
+  QString CO = Ports.at(2).Connection->Name;
+  QString S  = Ports.at(3).Connection->Name;
  
   QString COR = "CO_reg" + Name + CO;
   QString SR  = "S_reg"  + Name + S;
