@@ -792,6 +792,13 @@ int Schematic::contentsY()
 }
 
 // -----------------------------------------------------------
+void Schematic::contentsToViewport(int x, int y, int &vx, int &vy)
+{
+  vx = x - contentsX();
+  vy = y - contentsY();
+}
+
+// -----------------------------------------------------------
 float Schematic::zoom(float s)
 {
   Scale *= s;

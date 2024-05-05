@@ -113,7 +113,7 @@ public:
   void rotateElements(Schematic*, int&, int&);
   void moveElements(Schematic*, int&, int&);
   void moveElements(const QVector<Element *>&, int, int);
-  void endElementMoving(Schematic*, const QVector<Element *>&);
+  void endElementMoving(Schematic*, QVector<Element *> &);
   void rightPressMenu(Schematic*, QMouseEvent*, float, float);
 };
 

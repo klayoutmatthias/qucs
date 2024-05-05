@@ -21,12 +21,10 @@
  *  \brief Actions implementation for the GUI menu items
  */
 
-#include <QtCore>
 #include <stdlib.h>
 #include <limits.h>
 
 #include <QProcess>
-#include <Q3PtrList>
 #include <QRegExpValidator>
 #include <QLineEdit>
 #include <QAction>
@@ -41,6 +39,7 @@
 #include <QListWidget>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QScrollBar>
 
 #include "projectView.h"
 #include "qucs.h"
@@ -981,13 +980,13 @@ void QucsApp::slotCursorLeft(bool left)
   }
   if(!editText->isHidden()) return;  // for edit of component property ?
 
-  Q3PtrList<Element> movingElements;
+  QVector<Element *> movingElements;
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
-  int markerCount = Doc->copySelectedElements(&movingElements);
+  int markerCount = Doc->copySelectedElements(movingElements);
 
   if((movingElements.count() - markerCount) < 1) {
     if(markerCount > 0) {  // only move marker if nothing else selected
-      Doc->markerLeftRight(left, &movingElements);
+      Doc->markerLeftRight(left, movingElements);
     } else if(left) {
       if(Doc->scrollLeft(Doc->horizontalScrollBar()->singleStep()))
         Doc->scrollBy(-Doc->horizontalScrollBar()->singleStep(), 0);
@@ -1000,9 +999,9 @@ void QucsApp::slotCursorLeft(bool left)
     view->drawn = false;
     return;
   } else { // random selection. move all of them
-    view->moveElements(&movingElements, sign*Doc->GridX, 0);
+    view->moveElements(movingElements, sign*Doc->GridX, 0);
     view->MAx3 = 1;  // sign for moved elements
-    view->endElementMoving(Doc, &movingElements);
+    view->endElementMoving(Doc, movingElements);
   }
 }
 
@@ -1013,50 +1012,50 @@ void QucsApp::slotCursorUp(bool up)
   }else if(up){
     if(view->MAx3 == 0) return;  // edit component namen ?
     Component *pc = (Component*)view->focusElement;
-    Property *pp = pc->Props.at(view->MAx3-1);  // current property
-    int Begin = pp->Description.indexOf('[');
+    const Property &pp = pc->Props.at(view->MAx3-1);  // current property
+    int Begin = pp.Description.indexOf('[');
     if(Begin < 0) return;  // no selection list ?
-    int End = pp->Description.indexOf(editText->text(), Begin); // current
+    int End = pp.Description.indexOf(editText->text(), Begin); // current
     if(End < 0) return;  // should never happen
-    End = pp->Description.lastIndexOf(',', End);
+    End = pp.Description.lastIndexOf(',', End);
     if(End < Begin) return;  // was first item ?
     End--;
-    int Pos = pp->Description.lastIndexOf(',', End);
+    int Pos = pp.Description.lastIndexOf(',', End);
     if(Pos < Begin) Pos = Begin;   // is first item ?
     Pos++;
-    if(pp->Description.at(Pos) == ' ') Pos++; // remove leading space
-    editText->setText(pp->Description.mid(Pos, End-Pos+1));
+    if(pp.Description.at(Pos) == ' ') Pos++; // remove leading space
+    editText->setText(pp.Description.mid(Pos, End-Pos+1));
     editText->selectAll();
     return;
   }else{ // down
     if(view->MAx3 == 0) return;  // edit component namen ?
     Component *pc = (Component*)view->focusElement;
-    Property *pp = pc->Props.at(view->MAx3-1);  // current property
-    int Pos = pp->Description.indexOf('[');
+    const Property &pp = pc->Props.at(view->MAx3-1);  // current property
+    int Pos = pp.Description.indexOf('[');
     if(Pos < 0) return;  // no selection list ?
-    Pos = pp->Description.indexOf(editText->text(), Pos); // current list item
+    Pos = pp.Description.indexOf(editText->text(), Pos); // current list item
     if(Pos < 0) return;  // should never happen
-    Pos = pp->Description.indexOf(',', Pos);
+    Pos = pp.Description.indexOf(',', Pos);
     if(Pos < 0) return;  // was last item ?
     Pos++;
-    if(pp->Description.at(Pos) == ' ') Pos++; // remove leading space
-    int End = pp->Description.indexOf(',', Pos);
+    if(pp.Description.at(Pos) == ' ') Pos++; // remove leading space
+    int End = pp.Description.indexOf(',', Pos);
     if(End < 0) {  // is last item ?
-      End = pp->Description.indexOf(']', Pos);
+      End = pp.Description.indexOf(']', Pos);
       if(End < 0) return;  // should never happen
     }
-    editText->setText(pp->Description.mid(Pos, End-Pos));
+    editText->setText(pp.Description.mid(Pos, End-Pos));
     editText->selectAll();
     return;
   }
 
-  Q3PtrList<Element> movingElements;
+  QVector<Element *> movingElements;
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
-  int markerCount = Doc->copySelectedElements(&movingElements);
+  int markerCount = Doc->copySelectedElements(movingElements);
 
   if((movingElements.count() - markerCount) < 1) { // all selections are markers
     if(markerCount > 0) {  // only move marker if nothing else selected
-      Doc->markerUpDown(up, &movingElements);
+      Doc->markerUpDown(up, movingElements);
     } else if(up) { // nothing selected at all
       if(Doc->scrollUp(Doc->verticalScrollBar()->singleStep()))
         Doc->scrollBy(0, -Doc->verticalScrollBar()->singleStep());
@@ -1069,9 +1068,9 @@ void QucsApp::slotCursorUp(bool up)
     view->drawn = false;
     return;
   }else{ // some random selection, put it back
-    view->moveElements(&movingElements, 0, ((up)?-1:1) * Doc->GridY);
+    view->moveElements(movingElements, 0, ((up)?-1:1) * Doc->GridY);
     view->MAx3 = 1;  // sign for moved elements
-    view->endElementMoving(Doc, &movingElements);
+    view->endElementMoving(Doc, movingElements);
   }
 }
 
@@ -1087,37 +1086,38 @@ void QucsApp::slotApplyCompText()
   f.setPointSizeF(Doc->Scale * float(f.pointSize()) );
   editText->setFont(f);
 
-  Property  *pp = 0;
   Component *pc = (Component*)view->focusElement;
   if(!pc) return;  // should never happen
   view->MAx1 = pc->cx + pc->tx;
   view->MAy1 = pc->cy + pc->ty;
 
   int z, n=0;  // "n" is number of property on screen
-  pp = pc->Props.first();
-  for(z=view->MAx3; z>0; z--) {  // calculate "n"
-    if(!pp) {  // should never happen
-      slotHideEdit();
-      return;
+  {
+    auto pp = pc->Props.begin();
+    for(z=view->MAx3; z>0; z--) {  // calculate "n"
+      if(pp == pc->Props.end()) {  // should never happen
+        slotHideEdit();
+        return;
+      }
+      if(pp->display) n++;   // is visible ?
+      ++pp;
     }
-    if(pp->display) n++;   // is visible ?
-    pp = pc->Props.next();
   }
 
-  pp = 0;
-  if(view->MAx3 > 0)  pp = pc->Props.at(view->MAx3-1); // current property
+  Property *pp = 0;
+  if(view->MAx3 > 0)  pp = &pc->Props[view->MAx3-1]; // current property
   else s = pc->name();
 
   if(!editText->isHidden()) {   // is called the first time ?
     // no -> apply value to current property
     if(view->MAx3 == 0) {   // component name ?
-      Component *pc2;
       if(!editText->text().isEmpty())
         if(pc->name() != editText->text()) {
-          for(pc2 = Doc->Components->first(); pc2!=0; pc2 = Doc->Components->next())
+          auto pc2 = Doc->Components->begin();
+          for( ; pc2 != Doc->Components->end(); ++pc2)
             if(pc2->name() == editText->text())
               break;  // found component with the same name ?
-          if(!pc2) {
+          if(pc2 == Doc->Components->end()) {
             pc->obsolete_name_override_hack( editText->text() );
             Doc->setChanged(true, true);  // only one undo state
           }
@@ -1133,7 +1133,7 @@ void QucsApp::slotApplyCompText()
 
     n++;     // next row on screen
     (view->MAx3)++;  // next property
-    pp = pc->Props.at(view->MAx3-1);  // search for next property
+    pp = view->MAx3 > pc->Props.count() ? 0 : &pc->Props[view->MAx3-1];
 
     Doc->viewport()->update();
     view->drawn = false;
@@ -1146,7 +1146,7 @@ void QucsApp::slotApplyCompText()
 
     while(!pp->display) {  // search for next visible property
       (view->MAx3)++;  // next property
-      pp = pc->Props.next();
+      pp = view->MAx3 > pc->Props.count() ? 0 : &pc->Props[view->MAx3-1];
       if(!pp) {     // was already last property ?
         slotHideEdit();
         return;
@@ -1155,8 +1155,7 @@ void QucsApp::slotApplyCompText()
   }
 
   // avoid seeing the property text behind the line edit
-  if(pp)  // Is it first property or component name ?
-    s = pp->Value;
+  s = pp->Value;
   editText->setMinimumWidth(editText->fontMetrics().width(s)+4);
 
 

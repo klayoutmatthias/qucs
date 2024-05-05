@@ -19,10 +19,10 @@
 #define DIAGRAMDIALOG_H
 #include "diagram.h"
 #include "node.h"
+#include "sharedObjectList.h"
 
 #include <QDialog>
 #include <QRegExp>
-#include <Q3PtrList>
 
 class QVBoxLayout;
 class Cross3D;
@@ -125,7 +125,7 @@ private:
   QSlider     *SliderRotX, *SliderRotY, *SliderRotZ;
   Cross3D     *DiagCross;
   bool changed, transfer, toTake;
-  Q3PtrList<Graph>  Graphs;
+  SharedObjectList<Graph>  Graphs;
 };
 
 #endif

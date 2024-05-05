@@ -131,6 +131,17 @@ public:
   bool scrollLeft(int);
   bool scrollRight(int);
 
+  void resizeContents(int w, int h);
+  void scrollBy(int dx, int dy);
+  void setContentsPos(int x, int y);
+  int visibleWidth();
+  int visibleHeight();
+  int contentsWidth();
+  int contentsHeight();
+  int contentsX();
+  int contentsY();
+  void contentsToViewport(int x, int y, int &vx, int &vy);
+
   // The pointers points to the current lists, either to the schematic
   // elements "Doc..." or to the symbol elements "SymbolPaints".
 // private: //TODO. one at a time.
@@ -180,17 +191,6 @@ signals:
   void signalUndoState(bool);
   void signalRedoState(bool);
   void signalFileChanged(bool);
-
-private:
-  void resizeContents(int w, int h);
-  void scrollBy(int dx, int dy);
-  void setContentsPos(int x, int y);
-  int visibleWidth();
-  int visibleHeight();
-  int contentsWidth();
-  int contentsHeight();
-  int contentsX();
-  int contentsY();
 
 protected:
   void paintFrame(ViewPainter*);
@@ -310,11 +310,13 @@ private:
 
   bool loadProperties(QTextStream*);
   void simpleInsertComponent(Component*);
-  bool loadComponents(QTextStream*, QList<Component> *List=0);
+  bool loadComponents(QTextStream*, QVector<Element *> *List=0);
   void simpleInsertWire(Wire*);
-  bool loadWires(QTextStream*, QList<Element> *List=0);
-  bool loadDiagrams(QTextStream*, QList<Diagram>&);
-  bool loadPaintings(QTextStream*, QList<Painting>&);
+  bool loadWires(QTextStream*, QVector<Element *> *List=0);
+  bool loadDiagrams(QTextStream*, QVector<Element *>&);
+  bool loadDiagrams(QTextStream*, DiagramList &);
+  bool loadPaintings(QTextStream*, QVector<Element *>&);
+  bool loadPaintings(QTextStream*, PaintingList &);
   bool loadIntoNothing(QTextStream*);
 
   QString createClipboardFile();
