@@ -66,27 +66,25 @@ Element* VHDL_File::info(QString& Name, char* &BitmapFile, bool getNewOne)
 QString VHDL_File::vhdlCode(int)
 {
   QString s;
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  if(pp) {
+  auto iport = Ports.begin();
+  if(iport != Ports.end()) {
     s = "  " + Name + ": entity " + EntityName;
 
     // output all generic properties
-    Property *pr = Props.at(1);
-    if (pr) {
+    if (Props.size() > 1) {
+      auto pr = Props.begin() + 1;
       s += " generic map (";
-      s += pr.Value;
-      for(pr = Props.next(); pr != 0; pr = Props.next())
-	s += ", " + pr.Value;
+      s += pr->Value;
+      for(++pr; pr != Props.end(); ++pr)
+        s += ", " + pr->Value;
       s += ")";
     }
 
     // output all node names
     s += " port map (";
-    if(pp)  s += pp.Connection->Name;
-    while (iport.hasNext()) {
-      pp = iport.next();
-      s += ", "+pp.Connection->Name;   // node names
+    s += iport->Connection->Name;
+    while (++iport != Ports.end()) {
+      s += ", "+iport->Connection->Name;   // node names
     }
     s += ");\n";
   }
@@ -146,12 +144,12 @@ void VHDL_File::createSymbol()
   Texts.append(Text(w/-2, fHeight/-2, tmp));
 
   int y = 15-h, i = 0;
-  Port *pp;
+  Port pp;
   while(i<No) {
     Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
     pp = Port(-30,  y);
+    pp.Type = TypeNames.section(',', i, i);
     Ports.append(pp);
-    pp->Type = TypeNames.section(',', i, i);
     tmp = PortNames.section(',', i, i);
     w = metrics.width(tmp);
     Texts.append(Text(-19-w, y-fHeight-2, tmp));
@@ -160,8 +158,8 @@ void VHDL_File::createSymbol()
     if(i == No) break;
     Lines.append(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
     pp = Port( 30,  y);
+    pp.Type = TypeNames.section(',', i, i);
     Ports.append(pp);
-    pp->Type = TypeNames.section(',', i, i);
     tmp = PortNames.section(',', i, i);
     Texts.append(Text( 20, y-fHeight-2, tmp));
     y += 60;
@@ -177,27 +175,24 @@ void VHDL_File::createSymbol()
   No = 0;
   if(!GenNames.isEmpty())
     No = (GenNames.count(',')) + 1;
-  Property * pr = Props.at(1);
+  auto pr = Props.begin() + 1;
   for(i=0; i<No; i++) {
-    if (!pr) {
-      pr = Property(GenNames.section(',', i, i),
-			GenDefs.section(',', i, i), true,
-			QObject::tr("generic variable")+
-			" "+QString::number(i+1));
-      Props.append(pr);
-      pr = 0;
-    }
-    else {
+    if(pr == Props.end()) {
+      Property newProp(GenNames.section(',', i, i),
+                       GenDefs.section(',', i, i), true,
+                       QObject::tr("generic variable")+
+                         " "+QString::number(i+1));
+      Props.append(newProp);
+    } else {
       pr->Description =
 	QObject::tr("generic variable")+" "+QString::number(i+1);
       pr->Name = GenNames.section(',', i, i);
-      pr = Props.next();
+      ++pr;
     }
   }
   // remove remaining properties if necessary
-  y=Props.count()-1;
-  for(i=No; i<y; i++) {
-    Props.removeLast();
+  if (pr != Props.end()) {
+    Props.erase(pr, Props.end());
   }
 }
 

@@ -103,20 +103,18 @@ Element* TR_Sim::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
 void TR_Sim::recreate(Schematic*)
 {
-  Property *pp = Props.first();
+  Property &pp = Props[0];
   if((pp.Value == "list") || (pp.Value == "const")) {
     // Call them "Symbol" to omit them in the netlist.
-    pp = Props.next();
-    pp->Name = "Symbol";
-    pp->display = false;
-    pp = Props.next();
-    pp->Name = "Symbol";
-    pp->display = false;
-    Props.next()->Name = "Values";
+    Props[1].Name = "Symbol";
+    Props[1].display = false;
+    Props[2].Name = "Symbol";
+    Props[2].display = false;
+    Props[3].Name = "Values";
   }
   else {
-    Props.next()->Name = "Start";
-    Props.next()->Name = "Stop";
-    Props.next()->Name = "Points";
+    Props[1].Name = "Start";
+    Props[2].Name = "Stop";
+    Props[3].Name = "Points";
   }
 }

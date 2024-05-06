@@ -81,15 +81,13 @@ void Subcircuit::createSymbol()
     if(tx == INT_MIN)  tx = x1+4;
     if(ty == INT_MIN)  ty = y2+4;
     // remove unused ports
-    QMutableListIterator<Port *> ip(Ports);
-    Port *pp;
-    while (ip.hasNext()) {
-      pp = ip.next();
-      if(!pp->avail) {
-          pp = ip.peekNext();
-          ip.remove();
+    QList<Port>::iterator pw = Ports.begin();
+    for (auto p = Ports.begin(); p != Ports.end(); ++p) {
+      if(p->avail) {
+        *pw++ = *p;
       }
     }
+    Ports.erase(pw, Ports.end());
   }
   else {
     No = Schematic::testFile(FileName);
@@ -204,77 +202,73 @@ QString Subcircuit::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // type for subcircuit
   QString f = misc::properFileName(Props.first().Value);
   s += " Type=\""+misc::properName(f)+"\"";
 
   // output all user defined properties
-  for(Property *pp = Props.next(); pp != 0; pp = Props.next())
-    s += " "+pp->Name+"=\""+pp.Value+"\"";
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp)
+    s += " "+pp->Name+"=\""+pp->Value+"\"";
   return s + '\n';
 }
 
 // -------------------------------------------------------
 QString Subcircuit::vhdlCode(int)
 {
-  QString f = misc::properFileName(Props.first().Value);
+  QString f = misc::properFileName(Props[0].Value);
   QString s = "  " + Name + ": entity Sub_" + misc::properName(f);
 
   // output all user defined properties
-  Property *pr = Props.next();
-  if (pr) {
+  if (Props.count() > 1) {
     s += " generic map (";
-    s += pr.Value;
-    for(pr = Props.next(); pr != 0; pr = Props.next())
-      s += ", " + pr.Value;
+    for(int i = 1; i < Props.count(); ++i) {
+      if (i > 1)
+        s += ", ";
+      s += Props[i].Value;
+    }
     s += ")";
   }
 
   // output all node names
   s += " port map (";
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  if(pp)
-    s += pp.Connection->Name;
-  while (iport.hasNext()) {
-    pp = iport.next();
-    s += ", "+pp.Connection->Name;   // node names
+  for (int i = 0; i < Ports.count(); ++i) {
+    if (i > 0)
+      s += ", ";
+    s += Ports[i].Connection->Name;  // node names
   }
-
   s += ");\n";
+
   return s;
 }
 
 // -------------------------------------------------------
 QString Subcircuit::verilogCode(int)
 {
-  QString f = misc::properFileName(Props.first().Value);
+  QString f = misc::properFileName(Props[0].Value);
   QString s = "  Sub_" + misc::properName(f);
 
   // output all user defined properties
-  Property *pr = Props.next();
-  if (pr) {
+  if (Props.count() > 1) {
     s += " #(";
-    s += misc::Verilog_Param(pr.Value);
-    for(pr = Props.next(); pr != 0; pr = Props.next())
-      s += ", " + misc::Verilog_Param(pr.Value);
+    for(int i = 1; i < Props.count(); ++i) {
+      if (i > 1)
+        s += ", ";
+      s += misc::Verilog_Param(Props[i].Value);
+    }
     s += ")";
   }
 
   // output all node names
   s +=  " " + Name + " (";
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  if(pp)
-    s += pp.Connection->Name;
-  while (iport.hasNext()) {
-    pp = iport.next();
-    s += ", "+pp.Connection->Name;   // node names
+  for (int i = 0; i < Ports.count(); ++i) {
+    if (i > 0)
+      s += ", ";
+    s += Ports[i].Connection->Name;  // node names
   }
-
   s += ");\n";
+
   return s;
 }
 

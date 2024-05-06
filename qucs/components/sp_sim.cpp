@@ -86,20 +86,18 @@ Element* SP_Sim::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
 void SP_Sim::recreate(Schematic*)
 {
-  Property *pp = Props.first();
+  Property &pp = Props.first();
   if((pp.Value == "list") || (pp.Value == "const")) {
     // Call them "Symbol" to omit them in the netlist.
-    pp = Props.next();
-    pp->Name = "Symbol";
-    pp->display = false;
-    pp = Props.next();
-    pp->Name = "Symbol";
-    pp->display = false;
-    Props.next()->Name = "Values";
+    Props[1].Name = "Symbol";
+    Props[1].display = false;
+    Props[2].Name = "Symbol";
+    Props[2].display = false;
+    Props[3].Name = "Values";
   }
   else {
-    Props.next()->Name = "Start";
-    Props.next()->Name = "Stop";
-    Props.next()->Name = "Points";
+    Props[0].Name = "Start";
+    Props[1].Name = "Stop";
+    Props[2].Name = "Points";
   }
 }

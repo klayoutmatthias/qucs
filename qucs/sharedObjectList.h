@@ -61,13 +61,13 @@ public:
 
     explicit ConstIterator() : m_basic() { }
     explicit ConstIterator(const basic_iterator &i) : m_basic(i) { }
-    explicit ConstIterator(const Iterator &i) : m_basic(i.m_basic) { }
-    bool operator==(const Iterator &other) const { return m_basic == other.m_basic; }
-    bool operator!=(const Iterator &other) const { return m_basic != other.m_basic; }
-    Iterator operator++() { ++m_basic; return *this; }
-    Iterator operator++(int) { m_basic++; return *this; }
-    Iterator operator--() { --m_basic; return *this; }
-    Iterator operator--(int) { m_basic--; return *this; }
+    ConstIterator(const Iterator &i) : m_basic(i.m_basic) { }
+    bool operator==(const ConstIterator &other) const { return m_basic == other.m_basic; }
+    bool operator!=(const ConstIterator &other) const { return m_basic != other.m_basic; }
+    ConstIterator operator++() { ++m_basic; return *this; }
+    ConstIterator operator++(int) { m_basic++; return *this; }
+    ConstIterator operator--() { --m_basic; return *this; }
+    ConstIterator operator--(int) { m_basic--; return *this; }
     reference operator*() const { return **m_basic; }
     const T *operator->() const { return (*m_basic).get(); }
     const const_holder &ref() const { return *m_basic; }

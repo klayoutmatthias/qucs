@@ -46,8 +46,8 @@ EqnDefined::EqnDefined()
 Component* EqnDefined::newOne()
 {
   EqnDefined* p = new EqnDefined();
-  p->Props.at(0).Value = Props.at(0).Value;
-  p->Props.at(1).Value = Props.at(1).Value;
+  p->Props[0].Value = Props[0].Value;
+  p->Props[1].Value = Props[1].Value;
   p->recreate(0);
   return p;
 }
@@ -60,8 +60,8 @@ Element* EqnDefined::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     EqnDefined* p = new EqnDefined();
-    p->Props.at(0).Value = "explicit";
-    p->Props.at(1).Value = "1";
+    p->Props[0].Value = "explicit";
+    p->Props[1].Value = "1";
     p->recreate(0);
     return p;
   }
@@ -76,15 +76,15 @@ QString EqnDefined::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  Property *p2 = Props.at(2);
-  while(p2) {
-    s += " "+p2->Name+"=\""+Name+"."+p2->Name+"\"";
-    e += "  Eqn:Eqn"+Name+p2->Name+" "+
-      Name+"."+p2->Name+"=\""+p2.Value+"\" Export=\"no\"\n";
-    p2 = Props.next();
+  int i = 2;
+  while(i < Props.count()) {
+    s += " "+Props[i].Name+"=\""+Name+"."+Props[i].Name+"\"";
+    e += "  Eqn:Eqn"+Name+Props[i].Name+" "+
+      Name+"."+Props[i].Name+"=\""+Props[i].Value+"\" Export=\"no\"\n";
+    ++i;
   }
 
   return s+e;
@@ -110,7 +110,7 @@ void EqnDefined::createSymbol()
     PortDistance = 40;
     if(Num > 20) Num = 20;
   }
-  Props.at(1).Value = QString::number(Num);
+  Props[1].Value = QString::number(Num);
 
   // adjust actual number of properties
   int NumProps = (Props.count() - 2) / 2; // current number of properties
@@ -129,12 +129,10 @@ void EqnDefined::createSymbol()
   }
 
   // adjust property names
-  Property * p1 = Props.at(2);
+  int ii = 2;
   for(i = 1; i <= Num; i++) {
-    p1->Name = "I"+QString::number(i);
-    p1 = Props.next();
-    p1->Name = "Q"+QString::number(i);
-    p1 = Props.next();
+    Props[ii++].Name = "I"+QString::number(i);
+    Props[ii++].Name = "Q"+QString::number(i);
   }
 
   // draw symbol

@@ -64,7 +64,7 @@ Element* SPEmbed::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     SPEmbed* p = new SPEmbed();
-    p->Props.first().Value = "test.s3p";
+    p->Props[0].Value = "test.s3p";
     p->Props.last().Value = "3";
     p->recreate(0);
     return p;
@@ -90,7 +90,7 @@ Element* SPEmbed::info2(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     SPEmbed* p = new SPEmbed();
-    p->Props.first().Value = "test.s2p";
+    p->Props[0].Value = "test.s2p";
     p->Props.last().Value = "2";
     p->recreate(0);
     return p;
@@ -102,7 +102,7 @@ Element* SPEmbed::info2(QString& Name, char* &BitmapFile, bool getNewOne)
 QString SPEmbed::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.first().Value;
+  QString FileName = Props[0].Value;
   return misc::properAbsFileName(FileName);
 }
 
@@ -113,23 +113,19 @@ QString SPEmbed::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  Property *p2 = Props.first();
-  s += " "+p2->Name+"=\"{"+getSubcircuitFile()+"}\"";
+  s += " "+Props[0].Name+"=\"{"+getSubcircuitFile()+"}\"";
 
   // data type
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
+  s += " "+Props[1].Name+"=\""+Props[1].Value+"\"";
 
   // interpolator type
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
+  s += " "+Props[2].Name+"=\""+Props[2].Value+"\"";
 
   // DC property
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"\n";
+  s += " "+Props[3].Name+"=\""+Props[3].Value+"\"\n";
 
   return s;
 }

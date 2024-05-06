@@ -57,8 +57,6 @@ Component::Component()
   tx = 0;
   ty = 0;
 
-  Props.setAutoDelete(true);
-
   containingSchematic = NULL;
 }
 
@@ -91,10 +89,10 @@ int Component::textSize(int& _dx, int& _dy)
     _dy = metrics.height();
     count++;
   }
-  for(Property *pp = Props.first(); pp != 0; pp = Props.next())
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp)
     if(pp->display) {
       // get width of text
-      tmp = metrics.width(pp->Name+"="+pp.Value);
+      tmp = metrics.width(pp->Name+"="+pp->Value);
       if(tmp > _dx)  _dx = tmp;
       _dy += metrics.height();
       count++;
@@ -159,16 +157,17 @@ int Component::getTextSelected(int x_, int y_, float Corr)
     dy--;
   }
 
-  Property *pp;
-  for(pp = Props.first(); pp != 0; pp = Props.next())
+  auto pp = Props.begin();
+  int idx = 0;
+  for( ; pp != Props.end(); ++pp, ++idx)
     if(pp->display)
       if((dy--) < 1) break;
-  if(!pp) return -1;
+  if(pp == Props.end()) return -1;
 
   // get width of text
-  w = metrics.width(pp->Name+"="+pp.Value);
+  w = metrics.width(pp->Name+"="+pp->Value);
   if(x_ > w) return -1; // clicked past the property text end - selection invalid
-  return Props.at()+1;  // number the property
+  return idx+1;  // number the property
 }
 
 // -------------------------------------------------------
@@ -189,7 +188,7 @@ void Component::paint(ViewPainter *p)
   QFont f = p->Painter->font();   // save current font
   QFont newFont = f;
   if(Model.at(0) == '.') {   // is simulation component (dc, ac, ...)
-    newFont.setPointSizeF(p->Scale * Texts.first()->Size);
+    newFont.setPointSizeF(p->Scale * Texts.first().Size);
     newFont.setWeight(QFont::DemiBold);
     p->Painter->setFont(newFont);
     p->map(cx, cy, x, y);
@@ -197,7 +196,7 @@ void Component::paint(ViewPainter *p)
     p->Painter->setPen(QPen(Qt::darkBlue,2));
     a = b = 0;
     QRect r, t;
-    foreach(Text *pt, Texts) {
+    for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
       t.setRect(x, y+b, 0, 0);
       p->Painter->drawText(t, Qt::AlignLeft|Qt::TextDontClip, pt->s, &r);
       b += r.height();
@@ -221,26 +220,26 @@ void Component::paint(ViewPainter *p)
   else {    // normal components go here
 
     // paint all lines
-    foreach(Line *p1, Lines) {
+    for(auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
       p->Painter->setPen(p1->style);
       p->drawLine(cx+p1->x1, cy+p1->y1, cx+p1->x2, cy+p1->y2);
     }
 
     // paint all arcs
-    foreach(Arc *p3, Arcs) {
+    for(auto p3 = Arcs.begin(); p3 != Arcs.end(); ++p3) {
       p->Painter->setPen(p3->style);
       p->drawArc(cx+p3->x, cy+p3->y, p3->w, p3->h, p3->angle, p3->arclen);
     }
 
     // paint all rectangles
-    foreach(Area *pa, Rects) {
+    for(auto pa = Rects.begin(); pa != Rects.end(); ++pa) {
       p->Painter->setPen(pa->Pen);
       p->Painter->setBrush(pa->Brush);
       p->drawRect(cx+pa->x, cy+pa->y, pa->w, pa->h);
     }
 
     // paint all ellipses
-    foreach(Area *pa, Ellips) {
+    for(auto pa = Ellips.begin(); pa != Ellips.end(); ++pa) {
       p->Painter->setPen(pa->Pen);
       p->Painter->setBrush(pa->Brush);
       p->drawEllipse(cx+pa->x, cy+pa->y, pa->w, pa->h);
@@ -254,7 +253,7 @@ void Component::paint(ViewPainter *p)
 
     QMatrix wm = p->Painter->worldMatrix();
     // write all text
-    foreach(Text *pt, Texts) {
+    for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
       p->Painter->setWorldMatrix(
           QMatrix(pt->mCos, -pt->mSin, pt->mSin, pt->mCos,
                    p->DX + float(cx+pt->x) * p->Scale,
@@ -289,9 +288,9 @@ void Component::paint(ViewPainter *p)
     y += p->LineSpacing;
   }
   // write all properties
-  for(Property *p4 = Props.first(); p4 != 0; p4 = Props.next())
+  for(auto p4 = Props.begin(); p4 != Props.end(); ++p4)
     if(p4->display) {
-      p->Painter->drawText(x, y, 0, 0, Qt::TextDontClip, p4->Name+"="+p4.Value);
+      p->Painter->drawText(x, y, 0, 0, Qt::TextDontClip, p4->Name+"="+p4->Value);
       y += p->LineSpacing;
     }
 
@@ -331,7 +330,7 @@ void Component::paintScheme(Schematic *p)
 
     a = b = 0;
     QSize r;
-    foreach(Text *pt, Texts) {
+    for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
       r = metrics.size(0, pt->s);
       b += r.height();
       if(a < r.width())  a = r.width();
@@ -352,21 +351,23 @@ void Component::paintScheme(Schematic *p)
   }
 
   // paint all lines
-  foreach(Line *p1, Lines)
+  for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1)
     p->PostPaintEvent(_Line,cx+p1->x1, cy+p1->y1, cx+p1->x2, cy+p1->y2);
 
   // paint all ports
-  foreach(Port *p2, Ports)
+  for (auto p2 = Ports.begin(); p2 != Ports.end(); ++p2)
     if(p2->avail) p->PostPaintEvent(_Ellipse,cx+p2->x-4, cy+p2->y-4, 8, 8);
 
-  foreach(Arc *p3, Arcs)   // paint all arcs
+  // paint all arcs
+  for (auto p3 = Arcs.begin(); p3 != Arcs.end(); ++p3)
     p->PostPaintEvent(_Arc,cx+p3->x, cy+p3->y, p3->w, p3->h, p3->angle, p3->arclen);
 
-
-  foreach(Area *pa, Rects) // paint all rectangles
+  // paint all rectangles
+  for (auto pa = Rects.begin(); pa != Rects.end(); ++pa)
     p->PostPaintEvent(_Rect,cx+pa->x, cy+pa->y, pa->w, pa->h);
 
-  foreach(Area *pa, Ellips) // paint all ellipses
+  // paint all ellipses
+  for (auto pa = Ellips.begin(); pa != Ellips.end(); ++pa)
     p->PostPaintEvent(_Ellipse,cx+pa->x, cy+pa->y, pa->w, pa->h);
 }
 
@@ -374,12 +375,12 @@ void Component::paintScheme(Schematic *p)
 // For output on a printer device.
 void Component::print(ViewPainter *p, float FontScale)
 {
-  foreach(Text *pt, Texts)
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt)
     pt->Size *= FontScale;
 
   paint(p);
 
- foreach(Text *pt, Texts)
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt)
     pt->Size /= FontScale;
 }
 
@@ -393,7 +394,7 @@ void Component::rotate()
   int tmp, dx, dy;
 
   // rotate all lines
-  foreach(Line *p1, Lines) {
+  for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
     tmp = -p1->x1;
     p1->x1 = p1->y1;
     p1->y1 = tmp;
@@ -403,14 +404,14 @@ void Component::rotate()
   }
 
   // rotate all ports
-  foreach(Port *p2, Ports) {
+  for (auto p2 = Ports.begin(); p2 != Ports.end(); ++p2) {
     tmp = -p2->x;
     p2->x = p2->y;
     p2->y = tmp;
   }
 
   // rotate all arcs
-  foreach(Arc *p3, Arcs) {
+  for (auto p3 = Arcs.begin(); p3 != Arcs.end(); ++p3) {
     tmp = -p3->x;
     p3->x = p3->y;
     p3->y = tmp - p3->w;
@@ -422,7 +423,7 @@ void Component::rotate()
   }
 
   // rotate all rectangles
-  foreach(Area *pa, Rects) {
+  for (auto pa = Rects.begin(); pa != Rects.end(); ++pa) {
     tmp = -pa->x;
     pa->x = pa->y;
     pa->y = tmp - pa->w;
@@ -432,7 +433,7 @@ void Component::rotate()
   }
 
   // rotate all ellipses
-  foreach(Area *pa, Ellips) {
+  for (auto pa = Ellips.begin(); pa != Ellips.end(); ++pa) {
     tmp = -pa->x;
     pa->x = pa->y;
     pa->y = tmp - pa->w;
@@ -443,7 +444,7 @@ void Component::rotate()
 
   // rotate all text
   float ftmp;
-  foreach(Text *pt, Texts) {
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
     tmp = -pt->x;
     pt->x = pt->y;
     pt->y = tmp;
@@ -467,10 +468,10 @@ void Component::rotate()
     dx = metrics.width(Name);
     dy = metrics.lineSpacing();
   }
-  for(Property *pp = Props.first(); pp != 0; pp = Props.next())
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp)
     if(pp->display) {
       // get width of text
-      tmp = metrics.width(pp->Name+"="+pp.Value);
+      tmp = metrics.width(pp->Name+"="+pp->Value);
       if(tmp > dx) dx = tmp;
       dy += metrics.lineSpacing();
     }
@@ -492,17 +493,17 @@ void Component::mirrorX()
     if(Ports.count() < 1) return;  // do not rotate components without ports
 
   // mirror all lines
-  foreach(Line *p1, Lines) {
+  for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
     p1->y1 = -p1->y1;
     p1->y2 = -p1->y2;
   }
 
   // mirror all ports
-  foreach(Port *p2, Ports)
+  for (auto p2 = Ports.begin(); p2 != Ports.end(); ++p2)
     p2->y = -p2->y;
 
   // mirror all arcs
-  foreach(Arc *p3, Arcs) {
+  for (auto p3 = Arcs.begin(); p3 != Arcs.end(); ++p3) {
     p3->y = -p3->y - p3->h;
     if(p3->angle > 16*180) p3->angle -= 16*360;
     p3->angle  = -p3->angle;    // mirror
@@ -511,16 +512,16 @@ void Component::mirrorX()
   }
 
   // mirror all rectangles
-  foreach(Area *pa, Rects)
+  for (auto pa = Rects.begin(); pa != Rects.end(); ++pa)
     pa->y = -pa->y - pa->h;
 
   // mirror all ellipses
-  foreach(Area *pa, Ellips)
+  for (auto pa = Ellips.begin(); pa != Ellips.end(); ++pa)
     pa->y = -pa->y - pa->h;
 
   QFont f = QucsSettings.font;
   // mirror all text
-  foreach(Text *pt, Texts) {
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
     f.setPointSizeF(pt->Size);
     // use the screen-compatible metric
     QFontMetrics  smallMetrics(f, 0);
@@ -535,7 +536,7 @@ void Component::mirrorX()
   int dy = 0;
   if(showName)
     dy = metrics.lineSpacing();   // for "Name"
-  for(Property *pp = Props.first(); pp != 0; pp = Props.next())
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp)
     if(pp->display)  dy += metrics.lineSpacing();
   if((tx > x1) && (tx < x2)) ty = -ty-dy;     // mirror text position
   else ty = y1+ty+y2;
@@ -554,34 +555,34 @@ void Component::mirrorY()
     if(Ports.count() < 1) return;  // do not rotate components without ports
 
   // mirror all lines
-  foreach(Line *p1, Lines) {
+  for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
     p1->x1 = -p1->x1;
     p1->x2 = -p1->x2;
   }
 
   // mirror all ports
-  foreach(Port *p2, Ports)
+  for (auto p2 = Ports.begin(); p2 != Ports.end(); ++p2)
     p2->x = -p2->x;
 
   // mirror all arcs
-  foreach(Arc *p3, Arcs) {
+  for (auto p3 = Arcs.begin(); p3 != Arcs.end(); ++p3) {
     p3->x = -p3->x - p3->w;
     p3->angle = 16*180 - p3->angle - p3->arclen;  // mirror
     if(p3->angle < 0) p3->angle += 16*360;   // angle has to be > 0
   }
 
   // mirror all rectangles
-  foreach(Area *pa, Rects)
+  for (auto pa = Rects.begin(); pa != Rects.end(); ++pa)
     pa->x = -pa->x - pa->w;
 
   // mirror all ellipses
-  foreach(Area *pa, Ellips)
+  for (auto pa = Ellips.begin(); pa != Ellips.end(); ++pa)
     pa->x = -pa->x - pa->w;
 
   int tmp;
   QFont f = QucsSettings.font;
   // mirror all text
-  foreach(Text *pt, Texts) {
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt) {
     f.setPointSizeF(pt->Size);
     // use the screen-compatible metric
     QFontMetrics  smallMetrics(f, 0);
@@ -596,10 +597,10 @@ void Component::mirrorY()
   int dx = 0;
   if(showName)
     dx = metrics.width(Name);
-  for(Property *pp = Props.first(); pp != 0; pp = Props.next())
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp)
     if(pp->display) {
       // get width of text
-      tmp = metrics.width(pp->Name+"="+pp.Value);
+      tmp = metrics.width(pp->Name+"="+pp->Value);
       if(tmp > dx)  dx = tmp;
     }
   if((ty > y1) && (ty < y2)) tx = -tx-dx;     // mirror text position
@@ -622,13 +623,13 @@ QString Component::netlist()
   // as a resistor as well, and the changes were made to their .cpp
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1){
     i++;
-    s += " " + p1.Connection->Name;   // node names
+    s += " " + p1->Connection->Name;   // node names
   }
 
   // output all properties
-  for (Property *p2 = Props.first(); p2 != 0; p2 = Props.next()){
+  for(auto p2 = Props.begin(); p2 != Props.end(); ++p2) {
     if (p2->Name != "Symbol"){
-      s += " " + p2->Name + "=\"" + p2.Value + "\"";
+      s += " " + p2->Name + "=\"" + p2->Value + "\"";
     }else{
       // BUG: what is this?
       // doing name dependent stuff
@@ -652,13 +653,13 @@ QString Component::getNetlist()
 
   // Component is shortened.
   int z=0;
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  QString Node1 = pp.Connection->Name;
+  auto iport = Ports.begin();
+  QString Node1 = iport->Connection->Name;
   QString s = "";
-  while (iport.hasNext())
+  ++iport;
+  for ( ; iport != Ports.end(); ++iport)
     s += "R:" + Name + "." + QString::number(z++) + " " +
-      Node1 + " " + iport.next().Connection->Name + " R=\"0\"\n";
+      Node1 + " " + iport->Connection->Name + " R=\"0\"\n";
   return s;
 }
 
@@ -679,12 +680,12 @@ QString Component::get_Verilog_Code(int NumPorts)
   }
 
   // Component is shortened.
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  QString Node1 = pp.Connection->Name;
+  auto iport = Ports.begin();
+  QString Node1 = iport->Connection->Name;
   QString s = "";
-  while (iport.hasNext())
-    s += "  assign " + iport.next().Connection->Name + " = " + Node1 + ";\n";
+  ++iport;
+  for ( ; iport != Ports.end(); ++iport)
+    s += "  assign " + iport->Connection->Name + " = " + Node1 + ";\n";
   return s;
 }
 
@@ -767,11 +768,11 @@ void Schematic::saveComponent(QTextStream& s, Component /*const*/ * c) const
 
   // write all properties
   // FIXME: ask component for properties, not for dictionary
-  for(Property *p1 = c->Props.first(); p1 != 0; p1 = c->Props.next()) {
+  for(auto p1 = c->Props.begin(); p1 != c->Props.end(); ++p1) {
     if(p1->Description.isEmpty()){
-      s << " \""+p1->Name+"="+p1.Value+"\"";   // e.g. for equations
+      s << " \""+p1->Name+"="+p1->Value+"\"";   // e.g. for equations
     }else{
-      s << " \""+p1.Value+"\"";
+      s << " \""+p1->Value+"\"";
     }
     s << " ";
     if(p1->display){
@@ -854,7 +855,7 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
 
   QString Model = c->obsolete_model_hack(); // BUG: don't use names
 
-  unsigned int z=0, counts = s.count('"');
+  unsigned int counts = s.count('"');
   // FIXME. use c->paramCount()
   if(Model == "Sub")
     tmp = 2;   // first property (File) already exists
@@ -874,9 +875,10 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
   for(; tmp<=(int)counts/2; tmp++)
     c->Props.append(Property("p", "", true, " "));
 
+//  @@@ this is weird
   // load all properties
-  Property *p1;
-  for(p1 = c->Props.first(); p1 != 0; p1 = c->Props.next()) {
+  unsigned int z = 0;
+  for(auto p1 = c->Props.begin(); p1 != c->Props.end(); ++p1) {
     z++;
     n = s.section('"',z,z);    // property value
     z++;
@@ -884,54 +886,59 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
 
     // not all properties have to be mentioned (backward compatible)
     if(z > counts) {
+
       if(p1->Description.isEmpty()){
-        c->Props.remove();    // remove if allocated in vain
+        c->Props.erase(p1++);    // remove if allocated in vain
       }
 
       if(Model == "Diode") { // BUG: don't use names
 	if(counts < 56) {  // backward compatible
           counts >>= 1;
-          p1 = c->Props.at(counts-1);
-          for(; p1 != 0; p1 = c->Props.current()) {
+          p1 = c->Props.begin() + (counts-1);
+          for(; p1 != c->Props.begin(); ) {
             if(counts-- < 19){
               break;
 	    }
-
-            n = c->Props.prev().Value;
-            p1.Value = n;
+            auto p1prev = p1;
+            --p1prev;
+            p1->Value = p1prev->Value;
+            --p1;
           }
 
-          p1 = c->Props.at(17);
-          p1.Value = c->Props.at(11).Value;
-          c->Props.current().Value = "0";
+          c->Props[17].Value = c->Props[11].Value;
+          p1->Value = "0";
         }
       }
       else if(Model == "AND" || Model == "NAND" || Model == "NOR" ||
 	      Model == "OR" ||  Model == "XNOR"|| Model == "XOR") {
 	if(counts < 10) {   // backward compatible
           counts >>= 1;
-          p1 = c->Props.at(counts);
-          for(; p1 != 0; p1 = c->Props.current()) {
+          p1 = c->Props.begin() + counts;
+          for(; p1 != c->Props.begin(); ) {
             if(counts-- < 4)
               break;
-            n = c->Props.prev().Value;
-            p1.Value = n;
+            auto p1prev = p1;
+            --p1prev;
+            p1->Value = p1prev->Value;
+            --p1;
           }
-          c->Props.current().Value = "10";
+          p1->Value = "10";
 	}
       }
       else if(Model == "Buf" || Model == "Inv") {
 	if(counts < 8) {   // backward compatible
           counts >>= 1;
-          p1 = c->Props.at(counts);
-          for(; p1 != 0; p1 = c->Props.current()) {
+          p1 = c->Props.begin() + counts;
+          for(; p1 != c->Props.begin(); ) {
             if(counts-- < 3)
               break;
-            n = c->Props.prev().Value;
-            p1.Value = n;
+            auto p1prev = p1;
+            --p1prev;
+            p1->Value = p1prev->Value;
+            --p1;
           }
-          c->Props.current().Value = "10";
-	}
+          p1->Value = "10";
+        }
       }
 
       return c;
@@ -939,21 +946,21 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
 
     // for equations
     if(Model != "EDD" && Model != "RFEDD" && Model != "RFEDD2P")
-    if(p1->Description.isEmpty()) {  // unknown number of properties ?
-      p1->Name = n.section('=',0,0);
-      n = n.section('=',1);
-      // allocate memory for a new property (e.g. for equations)
-      if(c->Props.count() < (counts>>1)) {
-        c->Props.insert(z >> 1, Property("y", "1", true));
-        c->Props.prev();
+      if(p1->Description.isEmpty()) {  // unknown number of properties ?
+        p1->Name = n.section('=',0,0);
+        n = n.section('=',1);
+        // allocate memory for a new property (e.g. for equations)
+        if(c->Props.count() < (counts>>1)) {
+          auto p1next = p1;
+          ++p1next;
+          c->Props.insert(p1next, Property("y", "1", true));
+        }
       }
+    if(Model == "R" && z == 6 && counts == 6) {    // backward compatible
+      c->Props.last().Value = n;
+      return c;
     }
-    if(z == 6)  if(counts == 6)     // backward compatible
-      if(Model == "R") {
-        c->Props.last().Value = n;
-        return c;
-      }
-    p1.Value = n;
+    p1->Value = n;
 
     n  = s.section('"',z,z);    // display
     p1->display = (n.at(1) == '1');
@@ -983,7 +990,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     for(i6 = Ports.count(); i6<i3; i6++)  // if ports not in numerical order
       Ports.append(Port(0, 0, false));
 
-    Port *po = Ports.at(i3-1);
+    auto po = Ports.begin() + (i3-1);
     po->x  = i1;
     po->y = i2;
     po->avail = true;
@@ -1015,7 +1022,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(!getIntegers(Row, &i1, &i2, &i3, &i4, &i5, &i6))
       return -1;
     if(!getPen(Row, Pen, 7))  return -1;
-    Arcs.append(new struct Arc(i1, i2, i3, i4, i5, i6, Pen));
+    Arcs.append(Arc(i1, i2, i3, i4, i5, i6, Pen));
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i1+i3 > x2)  x2 = i1+i3;
@@ -1031,18 +1038,17 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(Name.isEmpty())  Name = "SUB";
 
     i1 = 1;
-    Property *pp = Props.at(numProps-1);
+    auto pp = Props.begin() + (numProps-1);
     for(;;) {
       s = Row.section('"', i1,i1);
       if(s.isEmpty())  break;
 
-      pp = Props.next();
-      if(pp == 0) {
-        pp = Property();
-        Props.append(pp);
-
+      ++pp;
+      if(pp == Props.end()) {
+        Props.append(Property());
+        pp = --Props.end();
         pp->display = (s.at(0) == '1');
-        pp.Value = s.section('=', 2,2);
+        pp->Value = s.section('=', 2,2);
       }
 
       pp->Name  = s.section('=', 1,1);
@@ -1053,8 +1059,7 @@ int Component::analyseLine(const QString& Row, int numProps)
       i1 += 2;
     }
 
-    while(pp != Props.last())
-      Props.remove();
+    Props.erase(pp, Props.end());
     return 0;   // do not count IDs
   }
   else if(s == "Arrow") {
@@ -1262,13 +1267,13 @@ bool Component::getBrush(const QString& s, QBrush& Brush, int i)
 // ---------------------------------------------------------------------
 Property &Component::getProperty(const QString& name)
 {
-  for(Property *pp = Props.first(); pp != 0; pp = Props.next()) {
+  for(auto pp = Props.begin(); pp != Props.end(); ++pp) {
     if(pp->Name == name) {
       return *pp;
     }
   }
   Props.push_back(Property());
-  Props.back().name = name;
+  Props.back().Name = name;
   return Props.back();
 }
 
@@ -1310,8 +1315,7 @@ void Component::copyComponent(Component *pc)
 void MultiViewComponent::recreate(Schematic *Doc)
 {
   if(Doc) {
-    Doc->Components->setAutoDelete(false);
-    Doc->deleteComp(this);
+    Doc->Components->release(this);
   }
 
   Ellips.clear();
@@ -1337,8 +1341,7 @@ void MultiViewComponent::recreate(Schematic *Doc)
   mirroredX = mmir;
 
   if(Doc) {
-    Doc->insertRawComponent(this);
-    Doc->Components->setAutoDelete(true);
+    Doc->insertRawComponent(ComponentList::holder(this));
   }
 }
 
@@ -1374,38 +1377,34 @@ QString GateComponent::netlist()
   QString s = Model+":"+Name;
 
   // output all node names
-  foreach(Port *pp, Ports)
-    s += " "+pp.Connection->Name;   // node names
+  for (auto pp = Ports.begin(); pp != Ports.end(); ++pp)
+    s += " "+pp->Connection->Name;   // node names
 
   // output all properties
-  Property *p = Props.at(1);
-  s += " " + p->Name + "=\"" + p.Value + "\"";
-  p = Props.next();
-  s += " " + p->Name + "=\"" + p.Value + "\"";
-  p = Props.next();
-  s += " " + p->Name + "=\"" + p.Value + "\"\n";
+  s += " " + Props[0].Name + "=\"" + Props[0].Value + "\"";
+  s += " " + Props[1].Name + "=\"" + Props[1].Value + "\"";
+  s += " " + Props[2].Name + "=\"" + Props[2].Value + "\"\n";
   return s;
 }
 
 // -------------------------------------------------------
 QString GateComponent::vhdlCode(int NumPorts)
 {
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  QString s = "  " + pp.Connection->Name + " <= ";  // output port
+  auto iport = Ports.begin();
+  ++iport;
+  QString s = "  " + iport->Connection->Name + " <= ";  // output port
 
   // xnor NOT defined for std_logic, so here use not and xor
   if (Model == "XNOR") {
     QString Op = " xor ";
 
     // first input port
-    pp = iport.next();
-    QString rhs = pp.Connection->Name;
+    ++iport;
+    QString rhs = iport->Connection->Name;
 
     // output all input ports with node names
-    while(iport.hasNext()) {
-      pp = iport.next();
-      rhs = "not ((" + rhs + ")" + Op + pp.Connection->Name + ")";
+    while(++iport != Ports.end()) {
+      rhs = "not ((" + rhs + ")" + Op + iport->Connection->Name + ")";
     }
     s += rhs;
   }
@@ -1416,13 +1415,12 @@ QString GateComponent::vhdlCode(int NumPorts)
       Op = Op.remove(1, 1);
     }
 
-    pp = iport.next();
-    s += pp.Connection->Name;   // first input port
+    ++iport;
+    s += iport->Connection->Name;   // first input port
 
     // output all input ports with node names
-    while(iport.hasNext()) {
-      pp = iport.next();
-      s += Op + pp.Connection->Name;
+    while(++iport != Ports.end()) {
+      s += Op + iport->Connection->Name;
     }
     if(Model.at(0) == 'N')
       s += ')';
@@ -1442,8 +1440,8 @@ QString GateComponent::vhdlCode(int NumPorts)
 QString GateComponent::verilogCode(int NumPorts)
 {
   bool synthesize = true;
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
+  auto iport = Ports.begin();
+  ++iport;
   QString s("");
 
   if(synthesize) {
@@ -1464,16 +1462,15 @@ QString GateComponent::verilogCode(int NumPorts)
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
-    s += " " + pp.Connection->Name + " = ";  // output port
+    s += " " + iport->Connection->Name + " = ";  // output port
     if(Model.at(0) == 'N') s += "~(";
 
-    pp = iport.next();
-    s += pp.Connection->Name;   // first input port
+    ++iport;
+    s += iport->Connection->Name;   // first input port
 
     // output all input ports with node names
-    while (iport.hasNext()) {
-      pp = iport.next();
-      s += " " + op + " " + pp.Connection->Name;
+    while (++iport != Ports.end()) {
+      s += " " + op + " " + iport->Connection->Name;
     }
 
     if(Model.at(0) == 'N') s += ")";
@@ -1487,15 +1484,14 @@ QString GateComponent::verilogCode(int NumPorts)
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
-    s += " " + Name + " (" + pp.Connection->Name;  // output port
+    s += " " + Name + " (" + iport->Connection->Name;  // output port
 
-    pp = iport.next();
-    s += ", " + pp.Connection->Name;   // first input port
+    ++iport;
+    s += ", " + iport->Connection->Name;   // first input port
 
     // output all input ports with node names
-    while (iport.hasNext()) {
-      pp = iport.next();
-      s += ", " + pp.Connection->Name;
+    while (++iport != Ports.end()) {
+      s += ", " + iport->Connection->Name;
     }
 
     s += ");\n";

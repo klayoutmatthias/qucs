@@ -47,8 +47,8 @@ LibComp::LibComp()
 Component* LibComp::newOne()
 {
   LibComp *p = new LibComp();
-  p->Props.first().Value = Props.first().Value;
-  p->Props.next().Value = Props.next().Value;
+  p->Props[0].Value = Props[0].Value;
+  p->Props[1].Value = Props[1].Value;
   p->recreate(0);
   return p;
 }
@@ -85,7 +85,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
 			 QStringList *Includes)
 {
   QDir Directory(QucsSettings.LibDir);
-  QFile file(Directory.absoluteFilePath(Props.first().Value + ".lib"));
+  QFile file(Directory.absoluteFilePath(Props[0].Value + ".lib"));
   if(!file.open(QIODevice::ReadOnly))
     return -1;
 
@@ -118,7 +118,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
   }
 
   // search component
-  Line = "\n<Component " + Props.next().Value + ">";
+  Line = "\n<Component " + Props[1].Value + ">";
   Start = Section.indexOf(Line);
   if(Start < 0)  return -4;  // component not found
   Start = Section.indexOf('\n', Start);
@@ -184,13 +184,10 @@ int LibComp::loadSymbol()
     z = loadSection("Model", Line);
     if(z < 0)  return z;
 
-    Component *pc = getComponentFromName(Line);
-    if(pc == 0)  return -20;
-
-    copyComponent(pc);
-
-    pc->Props.setAutoDelete(false);
-    delete pc;
+    // Note: the component returned from getComponentFromName does not have an ownership yet.
+    std::unique_ptr<Component> pc (getComponentFromName(Line));
+    if(!pc)  return -20;
+    copyComponent(pc.get());
 
     return 1;
   }
@@ -222,7 +219,7 @@ int LibComp::loadSymbol()
 QString LibComp::getSubcircuitFile()
 {
   QDir Directory(QucsSettings.LibDir);
-  QString FileName = Directory.absoluteFilePath(Props.first().Value);
+  QString FileName = Directory.absoluteFilePath(Props[0].Value);
   return misc::properAbsFileName(FileName);
 }
 
@@ -270,8 +267,8 @@ bool LibComp::createSubNetlist(QTextStream *stream, QStringList &FileList,
 // -------------------------------------------------------
 QString LibComp::createType()
 {
-  QString Type = misc::properFileName(Props.first().Value);
-  return misc::properName(Type + "_" + Props.next().Value);
+  QString Type = misc::properFileName(Props[0].Value);
+  return misc::properName(Type + "_" + Props[1].Value);
 }
 
 // -------------------------------------------------------
@@ -281,14 +278,14 @@ QString LibComp::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output property
   s += " Type=\""+createType()+"\"";   // type for subcircuit
 
   // output user defined parameters
-  for(Property *pp = Props.at(2); pp != 0; pp = Props.next())
-    s += " "+pp->Name+"=\""+pp.Value+"\"";
+  for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp)
+    s += " "+pp->Name+"=\""+pp->Value+"\"";
 
   return s + '\n';
 }
@@ -299,12 +296,11 @@ QString LibComp::verilogCode(int)
   QString s = "  Sub_" + createType() + " " + Name + " (";
 
   // output all node names
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  if(pp)  s += pp.Connection->Name;
-  while (iport.hasNext()) {
-    pp = iport.next();
-    s += ", "+pp.Connection->Name;   // node names
+  auto iport = Ports.begin();
+  if (iport != Ports.end()) {
+    s += iport->Connection->Name;
+    while (++iport != Ports.end())
+      s += ", "+iport->Connection->Name;   // node names
   }
 
   s += ");\n";
@@ -317,12 +313,11 @@ QString LibComp::vhdlCode(int)
   QString s = "  " + Name + ": entity Sub_" + createType() + " port map (";
 
   // output all node names
-  QListIterator<Port *> iport(Ports);
-  Port *pp = iport.next();
-  if(pp)  s += pp.Connection->Name;
-  while (iport.hasNext()) {
-    pp = iport.next();
-    s += ", "+pp.Connection->Name;   // node names
+  auto iport = Ports.begin();
+  if (iport != Ports.end()) {
+    s += iport->Connection->Name;
+    while (++iport != Ports.end())
+      s += ", "+iport->Connection->Name;   // node names
   }
 
   s += ");\n";

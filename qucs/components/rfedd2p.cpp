@@ -66,7 +66,7 @@ Element* RFedd2P::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     RFedd2P* p = new RFedd2P();
-    p->Props.at(0).Value = "Y";
+    p->Props[0].Value = "Y";
     p->recreate(0);
     return p;
   }
@@ -82,22 +82,17 @@ QString RFedd2P::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  Property *p2;
-  p2 = Props.at(0);
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
-  p = p2.Value;
-  p2 = Props.at(1);
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
-  p2 = Props.at(2);
-  while(p2) {
-    n = p2->Name.mid(1);
-    s += " "+p2->Name+"=\""+Name+"."+p+n+"\"";
-    e += "  Eqn:Eqn"+Name+p2->Name+" "+
-      Name+"."+p+n+"=\""+p2.Value+"\" Export=\"no\"\n";
-    p2 = Props.next();
+  s += " "+Props[0].Name+"=\""+Props[0].Value+"\"";
+  p = Props[0].Value;
+  s += " "+Props[1].Name+"=\""+Props[1].Value+"\"";
+  for (int i = 2; i < Props.count(); ++i) {
+    n = Props[i].Name.mid(1);
+    s += " "+Props[i].Name+"=\""+Name+"."+p+n+"\"";
+    e += "  Eqn:Eqn"+Name+Props[i].Name+" "+
+      Name+"."+p+n+"=\""+Props[i].Value+"\" Export=\"no\"\n";
   }
 
   return s+e;

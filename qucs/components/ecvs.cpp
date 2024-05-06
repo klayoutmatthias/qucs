@@ -96,11 +96,11 @@ QString ecvs::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  for(Property *p2 = Props.first(); p2 != 0; p2 = Props.next())
-    s += " "+p2->Name+"=\""+p2.Value+"\"";
+  for(auto p2 = Props.begin(); p2 != Props.end(); ++p2)
+    s += " "+p2->Name+"=\""+p2->Value+"\"";
 
   return s + "\n";
 }

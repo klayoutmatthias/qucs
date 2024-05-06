@@ -78,8 +78,8 @@ QString MSvia::netlist()
   s += " " + Ports.first().Connection->Name + " gnd";
 
   // output all properties
-  for(Property *p2 = Props.first(); p2 != 0; p2 = Props.next())
-    s += " "+p2->Name+"=\""+p2.Value+"\"";
+  for(auto p2 = Props.begin(); p2 != Props.end(); ++p2)
+    s += " "+p2->Name+"=\""+p2->Value+"\"";
 
   return s + '\n';
 }

@@ -357,4 +357,4 @@ qt5_wrap_cpp(COMPONENTS_MOC_SRCS ${COMPONENTS_MOC_HDRS})
 add_library(components OBJECT ${COMPONENTS_HDRS} ${COMPONENTS_SRCS}
                               ${COMPONENTS_MOC_SRCS})
 
-target_link_libraries(components Qt::Core Qt::Gui Qt::Widgets ${CMAKE_DL_LIBS})
+target_link_libraries(components Qt::Core Qt::Gui Qt::Widgets Qt::Script ${CMAKE_DL_LIBS})

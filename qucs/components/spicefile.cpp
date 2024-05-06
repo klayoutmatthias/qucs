@@ -143,19 +143,19 @@ void SpiceFile::createSymbol()
   fHeight = metrics.lineSpacing();
   tx = x1+4;
   ty = y1 - fHeight - 4;
-  if(Props.first()->display) ty -= fHeight;
+  if(Props[0].display) ty -= fHeight;
   changed = true;
 }
 
 // ---------------------------------------------------
 QString SpiceFile::netlist()
 {
-  if(Props.at(1).Value.isEmpty())
+  if(Props[1].Value.isEmpty())
     return QString("");  // no ports, no subcircuit instance
 
   QString s = "Sub:"+Name;   // SPICE netlist is subcircuit
-  foreach(Port *pp, Ports)
-    s += " "+pp.Connection->Name;   // output all node names
+  for(auto pp = Ports.begin(); pp != Ports.end(); ++pp)
+    s += " "+pp->Connection->Name;   // output all node names
 
   QString f = misc::properFileName(Props.first().Value);
   s += " Type=\""+misc::properName(f)+"\"\n";
