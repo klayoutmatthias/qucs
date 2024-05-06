@@ -154,12 +154,9 @@ int TimingDiagram::calcDiagram()
 
   Graph *firstGraph;
 
-  QListIterator<Graph *> ig(Graphs);
-  Graph *g = 0;
-  if (ig.hasNext()) // point to first graph
-    g = ig.next();
+  auto ig = Graphs.begin();
   
-  if(g == 0) {  // no variables specified in diagram ?
+  if(ig == Graphs.end()) {  // no variables specified in diagram ?
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
@@ -168,26 +165,24 @@ int TimingDiagram::calcDiagram()
   }
 
 
-  double *px;
   // any graph with data ?
-  while(g->isEmpty()) {
-    if (!ig.hasNext()) break; // no more graphs, exit loop
-    g = ig.next(); // point to next graph
+  while(ig != Graphs.end() && ig->isEmpty()) {
+    ++ig;
   }
   
-  if(g->isEmpty()) { // no graph with data found ?
+  if(ig == Graphs.end()) { // no graph with data found ?
     Str = QObject::tr("no data");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth < 0)  return 0;
     Texts.append(new Text(x, y2-2, Str));
     return 0;
   }
-  firstGraph = g;
+  firstGraph = ig.operator->();
 
 
   // First check the maximum bit number of all vectors.
   colWidth = 0;
-  foreach(Graph *g, Graphs)
+  for (auto g = Graphs.begin(); g != Graphs.end(); ++g)
     if(g->cPointsY) {
       if(g->Var.right(2) == ".X") {
         z = strlen((char*)g->cPointsY);
@@ -228,7 +223,7 @@ if(!firstGraph->isEmpty()) {
 
   y -= 5;
   // write all dependent variable names to get width of first column
-  foreach(Graph *g, Graphs) {
+  for (auto g = Graphs.begin(); g != Graphs.end(); ++g) {
     if(y < tHeight)  break;
     Str = g->Var;
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
@@ -253,6 +248,7 @@ if(!firstGraph->isEmpty()) {
 
   // write independent variable values (usually time)
   y = y2-tHeight-4;
+  double *px;
   px = pD->Points;
   z = int(xAxis.limit_min + 0.5);
   px += z;
@@ -276,7 +272,7 @@ if(!firstGraph->isEmpty()) {
   QPen Pen;
   int  yLast, yNow;
   y = y2-tHeight-9;
-  foreach(Graph *g, Graphs) {
+  for (auto g = Graphs.begin(); g != Graphs.end(); ++g) {
     if(y < tHeight) {
       // mark lack of space with a small arrow
       Lines.append(new Line(4, 6, 4, -7, QPen(Qt::red,2)));
@@ -297,7 +293,7 @@ if(!firstGraph->isEmpty()) {
       continue;
     }
 
-    if(!sameDependencies(g, firstGraph)) {
+    if(!sameDependencies(g.operator->(), firstGraph)) {
       Str = QObject::tr("wrong dependency");
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
       if(colWidth < 0)  goto funcEnd;
