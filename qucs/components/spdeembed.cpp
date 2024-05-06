@@ -120,23 +120,23 @@ QString SPDeEmbed::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1.Connection->Name;   // node names
+    s += " "+p1->Connection->Name;   // node names
 
   // output all properties
-  Property *p2 = Props.first();
+  auto p2 = Props.begin();
   s += " "+p2->Name+"=\"{"+getSubcircuitFile()+"}\"";
 
   // data type
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
+  ++p2;
+  s += " "+p2->Name+"=\""+p2->Value+"\"";
 
   // interpolator type
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"";
+  ++p2;
+  s += " "+p2->Name+"=\""+p2->Value+"\"";
 
   // DC property
-  p2 = Props.next();
-  s += " "+p2->Name+"=\""+p2.Value+"\"\n";
+  ++p2;
+  s += " "+p2->Name+"=\""+p2->Value+"\"\n";
 
   return s;
 }

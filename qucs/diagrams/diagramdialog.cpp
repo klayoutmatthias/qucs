@@ -111,7 +111,6 @@ DiagramDialog::DiagramDialog(Diagram *d, QWidget *parent, Graph *currentGraph)
   setAttribute(Qt::WA_DeleteOnClose);
 
   Diag = d;
-  Graphs.setAutoDelete(true);
   copyDiagramGraphs();   // make a copy of all graphs
   if(parent){
 	  const Schematic* s = dynamic_cast<const Schematic*>(parent);
@@ -716,9 +715,9 @@ DiagramDialog::DiagramDialog(Diagram *d, QWidget *parent, Graph *currentGraph)
   // ...........................................................
   // put all graphs into the ListBox
   Row = 0;
-  foreach(Graph *pg, Diag->Graphs) {
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
     GraphList->insertItem(Row, pg->Var);
-    if(pg == currentGraph) {
+    if(pg.operator->() == currentGraph) {
       GraphList->setCurrentRow(Row);   // select current graph
       SelectGraph(currentGraph);
     }
@@ -893,7 +892,13 @@ void DiagramDialog::slotSelectGraph(QListWidgetItem *item)
     return;
   }
 
-  SelectGraph (Graphs.at (GraphList->currentRow()));
+  int i = GraphList->currentRow();
+  for (auto g = Graphs.begin(); g != Graphs.end(); ++g) {
+    if (i-- == 0) {
+      SelectGraph(g.operator->());
+      break;
+    }
+  }
 }
 
 /*!
@@ -952,7 +957,12 @@ void DiagramDialog::slotDeleteGraph()
   }
 
   GraphList->takeItem(i);
-  Graphs.remove(i);
+  auto g = Graphs.begin();
+  for (int j = 0; j < i && g != Graphs.end(); ++j, ++g)
+    ;
+  if (g != Graphs.end()) {
+    Graphs.erase(g);
+  }
 
   int k=0;
   if (GraphList->count()!=0) {
@@ -1185,11 +1195,7 @@ void DiagramDialog::slotApply()
   }   // of "if(Diag->Name != "Tab")"
 
   Diag->Graphs.clear();   // delete the graphs
-  Graphs.setAutoDelete(false);
-  for(Graph *pg = Graphs.first(); pg != 0; pg = Graphs.next())
-    Diag->Graphs.append(pg);  // transfer the new graphs to diagram
-  Graphs.clear();
-  Graphs.setAutoDelete(true);
+  Diag->Graphs.swap(Graphs);
 
   Diag->loadGraphData(defaultDataSet);
   ((Schematic*)parent())->viewport()->repaint();
@@ -1216,6 +1222,16 @@ void DiagramDialog::reject()
 }
 
 // --------------------------------------------------------------------------
+Graph *DiagramDialog::GraphByIndex(int i)
+{
+  auto g = Graphs.begin();
+  for (; i > 0 && g != Graphs.end(); --i, ++g)
+    ;
+  assert(g != Graphs.end());
+  return g.operator->();
+}
+
+// --------------------------------------------------------------------------
 void DiagramDialog::slotSetColor()
 {
   QColor c = QColorDialog::getColor(
@@ -1226,7 +1242,7 @@ void DiagramDialog::slotSetColor()
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   g->Color = c;
   changed = true;
   toTake  = false;
@@ -1250,7 +1266,7 @@ void DiagramDialog::slotResetToTake(const QString& s)
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   g->Var = s;
   // \todo GraphList->changeItem(s, i);   // must done after the graph settings !!!
   changed = true;
@@ -1265,7 +1281,7 @@ void DiagramDialog::slotSetProp2(const QString& s)
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   if(Diag->Name == "Tab") g->Precision = s.toInt();
   else  g->Thick = s.toInt();
   changed = true;
@@ -1280,7 +1296,7 @@ void DiagramDialog::slotSetNumMode(int Mode)
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   g->numMode = Mode;
   changed = true;
   toTake  = false;
@@ -1313,7 +1329,7 @@ void DiagramDialog::slotSetGraphStyle(int style)
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   g->Style = toGraphStyle(style);
   assert(g->Style!=GRAPHSTYLE_INVALID);
   changed = true;
@@ -1325,7 +1341,7 @@ void DiagramDialog::slotSetGraphStyle(int style)
 */
 void DiagramDialog::copyDiagramGraphs()
 {
-  foreach(Graph *pg, Diag->Graphs)
+  for (auto pg = Diag->Graphs.begin(); pg != Diag->Graphs.end(); ++pg)
     Graphs.append(pg->sameNewOne());
 }
 
@@ -1337,7 +1353,7 @@ void DiagramDialog::slotSetYAxis(int axis)
   int i = GraphList->currentRow();
   if(i < 0) return;   // return, if no item selected
 
-  Graph *g = Graphs.at(i);
+  Graph *g = GraphByIndex(i);
   g->yAxisNo = axis;
   changed = true;
   toTake  = false;

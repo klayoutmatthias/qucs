@@ -2682,7 +2682,7 @@ void QucsApp::slot2PortMatching()
     return;
   }
 
-  DataX const *Data = Diag->Graphs.first()->axis(0);
+  DataX const *Data = Diag->Graphs.begin()->axis(0);
   if(Data->Var != "frequency") {
     QMessageBox::critical(0, tr("Error"), tr("Wrong dependency!"));
     return;
@@ -2694,14 +2694,18 @@ void QucsApp::slot2PortMatching()
     if(*(Value++) == Freq) break;
 
   // get S-parameters
-  double S11real = *(Diag->Graphs.at(0)->cPointsY + 2*z);
-  double S11imag = *(Diag->Graphs.at(0)->cPointsY + 2*z + 1);
-  double S12real = *(Diag->Graphs.at(1)->cPointsY + 2*z);
-  double S12imag = *(Diag->Graphs.at(1)->cPointsY + 2*z + 1);
-  double S21real = *(Diag->Graphs.at(2)->cPointsY + 2*z);
-  double S21imag = *(Diag->Graphs.at(2)->cPointsY + 2*z + 1);
-  double S22real = *(Diag->Graphs.at(3)->cPointsY + 2*z);
-  double S22imag = *(Diag->Graphs.at(3)->cPointsY + 2*z + 1);
+  auto ig = Diag->Graphs.begin();
+  double S11real = *(ig->cPointsY + 2*z);
+  double S11imag = *(ig->cPointsY + 2*z + 1);
+  ++ig;
+  double S12real = *(ig->cPointsY + 2*z);
+  double S12imag = *(ig->cPointsY + 2*z + 1);
+  ++ig;
+  double S21real = *(ig->cPointsY + 2*z);
+  double S21imag = *(ig->cPointsY + 2*z + 1);
+  ++ig;
+  double S22real = *(ig->cPointsY + 2*z);
+  double S22imag = *(ig->cPointsY + 2*z + 1);
   delete Diag;
 
   MatchDialog *Dia = new MatchDialog(this);

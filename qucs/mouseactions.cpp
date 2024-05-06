@@ -103,7 +103,6 @@ bool MouseActions::pasteElements(Schematic *Doc)
   movingElements.clear();
   if(!Doc->paste(&stream, movingElements)) return false;
 
-  Element *pe;
   int xmax, xmin, ymax, ymin;
   xmin = ymin = INT_MAX;
   xmax = ymax = INT_MIN;
@@ -1658,7 +1657,7 @@ void MouseActions::MReleaseResizeDiagram(Schematic *Doc, QMouseEvent *Event)
 
   Diagram *pd = (Diagram*)focusElement;
   pd->updateGraphData();
-  foreach(Graph *pg, pd->Graphs)
+  for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.begin(); ++pg)
     foreach(Marker *pm, pg->Markers) {
       pm->x1 += MAx3;      // correct changes due to move of diagram corner
       pm->y1 += MAy3;
@@ -1984,7 +1983,7 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
            bool found = false;
            for( ; dia != Doc->Diagrams->begin() && !found; ) {
              --dia;
-             found = (dia->Graphs.indexOf(pg) >= 0);
+             found = (dia->Graphs.find(pg) != dia->Graphs.end());
            }
            if(!found) break;
 

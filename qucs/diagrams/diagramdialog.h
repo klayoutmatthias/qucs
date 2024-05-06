@@ -93,6 +93,7 @@ protected slots:
 
 private:
   void SelectGraph(Graph*);
+  Graph *GraphByIndex(int i);
 
   Diagram *Diag;
   QString defaultDataSet;

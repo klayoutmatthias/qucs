@@ -22,6 +22,7 @@
 #include "marker.h"
 #include "element.h"
 #include "viewpainter.h"
+#include "sharedObjectList.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -107,7 +108,7 @@ public:
   QString Name; // identity of diagram type (e.g. Polar), used for saving etc.
   QPen    GridPen;
 
-  QList<Graph *>  Graphs;
+  SharedObjectList<Graph>  Graphs;
   QList<Arc *>    Arcs;
   QList<Line *>   Lines;
   QList<Text *>   Texts;

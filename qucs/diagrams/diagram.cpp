@@ -119,7 +119,7 @@ void Diagram::paintDiagram(ViewPainter *p)
     }
 
     // draw all graphs
-  foreach(Graph *pg, Graphs)
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg)
   {
       pg->paint(p, cx, cy);
   }
@@ -164,7 +164,7 @@ void Diagram::paintDiagram(ViewPainter *p)
 void Diagram::paintMarkers(ViewPainter *p, bool paintAll)
 {
     // draw markers last, so they are at the top of painting layers
-    foreach(Graph *pg, Graphs)
+    for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg)
       foreach(Marker *pm, pg->Markers)
           if ((pm->Type & 1)||paintAll) pm->paint(p, cx, cy);
 }
@@ -191,8 +191,8 @@ void Diagram::createAxisLabels()
   y = -y1;
   if(xAxis.Label.isEmpty()) {
     // write all x labels ----------------------------------------
-    foreach(Graph *pg, Graphs) {
-	  DataX const *pD = pg->axis(0);
+    for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
+          DataX const *pD = pg->axis(0);
 	  if(!pD) continue;
 	  y -= LineSpacing;
       if(Name[0] != 'C') {   // locus curve ?
@@ -227,7 +227,7 @@ void Diagram::createAxisLabels()
   y = y2>>1;
   if(yAxis.Label.isEmpty()) {
     // draw left y-label for all graphs ------------------------------
-    foreach(Graph *pg, Graphs) {
+    for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
       if(pg->yAxisNo != 0)  continue;
       if(pg->cPointsY) {
 	if(Name[0] != 'C') {   // location curve ?
@@ -265,7 +265,7 @@ void Diagram::createAxisLabels()
   y = y2>>1;
   if(zAxis.Label.isEmpty()) {
     // draw right y-label for all graphs ------------------------------
-    foreach(Graph *pg, Graphs) {
+    for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
       if(pg->yAxisNo != 1)  continue;
       if(pg->cPointsY) {
 	if(Name[0] != 'C') {   // location curve ?
@@ -343,11 +343,11 @@ Marker* Diagram::setMarker(int x, int y)
 {
   if(getSelected(x, y)) {
     // test all graphs of the diagram
-    foreach(Graph *pg,Graphs) {
+    for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
       int n  = pg->getSelected(x-cx, cy-y); // sic!
       if(n >= 0) {
 	assert(pg->parentDiagram() == this);
-	Marker *pm = new Marker(pg, n, x-cx, y-cy);
+        Marker *pm = new Marker(pg.operator->(), n, x-cx, y-cy);
 	pg->Markers.append(pm);
 	return pm;
       }
@@ -708,11 +708,11 @@ void Diagram::loadGraphData(const QString& defaultDataSet)
   yAxis.max = zAxis.max = xAxis.max = -DBL_MAX;
 
   int No=0;
-  foreach(Graph *pg, Graphs) {
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
     qDebug() << "load GraphData load" << defaultDataSet << pg->Var;
     if(pg->loadDatFile(defaultDataSet) != 1)   // load data, determine max/min values
       No++;
-    getAxisLimits(pg);
+    getAxisLimits(pg.operator->());
   }
 
   if(No <= 0) {   // All dataset files unchanged ?
@@ -748,8 +748,8 @@ void Diagram::recalcGraphData()
   yAxis.numGraphs = zAxis.numGraphs = 0;
 
   // get maximum and minimum values
-  foreach(Graph *pg, Graphs)
-    getAxisLimits(pg);
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg)
+    getAxisLimits(pg.operator->());
 
   if(xAxis.min > xAxis.max) {
     xAxis.min = 0.0;
@@ -776,10 +776,10 @@ void Diagram::updateGraphData()
 {
   int valid = calcDiagram();   // do not calculate graph data if invalid
 
-  foreach(Graph *pg, Graphs) {
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
     pg->clear();
     if((valid & (pg->yAxisNo+1)) != 0)
-      calcData(pg);   // calculate screen coordinates
+      calcData(pg.operator->());   // calculate screen coordinates
     else if(pg->cPointsY) {
       delete[] pg->cPointsY;
       pg->cPointsY = 0;
@@ -790,7 +790,7 @@ void Diagram::updateGraphData()
 
   // Setting markers must be done last, because in 3D diagram "Mem"
   // is released in "createAxisLabels()".
-  foreach(Graph *pg, Graphs){
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg) {
     pg->createMarkerText();
   }
 }
@@ -1238,7 +1238,7 @@ QString Diagram::save()
   // labels can contain spaces -> must be last items in the line
   s += " \""+xAxis.Label+"\" \""+yAxis.Label+"\" \""+zAxis.Label+"\" \""+sfreq+"\">\n";
 
-  foreach(Graph *pg, Graphs)
+  for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg)
     s += pg->save()+"\n";
 
   s += "  </"+Name+">";
@@ -1362,7 +1362,6 @@ bool Diagram::load(const QString& Line, QTextStream *stream)
   yAxis.Label = s.section('"',3,3);   // yLabel left
   zAxis.Label = s.section('"',5,5);   // yLabel right
 
-  Graph *pg;
   // .......................................................
   // load graphs of the diagram
   while(!stream->atEnd()) {
@@ -1375,24 +1374,22 @@ bool Diagram::load(const QString& Line, QTextStream *stream)
 
       // .......................................................
       // load markers of the diagram
-      pg = Graphs.last();
-      if(!pg)  return false;
-      assert(pg->parentDiagram() == this);
-      Marker *pm = new Marker(pg);
+      if(!Graphs.empty())  return false;
+      Graph &pg = Graphs.back();
+      assert(pg.parentDiagram() == this);
+      std::unique_ptr<Marker> pm (new Marker(&pg));
       if(!pm->load(s)) {
-	delete pm;
 	return false;
       }
-      pg->Markers.append(pm);
+      pg.Markers.append(pm.release());
       continue;
     }
 
-    pg = new Graph(this);
+    std::unique_ptr<Graph> pg (new Graph(this));
     if(!pg->load(s)) {
-      delete pg;
       return false;
     }
-    Graphs.append(pg);
+    Graphs.append(pg.release());
   }
 
   return false;   // end tag missing

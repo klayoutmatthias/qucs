@@ -1155,7 +1155,7 @@ Element* Schematic::selectElement(float fX, float fY, bool flag, int *index)
     for(auto pd = Diagrams->end(); pd != Diagrams->begin(); )
     {
         --pd;
-        foreach(Graph *pg, pd->Graphs)
+        for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
         {
             // test markers of graphs
             foreach(Marker *pm, pg->Markers)
@@ -1222,7 +1222,7 @@ Element* Schematic::selectElement(float fX, float fY, bool flag, int *index)
             }
 
             // test graphs of diagram
-            foreach(Graph *pg, pd->Graphs)
+            for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
             {
                 if(pg->getSelected(x-pd->cx, pd->cy-y) >= 0)
                 {
@@ -1230,20 +1230,20 @@ Element* Schematic::selectElement(float fX, float fY, bool flag, int *index)
                     {
                         // The element can be deselected
                         pg->isSelected ^= flag;
-                        return pg;
+                        return pg.operator->();
                     }
                     if(pe_sel)
                     {
                         pe_sel->isSelected = false;
-                        return pg;
+                        return pg.operator->();
                     }
                     if(pe_1st == 0)
                     {
-                        pe_1st = pg;   // access to elements lying beneath
+                        pe_1st = pg.operator->();   // access to elements lying beneath
                     }
                     if(pg->isSelected)
                     {
-                        pe_sel = pg;
+                        pe_sel = pg.operator->();
                     }
                 }
             }
@@ -1457,9 +1457,9 @@ void Schematic::deselectElements(Element *e)
         if(e != pd.operator->())  pd->isSelected = false;
 
         // test graphs of diagram
-        foreach(Graph *pg, pd->Graphs)
+        for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
         {
-            if(e != pg) pg->isSelected = false;
+            if(e != pg.operator->()) pg->isSelected = false;
 
             // test markers of graph
             foreach(Marker *pm, pg->Markers)
@@ -1557,7 +1557,7 @@ int Schematic::selectElements(int x1, int y1, int x2, int y2, bool flag)
     for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd)
     {
         // test graphs of diagram
-        foreach(Graph *pg, pd->Graphs)
+        for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
         {
             if(pg->isSelected &= flag) z++;
 
@@ -1607,7 +1607,7 @@ int Schematic::selectElements(int x1, int y1, int x2, int y2, bool flag)
 void Schematic::selectMarkers()
 {
     for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd)
-        foreach(Graph *pg, pd->Graphs)
+        for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
             foreach(Marker *pm, pg->Markers)
                 pm->isSelected = true;
 }
@@ -1869,7 +1869,7 @@ int Schematic::copySelectedElements(QVector<Element *> &p)
         }
         else
         {
-            foreach(Graph *pg, pd->Graphs)
+            for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
             {
                 QMutableListIterator<Marker *> im(pg->Markers);
                 Marker *pm;
@@ -2012,14 +2012,13 @@ bool Schematic::deleteElements()
             bool wasGraphDeleted = false;
             // all graphs of diagram
 
-            QMutableListIterator<Graph *> ig(pd->Graphs);
-            Graph *pg;
+            auto ign = pd->Graphs.begin();
 
-            while (ig.hasNext())
+            for (; ign != pd->Graphs.end(); )
             {
-                pg = ig.next();
+                auto ig = ++ign;
                 // all markers of diagram
-                QMutableListIterator<Marker *> im(pg->Markers);
+                QMutableListIterator<Marker *> im(ig->Markers);
                 Marker *pm;
                 while (im.hasNext())
                 {
@@ -2031,9 +2030,9 @@ bool Schematic::deleteElements()
                     }
                 }
 
-                if(pg->isSelected)
+                if(ig->isSelected)
                 {
-                    ig.remove();
+                    pd->Graphs.erase(ig);
                     sel = wasGraphDeleted = true;
                 }
             }

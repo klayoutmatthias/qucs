@@ -159,12 +159,9 @@ int TabDiagram::calcDiagram()
 
   Graph *firstGraph;
 
-  QListIterator<Graph *> ig(Graphs);
-  Graph *g = 0;
-  if (ig.hasNext()) // point to first graph
-    g = ig.next();
+  auto ig = Graphs.begin();  // point to first graph
 
-  if(g == 0) {  // no variables specified in diagram ?
+  if(ig == Graphs.end()) {  // no variables specified in diagram ?
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
@@ -180,14 +177,13 @@ int TabDiagram::calcDiagram()
   int startWriting, lastCount = 1;
 
   // any graph with data ?
-  while(g->isEmpty()) {
-    if (!ig.hasNext()) break; // no more graphs
-    g = ig.next(); // point to next graph
+  while(ig != Graphs.end() && ig->isEmpty()) {
+    ++ig;
   }
 
-  if(!g->isEmpty()) { // did we find a graph with data ?
+  if(ig != Graphs.end()) { // did we find a graph with data ?
     // ................................................
-    counting = g->axis(0)->count * g->countY;  // number of values
+    counting = ig->axis(0)->count * ig->countY;  // number of values
     NumAll = counting;
     
     invisibleCount = counting - y/tHeight;
@@ -198,8 +194,8 @@ int TabDiagram::calcDiagram()
 	xAxis.limit_min = double(invisibleCount); // adjust limit of scroll bar
     }
     
-    for(int h = g->numAxes(); h>0;){
-		DataX const *pD = g->axis(--h); // BUG
+    for(int h = ig->numAxes(); h>0;){
+                DataX const *pD = ig->axis(--h); // BUG
       colWidth = 0;
       Str = pD->Var;
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
@@ -217,7 +213,7 @@ int TabDiagram::calcDiagram()
 	      y += tHeight*startWriting;
 	      startWriting = 0;
 	      if(y < tHeight) break;  // no room for more rows ?
-	      Str = misc::StringNum(*px, 'g', g->Precision);
+              Str = misc::StringNum(*px, 'g', ig->Precision);
 	      colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
 	      if(colWidth < 0)  goto funcEnd;
 	      
@@ -227,7 +223,7 @@ int TabDiagram::calcDiagram()
 	    else startWriting -= counting;
 	    px++;
 	  }
-	  if(pD == g->axis(0))   // only paint one time
+          if(pD == ig->axis(0))   // only paint one time
 	    if(y >= tHeight) if(y < y2-tHeight-5)
 	      Lines.append(new Line(0, y+1, x2, y+1, QPen(Qt::black,0)));
 	}
@@ -240,10 +236,11 @@ int TabDiagram::calcDiagram()
   }  // of "if no data in graphs"
 
   
-  firstGraph = g;
+  firstGraph = (ig != Graphs.end() ? ig.operator->() : 0);
+
   // ................................................
   // all dependent variables
-  foreach(Graph *g, Graphs) {
+  for(auto g = Graphs.begin(); g != Graphs.end(); ++g) {
     y = y2-tHeight-5;
     colWidth = 0;
 
@@ -263,7 +260,7 @@ int TabDiagram::calcDiagram()
 	if(colWidth < 0)  goto funcEnd;
 	Texts.append(new Text(x, y, Str));
       }
-      else if(sameDependencies(g, firstGraph)) {
+      else if(sameDependencies(g.operator->(), firstGraph)) {
         int z=g->axis(0)->count * g->countY;
         if(z > NumAll)  NumAll = z;
 
@@ -320,7 +317,8 @@ int TabDiagram::calcDiagram()
       Texts.append(new Text(x, y, Str));
     }
     x += colWidth+15;
-    if(g != Graphs.last())   // do not paint last line
+    auto gn = g;
+    if(++gn != Graphs.end())   // do not paint last line
       Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
   }
 

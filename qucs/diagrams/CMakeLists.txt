@@ -47,3 +47,5 @@ qt5_wrap_cpp(DIAGRAMS_MOC_SRCS ${DIAGRAMS_MOC_HDRS})
 
 add_library(diagrams OBJECT ${DIAGRAMS_HDRS} ${DIAGRAMS_SRCS}
                             ${DIAGRAMS_MOC_SRCS})
+
+target_link_libraries(diagrams Qt::Core Qt::Gui Qt::Widgets ${CMAKE_DL_LIBS})

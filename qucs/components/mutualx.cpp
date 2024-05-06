@@ -57,7 +57,7 @@ Element* MutualX::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
       MutualX* p =  new MutualX();
-      p->Props.at(0).Value = "2";
+      p->Props[0].Value = "2";
       p->recreate(0);
       return p;
   }
@@ -67,7 +67,7 @@ Element* MutualX::info(QString& Name, char* &BitmapFile, bool getNewOne)
 Component* MutualX::newOne()
 {
     MutualX *p  = new MutualX();
-    p->Props.at(0).Value=Props.at(0).Value;
+    p->Props[0].Value=Props[0].Value;
     p->recreate(0);
     return p;
 }
@@ -78,7 +78,7 @@ QString MutualX::netlist()
 
     // output all node names
     for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1) {
-      s += " "+p1.Connection->Name;   // node names
+      s += " "+p1->Connection->Name;   // node names
     }
 
     int coils = Props.at(0).Value.toInt();
@@ -151,13 +151,13 @@ void MutualX::createSymbol()
 
     if (oldCoils>Num) { // reduce coils number
       for(int i = 0; i < dCoils; i++)
-        Props.remove(Num+1); // remove excess coils
+        Props.erase(Props.begin() + (Num+1)); // remove excess coils
       // remove only the no longer valid coupling coefficients, leave the
       //   ones related to existing coils untouched
       for(int i = 1,state=1; i < oldCoils; i++)
         for(int j = i+1; j <= oldCoils; j++,state++) {
             if ((i>Num)||(j>Num)) {
-                Props.remove(Num + state);
+                Props.erase(Props.begin() + (Num + state));
                 state--;
             }
         }
@@ -183,17 +183,17 @@ void MutualX::createSymbol()
   // in any case rewrite properties Name and Description
   // (when loading a component, added properties have a default name)
   // adjust coils names
-  Property * p1 = Props.at(1);
+  auto p1 = Props.begin() + 1;
   for(int i = 1; i <= Num; i++) {
     p1->Name = "L"+QString::number(i);
     p1->Description = QObject::tr("inductance of coil") + " " + QString::number(i);
-    p1 = Props.next();
+    ++p1;
   }
   // adjust coupling coeffs names
   for(int i = 1,state=1; i < Num; i++) 
     for(int j = i+1; j <= Num; j++,state++) {
-      Props.at(Num+state)->Name = "k" + QString::number(i) + QString::number(j);
-      Props.at(Num+state)->Description =
+      Props[Num+state].Name = "k" + QString::number(i) + QString::number(j);
+      Props[Num+state].Description =
         QObject::tr("coupling factor between coil %1 and coil %2").arg(i).arg(j);
     }
 
