@@ -101,16 +101,16 @@ Schematic::Schematic(QucsApp *App_, const QString& Name_)
   viewport()->setAcceptDrops(true);  // enable drag'n drop
 
   // to repair some strange  scrolling artefacts
-  connect(this, SIGNAL(horizontalSliderReleased()),
+  connect(horizontalScrollBar(), SIGNAL(sliderReleased()),
       viewport(), SLOT(update()));
-  connect(this, SIGNAL(verticalSliderReleased()),
+  connect(verticalScrollBar(), SIGNAL(sliderReleased()),
       viewport(), SLOT(update()));
   if (App_) {
     connect(this, SIGNAL(signalCursorPosChanged(int, int)), 
         App_, SLOT(printCursorPosition(int, int)));
-    connect(this, SIGNAL(horizontalSliderPressed()), 
+    connect(horizontalScrollBar(), SIGNAL(sliderPressed()),
         App_, SLOT(slotHideEdit()));
-    connect(this, SIGNAL(verticalSliderPressed()),
+    connect(verticalScrollBar(), SIGNAL(sliderPressed()),
         App_, SLOT(slotHideEdit()));
     connect(this, SIGNAL(signalUndoState(bool)),
         App_, SLOT(slotUpdateUndo(bool)));
