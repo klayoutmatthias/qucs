@@ -510,7 +510,7 @@ void Schematic::PostPaintEvent (PE pe, int x1, int y1, int x2, int y2, int a, in
 
 
 // ---------------------------------------------------
-void Schematic::contentsMouseMoveEvent(QMouseEvent *Event)
+void Schematic::mouseMoveEvent(QMouseEvent *Event)
 {
   emit signalCursorPosChanged(Event->pos().x(), Event->pos().y());
   if(App->MouseMoveAction)
@@ -518,7 +518,7 @@ void Schematic::contentsMouseMoveEvent(QMouseEvent *Event)
 }
 
 // -----------------------------------------------------------
-void Schematic::contentsMousePressEvent(QMouseEvent *Event)
+void Schematic::mousePressEvent(QMouseEvent *Event)
 {
   App->editText->setHidden(true); // disable text edit of component property
   if(App->MouseReleaseAction == &MouseActions::MReleasePaste)
@@ -543,14 +543,14 @@ void Schematic::contentsMousePressEvent(QMouseEvent *Event)
 }
 
 // -----------------------------------------------------------
-void Schematic::contentsMouseReleaseEvent(QMouseEvent *Event)
+void Schematic::mouseReleaseEvent(QMouseEvent *Event)
 {
   if(App->MouseReleaseAction)
     (App->view->*(App->MouseReleaseAction))(this, Event);
 }
 
 // -----------------------------------------------------------
-void Schematic::contentsMouseDoubleClickEvent(QMouseEvent *Event)
+void Schematic::mouseDoubleClickEvent(QMouseEvent *Event)
 {
   if(App->MouseDoubleClickAction)
     (App->view->*(App->MouseDoubleClickAction))(this, Event);
@@ -1913,7 +1913,7 @@ void Schematic::switchPaintMode()
 // **********      Function for serving mouse wheel moving    **********
 // **********                                                 **********
 // *********************************************************************
-void Schematic::contentsWheelEvent(QWheelEvent *Event)
+void Schematic::wheelEvent(QWheelEvent *Event)
 {
   App->editText->setHidden(true);  // disable edit of component property
   // use smaller steps; typically the returned delta() is a multiple of 120
@@ -2098,7 +2098,7 @@ void Schematic::slotScrollRight()
 // *********************************************************************
 
 // Is called if an object is dropped (after drag'n drop).
-void Schematic::contentsDropEvent(QDropEvent *Event)
+void Schematic::dropEvent(QDropEvent *Event)
 {
   if(dragIsOkay) {
     QList<QUrl> urls = Event->mimeData()->urls();
@@ -2136,7 +2136,7 @@ void Schematic::contentsDropEvent(QDropEvent *Event)
 }
 
 // ---------------------------------------------------
-void Schematic::contentsDragEnterEvent(QDragEnterEvent *Event)
+void Schematic::dragEnterEvent(QDragEnterEvent *Event)
 {
   //FIXME: the function of drag library component seems not working?
   formerAction = 0;
@@ -2187,7 +2187,7 @@ void Schematic::contentsDragEnterEvent(QDragEnterEvent *Event)
 }
 
 // ---------------------------------------------------
-void Schematic::contentsDragLeaveEvent(QDragLeaveEvent*)
+void Schematic::dragLeaveEvent(QDragLeaveEvent*)
 {
   if(App->view->selElem)
     if(App->view->selElem->Type & isComponent)
@@ -2204,7 +2204,7 @@ void Schematic::contentsDragLeaveEvent(QDragLeaveEvent*)
 }
 
 // ---------------------------------------------------
-void Schematic::contentsDragMoveEvent(QDragMoveEvent *Event)
+void Schematic::dragMoveEvent(QDragMoveEvent *Event)
 {
   if(!dragIsOkay) {
     if(App->view->selElem == 0) {

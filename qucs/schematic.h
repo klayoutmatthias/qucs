@@ -197,15 +197,15 @@ protected:
 
   // overloaded function to get actions of user
   void paintEvent(QPaintEvent * /*event*/);
-  void contentsMouseMoveEvent(QMouseEvent*);
-  void contentsMousePressEvent(QMouseEvent*);
-  void contentsMouseDoubleClickEvent(QMouseEvent*);
-  void contentsMouseReleaseEvent(QMouseEvent*);
-  void contentsWheelEvent(QWheelEvent*);
-  void contentsDropEvent(QDropEvent*);
-  void contentsDragEnterEvent(QDragEnterEvent*);
-  void contentsDragLeaveEvent(QDragLeaveEvent*);
-  void contentsDragMoveEvent(QDragMoveEvent*);
+  void mouseMoveEvent(QMouseEvent*);
+  void mousePressEvent(QMouseEvent*);
+  void mouseDoubleClickEvent(QMouseEvent*);
+  void mouseReleaseEvent(QMouseEvent*);
+  void wheelEvent(QWheelEvent*);
+  void dropEvent(QDropEvent*);
+  void dragEnterEvent(QDragEnterEvent*);
+  void dragLeaveEvent(QDragLeaveEvent*);
+  void dragMoveEvent(QDragMoveEvent*);
 
 protected slots:
   void slotScrollUp();
