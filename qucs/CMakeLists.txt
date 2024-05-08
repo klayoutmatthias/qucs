@@ -257,7 +257,7 @@ target_link_libraries(qucsschematic ${CMAKE_DL_LIBS})
 #
 add_executable(qucs MACOSX_BUNDLE WIN32 main.cpp ${RESOURCES_SRCS})
 
-target_link_libraries(qucs qucsschematic)
+target_link_libraries(qucs Qt::Core Qt::Gui Qt::Widgets Qt::Svg Qt::PrintSupport Qt::Script qucsschematic)
 
 #
 # Prepare the installation

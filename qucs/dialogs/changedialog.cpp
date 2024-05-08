@@ -165,15 +165,14 @@ void ChangeDialog::slotButtReplace()
 
   QList<QCheckBox *> pList;
   QCheckBox *pb;
-  Component *pc;
   QStringList List;
   QString str;
   int i1, i2;
   // search through all components
-  for(pc = Doc->Components->first(); pc!=0; pc = Doc->Components->next()) {
+  for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc) {
     if(matches(pc->obsolete_model_hack())) {
       if(Expr.indexIn(pc->name()) >= 0)
-        for(Property *pp = pc->Props.first(); pp!=0; pp = pc->Props.next())
+        for(auto pp = pc->Props.begin(); pp != pc->Props.end(); ++pp)
           if(pp->Name == PropNameEdit->currentText()) {
             pb = new QCheckBox(pc->name());
             Dia_Box->addWidget(pb);
@@ -212,10 +211,10 @@ void ChangeDialog::slotButtReplace()
     pb = i.next();
     if(!pb->isChecked())  continue;
 
-    for(pc = Doc->Components->first(); pc!=0; pc = Doc->Components->next()) {
+    for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc) {
       if(pb->text() != pc->name())  continue;
 
-      for(Property *pp = pc->Props.first(); pp!=0; pp = pc->Props.next()) {
+      for(auto pp = pc->Props.begin(); pp != pc->Props.end(); ++pp) {
         if(pp->Name != PropNameEdit->currentText())  continue;
 
         int tx_Dist, ty_Dist, tmp;
@@ -239,7 +238,7 @@ void ChangeDialog::slotButtReplace()
         }
 
         // apply changes to schematic symbol
-        Doc->recreateComponent(pc);
+        Doc->recreateComponent(pc.operator->());
         changed = true;
         break;
       }

@@ -80,7 +80,7 @@ add_executable(
   ${QUCS-POWCOMB_SRCS} ${QUCS-POWCOMB_HDRS} ${QUCS-POWCOMB_MOC_SRCS}
   ${RESOURCES_SRCS})
 
-target_link_libraries(qucspowercombining ${QT_LIBRARIES})
+target_link_libraries(qucspowercombining Qt::Core Qt::Svg)
 
 install(
   TARGETS qucspowercombining

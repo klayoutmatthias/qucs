@@ -30,7 +30,7 @@ if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-register ")
 endif()
 
-find_package(Qt5 COMPONENTS Gui REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 add_definitions(${QT_DEFINITIONS})
 
@@ -78,7 +78,7 @@ add_executable(
   qucsrescodes MACOSX_BUNDLE WIN32 ${QUCS-RESCODES_SRCS}
                                    ${QUCS-RESCODES_MOC_SRCS} ${RESOURCES_SRCS})
 
-target_link_libraries(qucsrescodes ${QT_LIBRARIES})
+target_link_libraries(qucsrescodes Qt::Core Qt::Gui Qt::Widgets)
 
 install(
   TARGETS qucsrescodes

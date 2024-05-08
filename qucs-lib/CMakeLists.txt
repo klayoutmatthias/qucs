@@ -69,7 +69,7 @@ endif(APPLE)
 add_executable(qucslib MACOSX_BUNDLE WIN32 ${QUCSLIB_SRCS} ${QUCSLIB_MOC_SRCS}
                                            ${RESOURCES_SRCS})
 
-target_link_libraries(qucslib ${QT_LIBRARIES})
+target_link_libraries(qucslib Qt::Core Qt::Gui Qt::Widgets)
 
 install(
   TARGETS qucslib

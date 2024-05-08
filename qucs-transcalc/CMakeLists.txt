@@ -65,6 +65,8 @@ qt5_add_resources(RESOURCES_SRCS ${RESOURCES})
 
 add_library(transcalc ${LIB_SRC})
 
+target_link_libraries(transcalc Qt::Core Qt::Gui Qt::Widgets)
+
 if(APPLE)
   # set information on Info.plist file
   set(MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -91,7 +93,7 @@ add_executable(
   qucstrans MACOSX_BUNDLE WIN32 ${QUCSTRANS_SRCS} ${QUCSTRANS_HDRS}
                                 ${QUCSTRANS_MOC_SRCS} ${RESOURCES_SRCS})
 
-target_link_libraries(qucstrans ${QT_LIBRARIES} transcalc)
+target_link_libraries(qucstrans Qt::Core Qt::Gui Qt::Widgets transcalc)
 
 # INSTALL(TARGETS qucstrans DESTINATION bin)
 

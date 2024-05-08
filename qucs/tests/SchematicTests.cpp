@@ -31,7 +31,7 @@ void SchematicTests::testConstructor()
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  SchematicTests t();
+  SchematicTests t;
 }
 
 // vim:ts=8:sw=2:

@@ -38,6 +38,7 @@ using namespace std;
 #include <QProgressBar>
 #include <QDebug>
 #include <QMessageBox>
+#include <QTextBlock>
 
 #include "simmessage.h"
 #include "module.h"
@@ -599,11 +600,10 @@ void SimMessage::startSimulator()
 
 // ------------------------------------------------------------------------
 Component * SimMessage::findOptimization(Schematic *Doc) {
-  Component *pc;
-  for(pc=Doc->Components->first(); pc!=0; pc=Doc->Components->next())
+  for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc)
     if(pc->isActive)
       if(pc->obsolete_model_hack() == ".Opt")
-	return pc;
+        return pc.operator->();
   return NULL;
 }
 

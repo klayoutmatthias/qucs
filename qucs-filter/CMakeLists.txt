@@ -101,7 +101,7 @@ add_executable(
   qucsfilter MACOSX_BUNDLE WIN32 ${QUCS-FILTER_SRCS} ${QUCS-FILTER_HDRS}
                                  ${QUCS-FILTER_MOC_SRCS} ${RESOURCES_SRCS})
 
-target_link_libraries(qucsfilter ${QT_LIBRARIES})
+target_link_libraries(qucsfilter Qt::Core Qt::Gui Qt::Widgets Qt::Svg)
 
 install(
   TARGETS qucsfilter

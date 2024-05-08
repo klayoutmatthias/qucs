@@ -311,7 +311,7 @@ if(!firstGraph->isEmpty()) {
 
     z = int(xAxis.limit_min + 0.5);
     if(g->Var.right(2) != ".X") {  // not digital variable ?
-      px = g->cPointsY;
+      double *px = g->cPointsY;
       px += 2 * z;
       z = g->axis(0)->count - z;
       yNow = 1 + ((tHeight - 6) >> 1);

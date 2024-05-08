@@ -74,3 +74,5 @@ qt5_wrap_ui(DIALOGS_UIC_SRCS ${DIALOGS_UIC_HDRS})
 
 add_library(dialogs OBJECT ${DIALOGS_HDRS} ${DIALOGS_SRCS} ${DIALOGS_MOC_SRCS}
                            ${DIALOGS_UIC_SRCS})
+
+target_link_libraries(dialogs Qt::Core Qt::Gui Qt::Widgets Qt::Script ${CMAKE_DL_LIBS})

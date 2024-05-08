@@ -79,12 +79,8 @@ int TruthDiagram::calcDiagram()
 
   Graph *firstGraph;
 
-  QListIterator<Graph *> ig(Graphs);
-  Graph *g = 0;
-  if (ig.hasNext())
-     g= ig.next();
-
-  if(g == 0) {  // no variables specified in diagram ?
+  auto ig = Graphs.begin();
+  if (ig == Graphs.end()) {  // no variables specified in diagram ?
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
@@ -100,14 +96,12 @@ int TruthDiagram::calcDiagram()
   int startWriting, z;
 
   // any graph with data ?
-  while(g->isEmpty()) {
-    if (!ig.hasNext()) break; // no more graphs, exit loop
-    g = ig.next(); // point to next graph
-  }
+  for (; ig != Graphs.end() && ig->isEmpty(); ++ig)
+    ;
 
-  if(!g->isEmpty()) { // did we find a graph with data ?
+  if(ig != Graphs.end()) { // did we find a graph with data ?
     // ................................................
-    NumAll = g->axis(0)->count * g->countY;  // number of values
+    NumAll = ig->axis(0)->count * ig->countY;  // number of values
     
     invisibleCount = NumAll - y/tHeight;
     if(invisibleCount <= 0)  xAxis.limit_min = 0.0;// height bigger than needed
@@ -151,10 +145,10 @@ int TruthDiagram::calcDiagram()
   
 
   int zi, digitWidth;
-  firstGraph = g;
+  firstGraph = ig.operator->();
   // ................................................
   // all dependent variables
-  foreach(Graph *g ,Graphs) {
+  for (auto g = Graphs.begin(); g != Graphs.end(); ++g) {
     y = y2-tHeight-5;
 
     Str = g->Var;
@@ -166,7 +160,7 @@ int TruthDiagram::calcDiagram()
     startWriting = int(xAxis.limit_min + 0.5);  // when to reach visible area
     if(g->axis(0)) {
 
-      if(sameDependencies(g, firstGraph)) {
+      if(sameDependencies(g.operator->(), firstGraph)) {
 
         if(g->Var.right(2) != ".X") {  // not a digital variable ?
           double *pdy = g->cPointsY - 2;
@@ -231,7 +225,8 @@ int TruthDiagram::calcDiagram()
       Texts.append(new Text(x, y, Str));
     }
     x += colWidth+15;
-    if(g != Graphs.last())   // do not paint last line
+    auto gn = g;
+    if(++gn != Graphs.end())   // do not paint last line
       Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
   }
 

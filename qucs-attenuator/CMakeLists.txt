@@ -73,7 +73,7 @@ add_executable(
   qucsattenuator MACOSX_BUNDLE WIN32
   ${attenuator_sources} ${attenuator_moc_sources} ${RESOURCES_SRCS})
 
-target_link_libraries(qucsattenuator ${QT_LIBRARIES})
+target_link_libraries(qucsattenuator Qt::Core Qt::Gui Qt::Widgets)
 
 # INSTALL (TARGETS qucsattenuator DESTINATION bin)
 #

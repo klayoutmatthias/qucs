@@ -167,9 +167,6 @@ Graph* SweepDialog::setBiasPoints()
   QFileInfo Info(Doc->DocName);
   QString DataSet = Info.path() + QDir::separator() + Doc->DataSet;
 
-  Node *pn;
-  Element *pe;
-
   // Note 1:
   // Invalidate it so that "Graph::loadDatFile()" does not check for the previously loaded time.
   // This is a current hack as "Graph::loadDatFile()" does not support multi-node data loading
@@ -179,7 +176,7 @@ Graph* SweepDialog::setBiasPoints()
   ValueList.clear();
 
   // create DC voltage for all nodes
-  for(pn = Doc->Nodes->first(); pn != 0; pn = Doc->Nodes->next()) {
+  for(auto pn = Doc->Nodes->begin(); pn != Doc->Nodes->end(); ++pn) {
     if(pn->Name.isEmpty()) continue;
 
     pn->x1 = 0;
@@ -189,8 +186,8 @@ Graph* SweepDialog::setBiasPoints()
     }
     else {
       hasNoComp = true;
-      for(pe = pn->Connections.first(); pe!=0; pe = pn->Connections.next())
-        if(pe->Type == isWire) {
+      for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
+        if((*pe)->Type == isWire) {
           if( ((Wire*)pe)->isHorizontal() )  pn->x1 |= 2;
         }
         else {
@@ -199,7 +196,7 @@ Graph* SweepDialog::setBiasPoints()
             break;
           }
 
-          if(pn->cx < pe->cx)  pn->x1 |= 1;  // to the right is no room
+          if(pn->cx < (*pe)->cx)  pn->x1 |= 1;  // to the right is no room
           hasNoComp = false;
         }
       if(hasNoComp) {  // text only were a component is connected
@@ -212,7 +209,7 @@ Graph* SweepDialog::setBiasPoints()
     pg->lastLoaded = QDateTime(); // Note 1 at the start of this function
     if(pg->loadDatFile(DataSet) == 2) {
       pn->Name = misc::num2str(*(pg->cPointsY)) + "V";
-      NodeList.append(pn);             // remember node ...
+      NodeList.append(pn.operator->());             // remember node ...
       ValueList.append(pg->cPointsY);  // ... and all of its values
       pg->cPointsY = 0;   // do not delete it next time !
     }
@@ -220,22 +217,23 @@ Graph* SweepDialog::setBiasPoints()
       pn->Name = "0V";
 
 
-    for(pe = pn->Connections.first(); pe!=0; pe = pn->Connections.next())
-      if(pe->Type == isWire) {
-        if( ((Wire*)pe)->Port1 != pn )  // no text at next node
-          ((Wire*)pe)->Port1->Name = "";
-        else  ((Wire*)pe)->Port2->Name = "";
+    for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
+      if((*pe)->Type == isWire) {
+        Wire *pw = (Wire *)*pe;
+        if (pw->Port1 != pn.operator->())  // no text at next node
+          pw->Port1->Name = "";
+        else
+          pw->Port2->Name = "";
       }
   }
 
 
   // create DC current through each probe
-  Component *pc;
-  for(pc = Doc->Components->first(); pc != 0; pc = Doc->Components->next())
+  for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc)
     if(pc->obsolete_model_hack() == "IProbe") { // BUG.
-      pn = pc->Ports.first()->Connection;
+      Node *pn = pc->Ports.first().Connection;
       if(!pn->Name.isEmpty())   // preserve node voltage ?
-        pn = pc->Ports.at(1)->Connection;
+        pn = pc->Ports.at(1).Connection;
 
       pn->x1 = 0x10;   // mark current
       pg->Var = pc->name() + ".I";
@@ -249,12 +247,12 @@ Graph* SweepDialog::setBiasPoints()
       else
         pn->Name = "0A";
 
-      for(pe = pn->Connections.first(); pe!=0; pe = pn->Connections.next())
-        if(pe->Type == isWire) {
-          if( ((Wire*)pe)->isHorizontal() )  pn->x1 |= 2;
+      for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
+        if((*pe)->Type == isWire) {
+          if( ((Wire*)*pe)->isHorizontal() )  pn->x1 |= 2;
         }
         else {
-          if(pn->cx < pe->cx)  pn->x1 |= 1;  // to the right is no room
+          if(pn->cx < (*pe)->cx)  pn->x1 |= 1;  // to the right is no room
         }
     }
 
