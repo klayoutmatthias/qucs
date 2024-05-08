@@ -740,19 +740,29 @@ void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImag
 // -----------------------------------------------------------
 void Schematic::resizeContents(int w, int h)
 {
-  //  TODO: implement @@@
+  int vpw = viewport()->width();
+  int vph = viewport()->height();
+  horizontalScrollBar()->setPageStep(vpw);
+  horizontalScrollBar()->setMaximum(std::max(0, w - vpw));
+  verticalScrollBar()->setPageStep(vph);
+  verticalScrollBar()->setMaximum(std::max(0, h - vph));
+  viewport()->update();
 }
 
 // -----------------------------------------------------------
 void Schematic::scrollBy(int dx, int dy)
 {
-  //  TODO: implement @@@
+  horizontalScrollBar()->setValue(horizontalScrollBar()->value() + dx);
+  verticalScrollBar()->setValue(verticalScrollBar()->value() + dy);
+  viewport()->update();
 }
 
 // -----------------------------------------------------------
 void Schematic::setContentsPos(int x, int y)
 {
-  //  TODO: implement @@@
+  horizontalScrollBar()->setValue(x);
+  verticalScrollBar()->setValue(y);
+  viewport()->update();
 }
 
 // -----------------------------------------------------------
@@ -818,10 +828,8 @@ float Schematic::zoomBy(float s)
 {
   zoom(s);
   s -= 1.0;
-#if 0 // @@@
   scrollBy( int(s * float(contentsX()+visibleWidth()/2)),
             int(s * float(contentsY()+visibleHeight()/2)) );
-#endif
   return Scale;
 }
 
@@ -1078,7 +1086,7 @@ bool Schematic::rotateElements()
 {
   int x1=INT_MAX, y1=INT_MAX;
   int x2=INT_MIN, y2=INT_MIN;
-  QVector<Element *> ElementCache; // @@@ should use shared object list
+  QVector<Element *> ElementCache;
   copyLabels(x1, y1, x2, y2, ElementCache);   // must be first of all !
   copyComponents(x1, y1, x2, y2, ElementCache);
   copyWires(x1, y1, x2, y2, ElementCache);
@@ -1170,7 +1178,7 @@ bool Schematic::rotateElements()
 bool Schematic::mirrorXComponents()
 {
   int x1, y1, x2, y2;
-  QVector<Element *> ElementCache; // @@@ should use shared object list
+  QVector<Element *> ElementCache;
   if(!copyComps2WiresPaints(x1, y1, x2, y2, ElementCache))
     return false;
 
@@ -1234,7 +1242,7 @@ bool Schematic::mirrorXComponents()
 bool Schematic::mirrorYComponents()
 {
   int x1, y1, x2, y2;
-  QVector<Element *> ElementCache; // @@@ should use shared object list
+  QVector<Element *> ElementCache;
   if(!copyComps2WiresPaints(x1, y1, x2, y2, ElementCache))
     return false;
 

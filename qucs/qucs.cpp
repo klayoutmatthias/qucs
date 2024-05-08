@@ -1933,7 +1933,7 @@ void QucsApp::updatePortNumber(QucsDoc *currDoc, int No)
       if(pc->obsolete_model_hack() == Model) { // BUG
         File = pc->Props.front().Value;
         if((File == pathName) || (File == Name)) {
-/* @@@ should not be needed as "recreateComponent" doc not delete+append
+/* @@@ should not be needed as "recreateComponent" does not delete+append
           pc_tmp = Doc->Components->prev();
           Doc->recreateComponent(pc);  // delete and re-append component
           if(!pc_tmp)  break;

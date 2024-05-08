@@ -921,6 +921,7 @@ int Schematic::copyWires(int& x1, int& y1, int& x2, int& y2,
             // @@@pl = pw->Label;
             pw->Label = 0; // @@@ bug?
             deleteWire(pw);
+            // @@@ did access deleted object?
             // @@@pw->Label = pl;    // restore wire label
         }
     }
