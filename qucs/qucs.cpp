@@ -1929,23 +1929,17 @@ void QucsApp::updatePortNumber(QucsDoc *currDoc, int No)
 
     // start from the last to omit re-appended components
     Schematic *Doc = (Schematic*)w;
+    QVector<Component *> toRecreate;
     for(auto pc = Doc->Components->end(); pc != Doc->Components->begin(); ) {
       --pc;
       if(pc->obsolete_model_hack() == Model) { // BUG
         File = pc->Props.front().Value;
-        if((File == pathName) || (File == Name)) {
-/* @@@ should not be needed as "recreateComponent" does not delete+append
-          pc_tmp = Doc->Components->prev();
-          Doc->recreateComponent(pc);  // delete and re-append component
-          if(!pc_tmp)  break;
-          Doc->Components->findRef(pc_tmp);
-          pc = Doc->Components->current();
-          continue;
-*/
-          Doc->recreateComponent(pc.operator->()); // @@@ tmp
-        }
+        if((File == pathName) || (File == Name))
+          toRecreate.push_back(pc.operator->());
       }
     }
+    for (auto i = toRecreate.begin(); i != toRecreate.end(); ++i)
+      Doc->recreateComponent(*i);
   }
 }
 

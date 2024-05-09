@@ -31,10 +31,10 @@ class ComponentDialog;
 class Component : public Element {
 public:
   Component();
-  virtual ~Component() {};
+  virtual ~Component() {}
 
   virtual Component* newOne();
-  virtual void recreate(Schematic*) {};
+  virtual void recreate(Schematic*) {}
   QString getNetlist();
   QString get_VHDL_Code(int);
   QString get_Verilog_Code(int);

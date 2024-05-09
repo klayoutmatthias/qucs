@@ -875,7 +875,8 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
   for(; tmp<=(int)counts/2; tmp++)
     c->Props.append(Property("p", "", true, " "));
 
-//  @@@ this is weird
+  // BUG this is weird ...
+
   // load all properties
   unsigned int z = 0;
   for(auto p1 = c->Props.begin(); p1 != c->Props.end(); ++p1) {

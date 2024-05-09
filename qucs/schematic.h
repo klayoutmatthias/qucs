@@ -240,7 +240,7 @@ public:
   Wire* selectedWire(int, int);
   Wire* splitWire(Wire*, Node*);
   bool  oneTwoWires(Node*);
-  void  deleteWire(const WireList::iterator &);
+  void  deleteWire(const WireList::iterator &, bool release=false);
 
   Marker* setMarker(int, int);
   void    markerLeftRight(bool, const QVector<Element *> &);

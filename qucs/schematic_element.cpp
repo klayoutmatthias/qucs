@@ -841,7 +841,7 @@ bool Schematic::oneTwoWires(Node *n)
 
 // ---------------------------------------------------
 // Deletes the wire 'w'.
-void Schematic::deleteWire(const WireList::iterator &w)
+void Schematic::deleteWire(const WireList::iterator &w, bool release)
 {
     if(w->Port1->Connections.count() == 1)
     {
@@ -867,12 +867,16 @@ void Schematic::deleteWire(const WireList::iterator &w)
             oneTwoWires(w->Port2);  // two wires -> one wire
     }
 
-    if(w->Label)
-    {
-        delete w->Label;
-        w->Label = 0;
+    if(! release) {
+      if(w->Label)
+      {
+          delete w->Label;
+          w->Label = 0;
+      }
+      Wires->erase(w);
+    } else {
+      Wires->release(w);
     }
-    Wires->erase(w);
 }
 
 // ---------------------------------------------------
@@ -918,11 +922,7 @@ int Schematic::copyWires(int& x1, int& y1, int& x2, int& y2,
                     pn->Label = 0;
                 }
 
-            // @@@pl = pw->Label;
-            pw->Label = 0; // @@@ bug?
-            deleteWire(pw);
-            // @@@ did access deleted object?
-            // @@@pw->Label = pl;    // restore wire label
+            deleteWire(pw, true /*release, don't delete*/);
         }
     }
 
