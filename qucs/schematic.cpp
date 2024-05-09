@@ -512,13 +512,33 @@ void Schematic::PostPaintEvent (PE pe, int x1, int y1, int x2, int y2, int a, in
 // ---------------------------------------------------
 void Schematic::mouseMoveEvent(QMouseEvent *Event)
 {
+  QMouseEvent translated(Event->type (), Event->localPos () + QPointF(contentsX(), contentsY()), Event->button (), Event->buttons (), Event->modifiers ());
+  contentMouseMoveEvent(&translated);
+  if (translated.isAccepted ()) {
+    Event->accept();
+  }
+}
+
+// ---------------------------------------------------
+void Schematic::contentMouseMoveEvent(QMouseEvent *Event)
+{
   emit signalCursorPosChanged(Event->pos().x(), Event->pos().y());
   if(App->MouseMoveAction)
     (App->view->*(App->MouseMoveAction))(this, Event);
 }
 
-// -----------------------------------------------------------
+// ---------------------------------------------------
 void Schematic::mousePressEvent(QMouseEvent *Event)
+{
+  QMouseEvent translated(Event->type (), Event->localPos () + QPointF(contentsX(), contentsY()), Event->button (), Event->buttons (), Event->modifiers ());
+  contentMousePressEvent(&translated);
+  if (translated.isAccepted ()) {
+    Event->accept();
+  }
+}
+
+// -----------------------------------------------------------
+void Schematic::contentMousePressEvent(QMouseEvent *Event)
 {
   App->editText->setHidden(true); // disable text edit of component property
   if(App->MouseReleaseAction == &MouseActions::MReleasePaste)
@@ -542,15 +562,35 @@ void Schematic::mousePressEvent(QMouseEvent *Event)
     (App->view->*(App->MousePressAction))(this, Event, x, y);
 }
 
-// -----------------------------------------------------------
+// ---------------------------------------------------
 void Schematic::mouseReleaseEvent(QMouseEvent *Event)
+{
+  QMouseEvent translated(Event->type (), Event->localPos () + QPointF(contentsX(), contentsY()), Event->button (), Event->buttons (), Event->modifiers ());
+  contentMouseReleaseEvent(&translated);
+  if (translated.isAccepted ()) {
+    Event->accept();
+  }
+}
+
+// -----------------------------------------------------------
+void Schematic::contentMouseReleaseEvent(QMouseEvent *Event)
 {
   if(App->MouseReleaseAction)
     (App->view->*(App->MouseReleaseAction))(this, Event);
 }
 
-// -----------------------------------------------------------
+// ---------------------------------------------------
 void Schematic::mouseDoubleClickEvent(QMouseEvent *Event)
+{
+  QMouseEvent translated(Event->type (), Event->localPos () + QPointF(contentsX(), contentsY()), Event->button (), Event->buttons (), Event->modifiers ());
+  contentMouseDoubleClickEvent(&translated);
+  if (translated.isAccepted ()) {
+    Event->accept();
+  }
+}
+
+// -----------------------------------------------------------
+void Schematic::contentMouseDoubleClickEvent(QMouseEvent *Event)
 {
   if(App->MouseDoubleClickAction)
     (App->view->*(App->MouseDoubleClickAction))(this, Event);
@@ -738,10 +778,17 @@ void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImag
 }
 
 // -----------------------------------------------------------
+void Schematic::resizeEvent(QResizeEvent*)
+{
+  resizeContents(contentsX() + viewport()->width(), contentsY() + viewport()->height());
+}
+
+// -----------------------------------------------------------
 void Schematic::resizeContents(int w, int h)
 {
   int vpw = viewport()->width();
   int vph = viewport()->height();
+printf("@@@ resizeContents(%d,%d)\n", w, h); fflush(stdout);
   horizontalScrollBar()->setPageStep(vpw);
   horizontalScrollBar()->setMaximum(std::max(0, w - vpw));
   verticalScrollBar()->setPageStep(vph);
@@ -752,6 +799,7 @@ void Schematic::resizeContents(int w, int h)
 // -----------------------------------------------------------
 void Schematic::scrollBy(int dx, int dy)
 {
+printf("@@@ scrollBy(%d,%d)\n", dx, dy); fflush(stdout);
   horizontalScrollBar()->setValue(horizontalScrollBar()->value() + dx);
   verticalScrollBar()->setValue(verticalScrollBar()->value() + dy);
   viewport()->update();
@@ -760,6 +808,7 @@ void Schematic::scrollBy(int dx, int dy)
 // -----------------------------------------------------------
 void Schematic::setContentsPos(int x, int y)
 {
+  printf("@@@ setContentsPos(%d,%d)\n", x, y); fflush(stdout);
   horizontalScrollBar()->setValue(x);
   verticalScrollBar()->setValue(y);
   viewport()->update();
@@ -809,16 +858,38 @@ void Schematic::contentsToViewport(int x, int y, int &vx, int &vy)
 }
 
 // -----------------------------------------------------------
-float Schematic::zoom(float s)
+float Schematic::zoom(float s, QPoint around)
 {
+  float scaleBefore = Scale;
   Scale *= s;
   if(Scale > 10.0) Scale = 10.0f;
   if(Scale < 0.1) Scale = 0.1f;
 
-  resizeContents(int(Scale*float(ViewX2 - ViewX1)),
-                 int(Scale*float(ViewY2 - ViewY1)));
+  float xBefore = ViewX1 + (around.x() + contentsX()) / scaleBefore;
+  float yBefore = ViewY1 + (around.y() + contentsY()) / scaleBefore;
 
-  viewport()->update();
+  int newWidth = int((Scale/scaleBefore)*contentsWidth ());
+  int newHeight = int((Scale/scaleBefore)*contentsHeight ());
+  resizeContents(newWidth, newHeight);
+
+  //  enlarge view window if required - i.e. if the requested width and height
+  //  cannot be granted
+  int newViewX1 = xBefore - float(contentsWidth()) / float(newWidth) * (xBefore - ViewX1);
+  int newViewX2 = contentsWidth() / Scale + newViewX1;
+  int newViewY1 = yBefore - float(contentsHeight()) / float(newHeight) * (yBefore - ViewY1);
+  int newViewY2 = contentsHeight() / Scale + newViewY1;
+
+  ViewX1 = std::min(ViewX1, newViewX1);
+  ViewY1 = std::min(ViewY1, newViewY1);
+  ViewX2 = std::max(ViewX2, newViewX2);
+  ViewY2 = std::max(ViewY2, newViewY2);
+
+  //  positions the view such that the original mouse position and the
+  //  original target position are identical.
+  int newContentsX = (xBefore - ViewX1) * Scale - around.x();
+  int newContentsY = (yBefore - ViewY1) * Scale - around.y();
+  setContentsPos(newContentsX, newContentsY);
+
   App->view->drawn = false;
   return Scale;
 }
@@ -826,10 +897,7 @@ float Schematic::zoom(float s)
 // -----------------------------------------------------------
 float Schematic::zoomBy(float s)
 {
-  zoom(s);
-  s -= 1.0;
-  scrollBy( int(s * float(contentsX()+visibleWidth()/2)),
-            int(s * float(contentsY()+visibleHeight()/2)) );
+  zoom(s, QPoint(visibleWidth () / 2, visibleHeight () / 2));
   return Scale;
 }
 
@@ -846,19 +914,19 @@ void Schematic::showAll()
     return;
   }
 
-  int visibleWidth = viewport()->width();
-  int visibleHeight = viewport()->height();
-
-  float xScale = float(visibleWidth) / float(UsedX2-UsedX1+80);
-  float yScale = float(visibleHeight) / float(UsedY2-UsedY1+80);
+  float xScale = float(visibleWidth()) / float(UsedX2-UsedX1+80);
+  float yScale = float(visibleHeight()) / float(UsedY2-UsedY1+80);
   if(xScale > yScale) xScale = yScale;
-  xScale /= Scale;
+  Scale = xScale;
 
   ViewX1 = UsedX1 - 40;
   ViewY1 = UsedY1 - 40;
   ViewX2 = UsedX2 + 40;
   ViewY2 = UsedY2 + 40;
-  zoom(xScale);
+
+  resizeContents(visibleWidth(), visibleHeight ());
+  setContentsPos(0, 0);
+  App->view->drawn = false;
 }
 
 // ---------------------------------------------------
@@ -886,7 +954,6 @@ void Schematic::showNoZoom()
   ViewX2 = x2+40;
   ViewY2 = y2+40;
   resizeContents(x2-x1+80, y2-y1+80);
-  viewport()->update();
   App->view->drawn = false;
 }
 
@@ -1377,9 +1444,6 @@ bool Schematic::load()
   if(ViewY1 > UsedY1)  ViewY1 = UsedY1;
   if(ViewX2 < UsedX2)  ViewX2 = UsedX2;
   if(ViewY2 < UsedY2)  ViewY2 = UsedY2;
-  zoom(1.0f);
-  setContentsPos(tmpViewX1, tmpViewY1);
-  tmpViewX1 = tmpViewY1 = -200;   // was used as temporary cache
   return true;
 }
 
@@ -1907,7 +1971,6 @@ void Schematic::switchPaintMode()
   tmp = UsedY2; UsedY2 = tmpUsedY2; tmpUsedY2 = tmp;
 }
 
-
 // *********************************************************************
 // **********                                                 **********
 // **********      Function for serving mouse wheel moving    **********
@@ -1929,13 +1992,12 @@ void Schematic::wheelEvent(QWheelEvent *Event)
   }
   // ...................................................................
   else if(Event->modifiers() & Qt::ControlModifier) {  // use mouse wheel to zoom ?
+
       // zoom factor scaled according to the wheel delta, to accomodate
       //  values different from 60 (slower or faster zoom)
       float Scaling = pow(1.1, delta/60.0);
-      zoom(Scaling);
-      Scaling -= 1.0;
-      scrollBy( int(Scaling * float(Event->pos().x())),
-                int(Scaling * float(Event->pos().y())) );
+      zoom(Scaling, QPoint(Event->position().x(), Event->position().y()));
+
   }
   // ...................................................................
   else {     // scroll vertically !
@@ -1958,8 +2020,8 @@ bool Schematic::scrollUp(int step)
   diff = contentsY() - step;
   if(diff < 0) {     // scroll outside the active area ?  (upwards)
     resizeContents(contentsWidth(), contentsHeight()-diff);
-    ViewY1 += diff;
-    scrollBy(0, diff);
+    ViewY1 += diff / Scale;
+    setContentsPos(contentsX(), 0);
     return false;
   }
 
@@ -1967,7 +2029,7 @@ bool Schematic::scrollUp(int step)
   if(diff > 0) {      // make active area smaller ?
     if(step < diff) diff = step;
     resizeContents(contentsWidth(), contentsHeight()-diff);
-    ViewY2 -= diff;
+    ViewY2 -= diff / Scale;
   }
 
   return true;
@@ -1983,8 +2045,8 @@ bool Schematic::scrollDown(int step)
   diff = contentsHeight() - contentsY()-visibleHeight() + step;
   if(diff < 0) {     // scroll outside the active area ?  (downwards)
     resizeContents(contentsWidth(), contentsHeight()-diff);
-    ViewY2 -= diff;
-    scrollBy(0, -step);
+    ViewY2 -= diff / Scale;
+    setContentsPos(contentsX(), contentsHeight() - visibleHeight());
     return false;
   }
 
@@ -1992,7 +2054,7 @@ bool Schematic::scrollDown(int step)
   if(diff < 0) {      // make active area smaller ?
     if(step > diff) diff = step;
     resizeContents(contentsWidth(), contentsHeight()+diff);
-    ViewY1 -= diff;
+    ViewY1 -= diff / Scale;
     return false;
   }
 
@@ -2009,8 +2071,8 @@ bool Schematic::scrollLeft(int step)
   diff = contentsX() - step;
   if(diff < 0) {     // scroll outside the active area ?  (to the left)
     resizeContents(contentsWidth()-diff, contentsHeight());
-    ViewX1 += diff;
-    scrollBy(diff, 0);
+    ViewX1 += diff / Scale;
+    setContentsPos(0, contentsY());
     return false;
   }
 
@@ -2018,7 +2080,7 @@ bool Schematic::scrollLeft(int step)
   if(diff > 0) {      // make active area smaller ?
     if(step < diff) diff = step;
     resizeContents(contentsWidth()-diff, contentsHeight());
-    ViewX2 -= diff;
+    ViewX2 -= diff / Scale;
   }
 
   return true;
@@ -2034,8 +2096,8 @@ bool Schematic::scrollRight(int step)
   diff = contentsWidth() - contentsX()-visibleWidth() + step;
   if(diff < 0) {     // scroll outside the active area ?  (to the right)
     resizeContents(contentsWidth()-diff, contentsHeight());
-    ViewX2 -= diff;
-    scrollBy(-step, 0);
+    ViewX2 -= diff / Scale;
+    setContentsPos(contentsWidth() - visibleWidth(), contentsY());
     return false;
   }
 
@@ -2043,53 +2105,12 @@ bool Schematic::scrollRight(int step)
   if(diff < 0) {      // make active area smaller ?
     if(step > diff) diff = step;
     resizeContents(contentsWidth()+diff, contentsHeight());
-    ViewX1 -= diff;
+    ViewX1 -= diff / Scale;
     return false;
   }
 
   return true;
 }
-
-// -----------------------------------------------------------
-// Is called if the scroll arrow of the ScrollBar is pressed.
-void Schematic::slotScrollUp()
-{
-  App->editText->setHidden(true);  // disable edit of component property
-  scrollUp(verticalScrollBar()->singleStep());
-  viewport()->update(); // because QScrollView thinks nothing has changed
-  App->view->drawn = false;
-}
-
-// -----------------------------------------------------------
-// Is called if the scroll arrow of the ScrollBar is pressed.
-void Schematic::slotScrollDown()
-{
-  App->editText->setHidden(true);  // disable edit of component property
-  scrollDown(-verticalScrollBar()->singleStep());
-  viewport()->update(); // because QScrollView thinks nothing has changed
-  App->view->drawn = false;
-}
-
-// -----------------------------------------------------------
-// Is called if the scroll arrow of the ScrollBar is pressed.
-void Schematic::slotScrollLeft()
-{
-  App->editText->setHidden(true);  // disable edit of component property
-  scrollLeft(horizontalScrollBar()->singleStep());
-  viewport()->update(); // because QScrollView thinks nothing has changed
-  App->view->drawn = false;
-}
-
-// -----------------------------------------------------------
-// Is called if the scroll arrow of the ScrollBar is pressed.
-void Schematic::slotScrollRight()
-{
-  App->editText->setHidden(true);  // disable edit of component property
-  scrollRight(-horizontalScrollBar()->singleStep());
-  viewport()->update(); // because QScrollView thinks nothing has changed
-  App->view->drawn = false;
-}
-
 
 // *********************************************************************
 // **********                                                 **********
@@ -2120,11 +2141,12 @@ void Schematic::dropEvent(QDropEvent *Event)
     return;
   }
 
+  QPoint pos = Event->pos() + QPoint(contentsX(), contentsY());
 
-  QMouseEvent e(QEvent::MouseButtonPress, Event->pos(),
+  QMouseEvent e(QEvent::MouseButtonPress, pos,
                 Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
-  int x = int(Event->pos().x()/Scale) + ViewX1;
-  int y = int(Event->pos().y()/Scale) + ViewY1;
+  int x = int(pos.x()/Scale) + ViewX1;
+  int y = int(pos.y()/Scale) + ViewY1;
 
   App->view->MPressElement(this, &e, x, y);
 
@@ -2212,7 +2234,9 @@ void Schematic::dragMoveEvent(QDragMoveEvent *Event)
       return;
     }
 
-    QMouseEvent e(QEvent::MouseMove, Event->pos(), Qt::NoButton, 
+    QPoint pos = Event->pos() + QPoint(contentsX(), contentsY());
+
+    QMouseEvent e(QEvent::MouseMove, pos, Qt::NoButton,
 		  Qt::NoButton, Qt::NoModifier);
     App->view->MMoveElement(this, &e);
   }

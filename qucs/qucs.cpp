@@ -1923,7 +1923,6 @@ void QucsApp::updatePortNumber(QucsDoc *currDoc, int No)
   // update all occurencies of subcircuit in all open documents
   No = 0;
   QWidget *w;
-  Component *pc_tmp;
   while((w=DocumentTab->widget(No++)) != 0) {
     if(isTextDocument (w))  continue;
 

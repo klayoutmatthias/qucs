@@ -105,7 +105,8 @@ public:
   void  setOnGrid(int&, int&);
   bool  elementsOnGrid();
 
-  float zoom(float);
+  //  NOTE: "around" is given in window coordinates - (0, 0) is upper left corner of viewport
+  float zoom(float, QPoint around);
   float zoomBy(float);
   void  showAll();
   void  showNoZoom();
@@ -197,6 +198,7 @@ protected:
 
   // overloaded function to get actions of user
   void paintEvent(QPaintEvent * /*event*/);
+
   void mouseMoveEvent(QMouseEvent*);
   void mousePressEvent(QMouseEvent*);
   void mouseDoubleClickEvent(QMouseEvent*);
@@ -206,12 +208,12 @@ protected:
   void dragEnterEvent(QDragEnterEvent*);
   void dragLeaveEvent(QDragLeaveEvent*);
   void dragMoveEvent(QDragMoveEvent*);
+  void resizeEvent(QResizeEvent*);
 
-protected slots:
-  void slotScrollUp();
-  void slotScrollDown();
-  void slotScrollLeft();
-  void slotScrollRight();
+  void contentMouseMoveEvent(QMouseEvent*);
+  void contentMousePressEvent(QMouseEvent*);
+  void contentMouseDoubleClickEvent(QMouseEvent*);
+  void contentMouseReleaseEvent(QMouseEvent*);
 
 private:
   bool dragIsOkay;

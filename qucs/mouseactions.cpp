@@ -1865,28 +1865,26 @@ void MouseActions::MReleaseZoomIn(Schematic *Doc, QMouseEvent *Event)
   float DX = float(MAx2);
   float DY = float(MAy2);
 
-  float initialScale = Doc->Scale;
-  float scale = 1;
-  float xShift = 0;
-  float yShift = 0;
   if((Doc->Scale * DX) < 6.0) {
     // a simple click zooms by constant factor
-    scale = Doc->zoom(1.5)/initialScale;
-
-    xShift = scale * Event->pos().x();
-    yShift = scale * Event->pos().y();
+    Doc->zoom(1.5, Event->pos() - QPoint(Doc->contentsX (), Doc->contentsY ()));
   } else {
+    // @@@ debug
+    float initialScale = Doc->Scale;
+    float xShift = 0;
+    float yShift = 0;
     float xScale = float(Doc->visibleWidth())  / std::abs(DX);
     float yScale = float(Doc->visibleHeight()) / std::abs(DY);
-    scale = qMin(xScale, yScale)/initialScale;
-    scale = Doc->zoom(scale)/initialScale;
+    float scale = qMin(xScale, yScale)/initialScale;
+    scale = Doc->zoom(scale, QPoint(0, 0))/initialScale;
 
     xShift = scale * (MAx1 - 0.5*DX);
     yShift = scale * (MAy1 - 0.5*DY);
+
+    xShift -= (0.5*Doc->visibleWidth() + Doc->contentsX());
+    yShift -= (0.5*Doc->visibleHeight() + Doc->contentsY());
+    Doc->scrollBy(xShift, yShift);
   }
-  xShift -= (0.5*Doc->visibleWidth() + Doc->contentsX());
-  yShift -= (0.5*Doc->visibleHeight() + Doc->contentsY());
-  Doc->scrollBy(xShift, yShift);
 
   QucsMain->MouseMoveAction = &MouseActions::MMoveZoomIn;
   QucsMain->MouseReleaseAction = 0;
