@@ -63,9 +63,8 @@ void Module::registerComponent (QString category, pInfoFunc info) {
   // property of the component
   QString Name, Model;
   char * File;
-  Component * c = (Component *) info (Name, File, true);
+  auto c = std::dynamic_pointer_cast<Component>(std::shared_ptr<Element>(info (Name, File, true)));
   Model = c->obsolete_model_hack();
-  delete c;
 
   // put into category and the component hash
   intoCategory (m);
@@ -75,17 +74,16 @@ void Module::registerComponent (QString category, pInfoFunc info) {
 
 // Returns instantiated component based on the given "Model" name.  If
 // there is no such component registers the function returns NULL.
-Component * Module::getComponent (QString Model) {
+std::shared_ptr<Component> Module::getComponent (QString Model) {
   if ( Modules.contains(Model)) {
     Module *m = Modules.find(Model).value();
     QString Name;
     char * File;
     QString vaBitmap;
     if (vaComponents.contains(Model))
-      return (Component *)
-              vacomponent::info (Name, vaBitmap, true, vaComponents[Model]);
+      return std::dynamic_pointer_cast<Component>(std::shared_ptr<Element>(vacomponent::info (Name, vaBitmap, true, vaComponents[Model])));
     else
-      return (Component *) m->info (Name, File, true);
+      return std::dynamic_pointer_cast<Component>(std::shared_ptr<Element>(m->info (Name, File, true)));
   }
   return 0;
 }
@@ -121,10 +119,8 @@ void Module::registerDynamicComponents()
      //char * File;
      QString Name, Model, vaBitmap;
 //     char * File;
-     Component * c = (Component *)
-             vacomponent::info (Name, vaBitmap, true, vaComponents[i.key()]);
+     auto c = std::dynamic_pointer_cast<Component>(std::shared_ptr<Element>(vacomponent::info (Name, vaBitmap, true, vaComponents[i.key()])));
      Model = c->obsolete_model_hack();
-     delete c;
 
      // put into category and the component hash
      intoCategory (m);

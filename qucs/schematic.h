@@ -118,7 +118,7 @@ public:
 
   void    cut();
   void    copy();
-  bool    paste(QTextStream*, QVector<Element *> &);
+  bool    paste(QTextStream*, SharedObjectList<Element> &);
   bool    load();
   int     save();
   int     saveSymbolCpp (void);
@@ -228,67 +228,67 @@ private:
    ******************************************************************** */
 
 public:
-  Node* insertNode(int, int, Element*);
+  Node* insertNode(int, int, const std::shared_ptr<Element> &);
   Node* selectedNode(int, int);
 
-  int   insertWireNode1(Wire*);
-  bool  connectHWires1(Wire*);
-  bool  connectVWires1(Wire*);
-  int   insertWireNode2(Wire*);
-  bool  connectHWires2(Wire*);
-  bool  connectVWires2(Wire*);
-  int   insertWire(const WireList::holder &);
+  int   insertWireNode1(const std::shared_ptr<Wire> &);
+  bool  connectHWires1(const std::shared_ptr<Wire> &);
+  bool  connectVWires1(const std::shared_ptr<Wire> &);
+  int   insertWireNode2(const std::shared_ptr<Wire> &);
+  bool  connectHWires2(const std::shared_ptr<Wire> &);
+  bool  connectVWires2(const std::shared_ptr<Wire> &);
+  int   insertWire(const std::shared_ptr<Wire> &);
   void  selectWireLine(Element*, Node*, bool);
   Wire* selectedWire(int, int);
-  Wire* splitWire(Wire*, Node*);
+  std::shared_ptr<Wire> splitWire(const std::shared_ptr<Wire> &, Node*);
   bool  oneTwoWires(Node*);
-  void  deleteWire(const WireList::iterator &, bool release=false);
+  void  deleteWire(const WireList::iterator &);
 
   Marker* setMarker(int, int);
-  void    markerLeftRight(bool, const QVector<Element *> &);
-  void    markerUpDown(bool, const QVector<Element *> &);
+  void    markerLeftRight(bool, SharedObjectList<Element> &);
+  void    markerUpDown(bool, SharedObjectList<Element> &);
 
-  Element* selectElement(float, float, bool, int *index=0);
+  std::shared_ptr<Element> selectElement(float, float, bool, int *index=0);
   void     deselectElements(Element*);
   int      selectElements(int, int, int, int, bool);
   void     selectMarkers();
-  void     newMovingWires(QVector<Element *> &, Node*, int);
-  int      copySelectedElements(QVector<Element *> &);
+  void     newMovingWires(SharedObjectList<Element> &, Node*, int);
+  int      copySelectedElements(SharedObjectList<Element> &);
   bool     deleteElements();
   bool     aligning(int);
   bool     distributeHorizontal();
   bool     distributeVertical();
 
-  void       setComponentNumber(Component*);
+  void       setComponentNumber(const std::shared_ptr<Component> &);
   void       insertRawComponent(const ComponentList::holder &, bool noOptimize=true);
   void       recreateComponent(Component*);
-  void       insertComponent(Component*);
+  void       insertComponent(const std::shared_ptr<Component> &);
   void       activateCompsWithinRect(int, int, int, int);
   bool       activateSpecifiedComponent(int, int);
   bool       activateSelectedComponents();
-  void       setCompPorts(Component*);
-  Component* selectCompText(int, int, int&, int&);
+  void       setCompPorts(std::shared_ptr<Component> &);
+  std::shared_ptr<Component> selectCompText(int, int, int&, int&);
   Component* searchSelSubcircuit();
-  Component* selectedComponent(int, int);
+  std::shared_ptr<Component> selectedComponent(int, int);
   void       deleteComp(const ComponentList::iterator &);
 
   void     oneLabel(Node*);
-  int      placeNodeLabel(WireLabel*);
+  int      placeNodeLabel(const std::shared_ptr<WireLabel> &);
   Element* getWireLabel(Node*);
-  void     insertNodeLabel(WireLabel*);
-  void     copyLabels(int&, int&, int&, int&, QVector<Element *> &);
+  void     insertNodeLabel(const std::shared_ptr<WireLabel> &);
+  void     copyLabels(int&, int&, int&, int&, SharedObjectList<Element> &);
 
   Painting* selectedPainting(float, float);
-  void      copyPaintings(int&, int&, int&, int&, QVector<Element *> &);
+  void      copyPaintings(int&, int&, int&, int&, SharedObjectList<Element> &);
 
 
 private:
-  void insertComponentNodes(Component*, bool);
-  int  copyWires(int&, int&, int&, int&, QVector<Element *> &);
-  int  copyComponents(int&, int&, int&, int&, QVector<Element *> &);
-  void copyComponents2(int&, int&, int&, int&, QVector<Element *> &);
-  bool copyComps2WiresPaints(int&, int&, int&, int&, QVector<Element *> &);
-  int  copyElements(int&, int&, int&, int&, QVector<Element *> &);
+  void insertComponentNodes(const std::shared_ptr<Component> &, bool);
+  int  copyWires(int&, int&, int&, int&, SharedObjectList<Element> &);
+  int  copyComponents(int&, int&, int&, int&, SharedObjectList<Element> &);
+  void copyComponents2(int&, int&, int&, int&, SharedObjectList<Element> &);
+  bool copyComps2WiresPaints(int&, int&, int&, int&, SharedObjectList<Element> &);
+  int  copyElements(int&, int&, int&, int&, SharedObjectList<Element> &);
 
 
 /* ********************************************************************
@@ -322,7 +322,7 @@ private:
   bool loadIntoNothing(QTextStream*);
 
   QString createClipboardFile();
-  bool    pasteFromClipboard(QTextStream *, QVector<Element *> &);
+  bool    pasteFromClipboard(QTextStream *, SharedObjectList<Element> &);
 
   QString createUndoString(char);
   bool    rebuild(const QString &);

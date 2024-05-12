@@ -22,6 +22,8 @@
 #include <QHash>
 #include <QMap>
 
+#include <memory>
+
 class Element;
 
 // function typedefs for circuits and analyses
@@ -37,7 +39,7 @@ class Module
   static void registerModule (QString, pInfoFunc);
   static void registerComponent (QString, pInfoFunc);
   static void intoCategory (Module *);
-  static Component * getComponent (QString);
+  static std::shared_ptr<Component> getComponent(QString);
   static void registerDynamicComponents(void);
 
  public:

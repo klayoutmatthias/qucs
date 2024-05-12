@@ -86,18 +86,15 @@ void Node::setName(const QString& Name_, const QString& Value_, int x_, int y_)
 // ----------------------------------------------------------------
 void Node::removeConnection(Element *e)
 {
-  QVector<Element *>::iterator cw = Connections.begin();
-  for (auto c = Connections.begin(); c != Connections.end(); ++c) {
-    if (*c != e) {
-      *cw++ = *c;
-    }
+  auto i = Connections.find(e);
+  if (i != Connections.end()) {
+    Connections.erase(i);
   }
-  Connections.erase(cw, Connections.end());
 }
 
 // ----------------------------------------------------------------
 void
-Node::appendConnection(Element *e)
+Node::appendConnection(const std::shared_ptr<Element> &e)
 {
   Connections.push_back(e);
 }

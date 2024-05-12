@@ -637,9 +637,7 @@ void QucsApp::slotSetCompView (int index)
 
       // Just need path to bitmap, do not create an object
       QString Name, vaBitmap;
-      Component * c = (Component *)
-              vacomponent::info (Name, vaBitmap, false, i.value());
-      if (c) delete c;
+      vacomponent::info (Name, vaBitmap, false, i.value());
 
       // check if icon exists, fall back to default
       QString iconPath = QucsSettings.QucsWorkDir.filePath(vaBitmap+".png");
@@ -810,7 +808,6 @@ void QucsApp::slotSelectComponent(QListWidgetItem *item)
   slotHideEdit(); // disable text edit of component property
 
   // delete previously selected elements
-  if(view->selElem != 0)  delete view->selElem;
   view->selElem  = 0;   // no component/diagram/painting selected
 
   if(item == 0) {   // mouse button pressed not over an item ?
@@ -861,14 +858,14 @@ void QucsApp::slotSelectComponent(QListWidgetItem *item)
   Infos = mod->info;
   if (Infos) {
     // static component
-    view->selElem = (*mod->info) (CompName, CompFile_cptr, true);
+    view->selElem = std::shared_ptr<Element>((*mod->info) (CompName, CompFile_cptr, true));
   } else {
     // Verilog-A component
     InfosVA = mod->infoVA;
     // get JSON file out of item name on widgetitem
     QString filename = Module::vaComponents[name];
     if (InfosVA) {
-      view->selElem = (*InfosVA) (CompName, CompFile_qstr, true, filename);
+      view->selElem = std::shared_ptr<Element>((*InfosVA) (CompName, CompFile_qstr, true, filename));
     }
   }
 
@@ -2388,7 +2385,6 @@ void QucsApp::slotSelectSubcircuit(const QModelIndex &idx)
   if (filename == tab_titl ) return; // Forbid to paste subcircuit into itself.
 
   // delete previously selected elements
-  if(view->selElem != 0)  delete view->selElem;
   view->selElem = 0;
 
   // toggle last toolbar button off
@@ -2399,13 +2395,13 @@ void QucsApp::slotSelectSubcircuit(const QModelIndex &idx)
   }
   activeAction = 0;
 
-  Component *Comp;
+  std::shared_ptr<Component> Comp;
   if(isVHDL)
-    Comp = new VHDL_File();
+    Comp.reset(new VHDL_File());
   else if(isVerilog)
-    Comp = new Verilog_File();
+    Comp.reset(new Verilog_File());
   else
-    Comp = new Subcircuit();
+    Comp.reset(new Subcircuit());
   Comp->Props.front().Value = idx.sibling(idx.row(), 0).data().toString();
   Comp->recreate(0);
   view->selElem = Comp;
@@ -2611,7 +2607,7 @@ void QucsApp::slotPowerMatching()
 {
   if(!view->focusElement) return;
   if(view->focusElement->Type != isMarker) return;
-  Marker *pm = (Marker*)view->focusElement;
+  auto pm = std::dynamic_pointer_cast<Marker>(view->focusElement);
 
 //  double Z0 = 50.0;
   QString Var = pm->pGraph->Var;
@@ -2635,7 +2631,7 @@ void QucsApp::slot2PortMatching()
 {
   if(!view->focusElement) return;
   if(view->focusElement->Type != isMarker) return;
-  Marker *pm = (Marker*)view->focusElement;
+  auto pm = std::dynamic_pointer_cast<Marker>(view->focusElement);
 
   QString DataSet;
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();

@@ -35,10 +35,10 @@ class vacomponent : public Component
   public:
     using Component::newOne;
     vacomponent(QString filename);
-    ~vacomponent() { };
+    ~vacomponent() { }
     virtual Component* newOne(QString filename);
-    static Element* info(QString&, QString &,
-                         bool getNewOne=false, QString filename="");
+    static Element *info(QString&, QString &,
+                                    bool getNewOne=false, QString filename="");
   protected:
     void createSymbol(QString filename);
 

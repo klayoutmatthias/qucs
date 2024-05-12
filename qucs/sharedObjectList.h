@@ -41,8 +41,12 @@ public:
     bool operator!=(const Iterator &other) const { return m_basic != other.m_basic; }
     Iterator operator++() { ++m_basic; return *this; }
     Iterator operator++(int) { m_basic++; return *this; }
+    Iterator operator+(int n) const { Iterator result = *this; for (int i = 0; i < n; ++i) ++result; return result; }
+    Iterator &operator+=(int n) { for (int i = 0; i < n; ++i) ++m_basic; return *this; }
     Iterator operator--() { --m_basic; return *this; }
     Iterator operator--(int) { m_basic--; return *this; }
+    Iterator operator-(int n) const { Iterator result = *this; for (int i = 0; i < n; ++i) --result; return result; }
+    Iterator &operator-=(int n) { for (int i = 0; i < n; ++i) --m_basic; return *this; }
     reference operator*() const { return **m_basic; }
     T *operator->() const { return (*m_basic).get(); }
     holder &ref() const { return *m_basic; }
@@ -66,8 +70,12 @@ public:
     bool operator!=(const ConstIterator &other) const { return m_basic != other.m_basic; }
     ConstIterator operator++() { ++m_basic; return *this; }
     ConstIterator operator++(int) { m_basic++; return *this; }
+    ConstIterator operator+(int n) const { ConstIterator result = *this; for (int i = 0; i < n; ++i) ++result; return result; }
+    ConstIterator &operator+=(int n) { for (int i = 0; i < n; ++i) ++m_basic; return *this; }
     ConstIterator operator--() { --m_basic; return *this; }
     ConstIterator operator--(int) { m_basic--; return *this; }
+    ConstIterator operator-(int n) const { ConstIterator result = *this; for (int i = 0; i < n; ++i) --result; return result; }
+    ConstIterator &operator-=(int n) { for (int i = 0; i < n; ++i) --m_basic; return *this; }
     reference operator*() const { return **m_basic; }
     const T *operator->() const { return (*m_basic).get(); }
     const const_holder &ref() const { return *m_basic; }
@@ -123,23 +131,6 @@ public:
     for ( ; i != end() && i.operator->() != ptr; ++i)
       ;
     return i;
-  }
-
-  //  releases an element from the list (release shared pointer and remove from list)
-  void release(const T *ptr)
-  {
-    Iterator i = find(ptr);
-    if (i != end()) {
-      release(i);
-    }
-  }
-
-  //  releases an element from the list (release shared pointer and remove from list)
-  void release(Iterator i)
-  {
-    struct null_deleter { void operator() (T *) {} };
-    i.ref().reset((T *)0, null_deleter());
-    erase(i);
   }
 
   //  finds an element by pointer

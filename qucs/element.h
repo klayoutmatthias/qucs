@@ -161,7 +161,7 @@ public:
   */
 class Conductor : public Element {
 public:
-  WireLabel *Label;
+  std::shared_ptr<WireLabel> Label;
 };
 
 #endif

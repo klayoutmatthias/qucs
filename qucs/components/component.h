@@ -153,6 +153,6 @@ protected:
 };
 
 // prototype of independent function
-Component* getComponentFromName(QString& Line, Schematic* p=NULL);
+std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p=NULL);
 
 #endif

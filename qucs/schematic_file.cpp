@@ -120,7 +120,7 @@ bool Schematic::loadIntoNothing(QTextStream *stream)
 
 // -------------------------------------------------------------
 // Paste from clipboard.
-bool Schematic::pasteFromClipboard(QTextStream *stream, QVector<Element *> &pe)
+bool Schematic::pasteFromClipboard(QTextStream *stream, SharedObjectList<Element> &pe)
 {
   QString Line;
 

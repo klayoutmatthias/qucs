@@ -1312,8 +1312,11 @@ void Component::copyComponent(Component *pc)
 // ***********************************************************************
 void MultiViewComponent::recreate(Schematic *Doc)
 {
+  ComponentList::holder holder;
   if(Doc) {
-    Doc->Components->release(this);
+    auto i = Doc->Components->find(this);
+    assert(i != Doc->Components->end());
+    holder = *i;
   }
 
   Ellips.clear();
@@ -1339,7 +1342,7 @@ void MultiViewComponent::recreate(Schematic *Doc)
   mirroredX = mmir;
 
   if(Doc) {
-    Doc->insertRawComponent(ComponentList::holder(this));
+    Doc->insertRawComponent(holder);
   }
 }
 
@@ -1596,7 +1599,7 @@ void GateComponent::createSymbol()
 // FIXME:
 // must be Component* SomeParserClass::getComponent(QString& Line)
 // better: Component* SomeParserClass::getComponent(SomeDataStream& s)
-Component* getComponentFromName(QString& Line, Schematic* p)
+std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
 {
   Component *c = 0;
 

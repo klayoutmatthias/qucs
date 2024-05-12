@@ -129,16 +129,15 @@ bool Wire::isHorizontal()
 void Wire::setName(const QString& Name_, const QString& Value_, int delta_, int x_, int y_)
 {
   if(Name_.isEmpty() && Value_.isEmpty()) {
-    if(Label) delete Label;
     Label = 0;
     return;
   }
 
   if(!Label) {
     if(isHorizontal())
-      Label = new WireLabel(Name_, x1+delta_, y1, x_, y_, isHWireLabel);
+      Label.reset(new WireLabel(Name_, x1+delta_, y1, x_, y_, isHWireLabel));
     else
-      Label = new WireLabel(Name_, x1, y1+delta_, x_, y_, isVWireLabel);
+      Label.reset(new WireLabel(Name_, x1, y1+delta_, x_, y_, isVWireLabel));
     Label->pOwner = this;
     Label->initValue = Value_;
   }

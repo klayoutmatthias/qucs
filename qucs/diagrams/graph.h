@@ -21,6 +21,7 @@
 
 #include "marker.h"
 #include "element.h"
+#include "sharedObjectList.h"
 
 #include <cmath>
 #include <QColor>
@@ -158,7 +159,7 @@ public:
   QColor  Color;
   int     Thick;
   graphstyle_t Style;
-  QList<Marker *> Markers;
+  SharedObjectList<Marker> Markers;
   double *gy;
 
   // for tabular diagram

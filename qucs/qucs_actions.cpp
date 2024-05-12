@@ -395,10 +395,7 @@ void QucsApp::slotInsertEquation(bool on)
   }
   activeAction = insEquation;
 
-  if(view->selElem)
-    delete view->selElem;  // delete previously selected component
-
-  view->selElem = new Equation();
+  view->selElem.reset(new Equation());
 
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
   if(view->drawn) Doc->viewport()->update();
@@ -428,10 +425,7 @@ void QucsApp::slotInsertGround(bool on)
   }
   activeAction = insGround;
 
-  if(view->selElem)
-    delete view->selElem;  // delete previously selected component
-
-  view->selElem = new Ground();
+  view->selElem.reset(new Ground());
 
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
   if(view->drawn) Doc->viewport()->update();
@@ -461,10 +455,7 @@ void QucsApp::slotInsertPort(bool on)
   }
   activeAction = insPort;
 
-  if(view->selElem)
-    delete view->selElem;  // delete previously selected component
-
-  view->selElem = new SubCirPort();
+  view->selElem.reset(new SubCirPort());
 
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
   if(view->drawn) Doc->viewport()->update();
@@ -981,7 +972,7 @@ void QucsApp::slotCursorLeft(bool left)
   }
   if(!editText->isHidden()) return;  // for edit of component property ?
 
-  QVector<Element *> movingElements;
+  SharedObjectList<Element> movingElements;
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
   int markerCount = Doc->copySelectedElements(movingElements);
 
