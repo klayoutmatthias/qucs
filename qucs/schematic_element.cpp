@@ -199,7 +199,7 @@ int Schematic::insertWireNode1(Wire *w)
         Node *newNode = new Node(w->x1, w->y1);   // create new node
         Nodes->append(newNode);
         newNode->appendConnection(w);  // connect schematic node to the new wire
-        w->Port1 = pn.operator->();
+        w->Port1 = newNode;
 
         // split the wire into two wires
         splitWire(ptr2.operator->(), newNode);
