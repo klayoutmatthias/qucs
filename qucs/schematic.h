@@ -311,13 +311,13 @@ private:
   int  saveDocument();
 
   bool loadProperties(QTextStream*);
-  void simpleInsertComponent(Component*);
-  bool loadComponents(QTextStream*, QVector<Element *> *List=0);
-  void simpleInsertWire(Wire*);
-  bool loadWires(QTextStream*, QVector<Element *> *List=0);
-  bool loadDiagrams(QTextStream*, QVector<Element *>&);
+  void simpleInsertComponent(const std::shared_ptr<Component> &);
+  bool loadComponents(QTextStream*, SharedObjectList<Element> *List=0);
+  void simpleInsertWire(const std::shared_ptr<Wire> &);
+  bool loadWires(QTextStream*, SharedObjectList<Element> *List=0);
+  bool loadDiagrams(QTextStream*, SharedObjectList<Element> &);
   bool loadDiagrams(QTextStream*, DiagramList &);
-  bool loadPaintings(QTextStream*, QVector<Element *>&);
+  bool loadPaintings(QTextStream*, SharedObjectList<Element> &);
   bool loadPaintings(QTextStream*, PaintingList &);
   bool loadIntoNothing(QTextStream*);
 

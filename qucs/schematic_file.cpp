@@ -617,7 +617,7 @@ bool Schematic::loadProperties(QTextStream *stream)
 
 // ---------------------------------------------------
 // Inserts a component without performing logic for wire optimization.
-void Schematic::simpleInsertComponent(Component *c)
+void Schematic::simpleInsertComponent(const std::shared_ptr<Component> &c)
 {
   Node *pn;
   int x, y;
@@ -643,7 +643,7 @@ void Schematic::simpleInsertComponent(Component *c)
       pn = new Node(x, y);
       DocNodes.append(pn);
     }
-    pn->Connections.append(c);  // connect schematic node to component node
+    pn->Connections.push_back(c);  // connect schematic node to component node
     if (!pp->Type.isEmpty()) {
       pn->DType = pp->Type;
     }
@@ -655,10 +655,9 @@ void Schematic::simpleInsertComponent(Component *c)
 }
 
 // -------------------------------------------------------------
-bool Schematic::loadComponents(QTextStream *stream, QVector<Element *> *List)
+bool Schematic::loadComponents(QTextStream *stream, SharedObjectList<Element> *List)
 {
   QString Line;
-  Component *c;
   while(!stream->atEnd()) {
     Line = stream->readLine();
     if(Line.at(0) == '<') if(Line.at(1) == '/') return true;
@@ -666,7 +665,7 @@ bool Schematic::loadComponents(QTextStream *stream, QVector<Element *> *List)
     if(Line.isEmpty()) continue;
 
     /// \todo enable user to load partial schematic, skip unknown components
-    c = getComponentFromName(Line, this);
+    auto c = getComponentFromName(Line, this);
     if(!c) return false;
 
     if(List) {  // "paste" ?
@@ -687,7 +686,7 @@ bool Schematic::loadComponents(QTextStream *stream, QVector<Element *> *List)
 
 // -------------------------------------------------------------
 // Inserts a wire without performing logic for optimizing.
-void Schematic::simpleInsertWire(Wire *pw)
+void Schematic::simpleInsertWire(const std::shared_ptr<Wire> &pw)
 {
   auto pn = DocNodes.begin();
   // check if first wire node lies upon existing node
@@ -706,10 +705,9 @@ void Schematic::simpleInsertWire(Wire *pw)
       pn->Label->Type = isNodeLabel;
       pn->Label->pOwner = pn.operator->();
     }
-    delete pw;           // delete wire because this is not a wire
     return;
   }
-  pn->Connections.append(pw);  // connect schematic node to component node
+  pn->Connections.push_back(pw);  // connect schematic node to component node
   pw->Port1 = pn.operator->();
 
   // check if second wire node lies upon existing node
@@ -721,16 +719,15 @@ void Schematic::simpleInsertWire(Wire *pw)
     pn = DocNodes.end();
     --pn;
   }
-  pn->Connections.append(pw);  // connect schematic node to component node
+  pn->Connections.push_back(pw);  // connect schematic node to component node
   pw->Port2 = pn.operator->();
 
   DocWires.append(pw);
 }
 
 // -------------------------------------------------------------
-bool Schematic::loadWires(QTextStream *stream, QVector<Element *> *List)
+bool Schematic::loadWires(QTextStream *stream, SharedObjectList<Element> *List)
 {
-  Wire *w;
   QString Line;
   while(!stream->atEnd()) {
     Line = stream->readLine();
@@ -739,18 +736,16 @@ bool Schematic::loadWires(QTextStream *stream, QVector<Element *> *List)
     if(Line.isEmpty()) continue;
 
     // (Node*)4 =  move all ports (later on)
-    w = new Wire(0,0,0,0, (Node*)4,(Node*)4);
+    std::shared_ptr<Wire> w(new Wire(0,0,0,0, (Node*)4,(Node*)4));
     if(!w->load(Line)) {
       QMessageBox::critical(0, QObject::tr("Error"),
 		QObject::tr("Format Error:\nWrong 'wire' line format!"));
-      delete w;
       return false;
     }
     if(List) {
       if(w->x1 == w->x2) if(w->y1 == w->y2) if(w->Label) {
 	w->Label->Type = isMovingLabel;
 	List->append(w->Label);
-	delete w;
 	continue;
       }
       List->append(w);
@@ -767,43 +762,45 @@ bool Schematic::loadWires(QTextStream *stream, QVector<Element *> *List)
 // -------------------------------------------------------------
 bool Schematic::loadDiagrams(QTextStream *stream, DiagramList &List)
 {
-  QVector<Element *> elements;
+  SharedObjectList<Element> elements;
   bool result = loadDiagrams(stream, elements);
 
   for (auto e = elements.begin(); e != elements.end(); ++e) {
-    Diagram *de = dynamic_cast<Diagram *>(*e);
-    assert(de != 0);
-    List.push_back(DiagramList::holder(de));
+    auto de = std::dynamic_pointer_cast<Diagram>(e.ref());
+    assert(de);
+    List.push_back(de);
   }
 
   return result;
 }
 
 // -------------------------------------------------------------
-bool Schematic::loadDiagrams(QTextStream *stream, QVector<Element *> &List)
+bool Schematic::loadDiagrams(QTextStream *stream, SharedObjectList<Element> &List)
 {
-  Diagram *d;
   QString Line, cstr;
   while(!stream->atEnd()) {
+
     Line = stream->readLine();
     if(Line.at(0) == '<') if(Line.at(1) == '/') return true;
     Line = Line.trimmed();
     if(Line.isEmpty()) continue;
 
+    std::shared_ptr<Diagram> d;
+
     cstr = Line.section(' ',0,0);    // diagram type
-         if(cstr == "<Rect") d = new RectDiagram();
-    else if(cstr == "<Polar") d = new PolarDiagram();
-    else if(cstr == "<Tab") d = new TabDiagram();
-    else if(cstr == "<Smith") d = new SmithDiagram();
-    else if(cstr == "<ySmith") d = new SmithDiagram(0,0,false);
-    else if(cstr == "<PS") d = new PSDiagram();
-    else if(cstr == "<SP") d = new PSDiagram(0,0,false);
-    else if(cstr == "<Rect3D") d = new Rect3DDiagram();
-    else if(cstr == "<Curve") d = new CurveDiagram();
-    else if(cstr == "<Time") d = new TimingDiagram();
-    else if(cstr == "<Truth") d = new TruthDiagram();
-    /*else if(cstr == "<Phasor") d = new PhasorDiagram();
-    else if(cstr == "<Waveac") d = new Waveac();*/
+         if(cstr == "<Rect") d.reset(new RectDiagram());
+    else if(cstr == "<Polar") d.reset(new PolarDiagram());
+    else if(cstr == "<Tab") d.reset(new TabDiagram());
+    else if(cstr == "<Smith") d.reset(new SmithDiagram());
+    else if(cstr == "<ySmith") d.reset(new SmithDiagram(0,0,false));
+    else if(cstr == "<PS") d.reset(new PSDiagram());
+    else if(cstr == "<SP") d.reset(new PSDiagram(0,0,false));
+    else if(cstr == "<Rect3D") d.reset(new Rect3DDiagram());
+    else if(cstr == "<Curve") d.reset(new CurveDiagram());
+    else if(cstr == "<Time") d.reset(new TimingDiagram());
+    else if(cstr == "<Truth") d.reset(new TruthDiagram());
+    /*else if(cstr == "<Phasor") d.reset(new PhasorDiagram();
+    else if(cstr == "<Waveac") d.reset(new Waveac();*/
     else {
       QMessageBox::critical(0, QObject::tr("Error"),
 		   QObject::tr("Format Error:\nUnknown diagram!"));
@@ -813,10 +810,9 @@ bool Schematic::loadDiagrams(QTextStream *stream, QVector<Element *> &List)
     if(!d->load(Line, stream)) {
       QMessageBox::critical(0, QObject::tr("Error"),
 		QObject::tr("Format Error:\nWrong 'diagram' line format!"));
-      delete d;
       return false;
     }
-    List.append(d);
+    List.push_back(d);
   }
 
   QMessageBox::critical(0, QObject::tr("Error"),
@@ -827,20 +823,20 @@ bool Schematic::loadDiagrams(QTextStream *stream, QVector<Element *> &List)
 // -------------------------------------------------------------
 bool Schematic::loadPaintings(QTextStream *stream, PaintingList &List)
 {
-  QVector<Element *> elements;
+  SharedObjectList<Element> elements;
   bool result = loadPaintings(stream, elements);
 
   for (auto e = elements.begin(); e != elements.end(); ++e) {
-    Painting *pe = dynamic_cast<Painting *>(*e);
-    assert(pe != 0);
-    List.push_back(PaintingList::holder(pe));
+    auto pe = std::dynamic_pointer_cast<Painting>(e.ref());
+    assert(pe);
+    List.push_back(pe);
   }
 
   return result;
 }
 
 // -------------------------------------------------------------
-bool Schematic::loadPaintings(QTextStream *stream, QVector<Element *> &List)
+bool Schematic::loadPaintings(QTextStream *stream, SharedObjectList<Element> &List)
 {
   Painting *p=0;
   QString Line, cstr;
@@ -1207,8 +1203,8 @@ void Schematic::propagateNode(QStringList& Collect,
   for(int i = 0; i < Cons.count(); ++i) {
     Node *p2 = Cons[i];
     for(auto pe = p2->Connections.begin(); pe != p2->Connections.end(); ++pe) {
-      if((*pe)->Type == isWire) {
-        Wire *pw = (Wire*)*pe;
+      if(std::shared_ptr<Element>(*pe)->Type == isWire) {
+        auto pw = std::dynamic_pointer_cast<Wire>(std::shared_ptr<Element>(*pe));
         if(p2 != pw->Port1) {
 	  if(pw->Port1->Name.isEmpty()) {
 	    pw->Port1->Name = pn->Name;
@@ -1226,7 +1222,7 @@ void Schematic::propagateNode(QStringList& Collect,
 	  }
 	}
 	if(setName) {
-	  if (isAnalog) createNodeSet(Collect, countInit, pw, pn);
+          if (isAnalog) createNodeSet(Collect, countInit, pw.get(), pn);  // @@@ pw.get()
 	  setName = false;
 	}
       }
