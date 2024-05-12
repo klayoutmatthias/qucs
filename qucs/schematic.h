@@ -261,7 +261,7 @@ public:
 
   void       setComponentNumber(const std::shared_ptr<Component> &);
   void       insertRawComponent(const ComponentList::holder &, bool noOptimize=true);
-  void       recreateComponent(Component*);
+  void       recreateComponent(const std::shared_ptr<Component> &);
   void       insertComponent(const std::shared_ptr<Component> &);
   void       activateCompsWithinRect(int, int, int, int);
   bool       activateSpecifiedComponent(int, int);

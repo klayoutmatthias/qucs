@@ -1925,13 +1925,13 @@ void QucsApp::updatePortNumber(QucsDoc *currDoc, int No)
 
     // start from the last to omit re-appended components
     Schematic *Doc = (Schematic*)w;
-    QVector<Component *> toRecreate;
+    std::list<std::shared_ptr<Component> > toRecreate;
     for(auto pc = Doc->Components->end(); pc != Doc->Components->begin(); ) {
       --pc;
       if(pc->obsolete_model_hack() == Model) { // BUG
         File = pc->Props.front().Value;
         if((File == pathName) || (File == Name))
-          toRecreate.push_back(pc.operator->());
+          toRecreate.push_back(pc.ref());
       }
     }
     for (auto i = toRecreate.begin(); i != toRecreate.end(); ++i)

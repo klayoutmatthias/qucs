@@ -2536,7 +2536,7 @@ void Schematic::insertRawComponent(const ComponentList::holder &c, bool noOptimi
 }
 
 // ---------------------------------------------------
-void Schematic::recreateComponent(Component *Comp)
+void Schematic::recreateComponent(const std::shared_ptr<Component> &Comp)
 {
     std::list<std::shared_ptr<WireLabel> > plMem;
     int PortCount = Comp->Ports.count();

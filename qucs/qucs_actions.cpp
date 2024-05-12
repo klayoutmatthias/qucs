@@ -1001,7 +1001,7 @@ void QucsApp::slotCursorUp(bool up)
   if(editText->isHidden()) {  // for edit of component property ?
   }else if(up){
     if(view->MAx3 == 0) return;  // edit component namen ?
-    Component *pc = (Component*)view->focusElement;
+    auto pc = std::dynamic_pointer_cast<Component>(view->focusElement);
     const Property &pp = pc->Props.at(view->MAx3-1);  // current property
     int Begin = pp.Description.indexOf('[');
     if(Begin < 0) return;  // no selection list ?
@@ -1019,7 +1019,7 @@ void QucsApp::slotCursorUp(bool up)
     return;
   }else{ // down
     if(view->MAx3 == 0) return;  // edit component namen ?
-    Component *pc = (Component*)view->focusElement;
+    auto pc = std::dynamic_pointer_cast<Component>(view->focusElement);
     const Property &pp = pc->Props.at(view->MAx3-1);  // current property
     int Pos = pp.Description.indexOf('[');
     if(Pos < 0) return;  // no selection list ?
@@ -1039,7 +1039,7 @@ void QucsApp::slotCursorUp(bool up)
     return;
   }
 
-  QVector<Element *> movingElements;
+  SharedObjectList<Element> movingElements;
   Schematic *Doc = (Schematic*)DocumentTab->currentWidget();
   int markerCount = Doc->copySelectedElements(movingElements);
 
@@ -1074,7 +1074,7 @@ void QucsApp::slotApplyCompText()
   f.setPointSizeF(Doc->Scale * float(f.pointSize()) );
   editText->setFont(f);
 
-  Component *pc = (Component*)view->focusElement;
+  auto pc = std::dynamic_pointer_cast<Component>(view->focusElement);
   if(!pc) return;  // should never happen
   view->MAx1 = pc->cx + pc->tx;
   view->MAy1 = pc->cy + pc->ty;
@@ -1262,7 +1262,7 @@ void QucsApp::slotExportGraphAsCsv()
 
 
   DataX const *pD;
-  Graph *g = (Graph*)view->focusElement;
+  auto g = std::dynamic_pointer_cast<Graph>(view->focusElement);
   // First output the names of independent and dependent variables.
   for(unsigned ii=0; (pD=g->axis(ii)); ++ii)
     Stream << '\"' << pD->Var << "\";";
