@@ -1869,7 +1869,6 @@ void MouseActions::MReleaseZoomIn(Schematic *Doc, QMouseEvent *Event)
     // a simple click zooms by constant factor
     Doc->zoom(1.5, Event->pos() - QPoint(Doc->contentsX (), Doc->contentsY ()));
   } else {
-    // @@@ debug
     float initialScale = Doc->Scale;
     float xShift = 0;
     float yShift = 0;

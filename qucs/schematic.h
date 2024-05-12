@@ -127,10 +127,10 @@ public:
   bool    undo();
   bool    redo();
 
-  bool scrollUp(int);
-  bool scrollDown(int);
-  bool scrollLeft(int);
-  bool scrollRight(int);
+  void scrollUp(int);
+  void scrollDown(int);
+  void scrollLeft(int);
+  void scrollRight(int);
 
   void resizeContents(int w, int h);
   void scrollBy(int dx, int dy);

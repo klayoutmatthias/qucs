@@ -158,8 +158,8 @@ void SPEmbed::createSymbol()
   Lines.append(Line( 15, -h, 15,  h,QPen(Qt::darkBlue,2)));
   Lines.append(Line(-15,  h, 15,  h,QPen(Qt::darkBlue,2)));
   Lines.append(Line(-15, -h,-15,  h,QPen(Qt::darkBlue,2)));
-  stmp = QObject::tr("file"); 
-  w = smallmetrics.width(stmp); // compute text size to center it 
+  stmp = QObject::tr("file");
+  w = smallmetrics.horizontalAdvance(stmp); // compute text size to center it
   Texts.append(Text(-w/2, -fHeight/2, stmp));
 
   int i=0, y = 15-h;
@@ -168,7 +168,7 @@ void SPEmbed::createSymbol()
     Lines.append(Line(-30, y,-15, y,QPen(Qt::darkBlue,2)));
     Ports.append(Port(-30, y));
     stmp = QString::number(i);
-    w = smallmetrics.width(stmp);
+    w = smallmetrics.horizontalAdvance(stmp);
     Texts.append(Text(-25-w, y-fHeight-2, stmp)); // text right-aligned
 
     if(i == Num) break; // if odd number of ports there will be one port less on the right side

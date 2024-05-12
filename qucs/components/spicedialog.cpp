@@ -348,11 +348,10 @@ bool SpiceDialog::loadSpiceNetList(const QString& s)
       piping = false;
     }
     script = QucsSettings.BinDir + script;
-    QString spiceCommand;
+    QStringList args;
     SpicePrep = new QProcess(this);
-    spiceCommand+=interpreter + " ";
-    spiceCommand+=script + " ";
-    spiceCommand+=FileInfo.filePath() + " ";
+    args.append(script);
+    args.append(FileInfo.filePath());
 
     QFile PrepFile;
     QFileInfo PrepInfo(QucsSettings.QucsWorkDir, s + ".pre");
@@ -360,7 +359,7 @@ bool SpiceDialog::loadSpiceNetList(const QString& s)
 
     if (!piping)
     {
-      spiceCommand += PrepName + " ";
+      args.append(PrepName);
       connect(SpicePrep, SIGNAL(readyReadStandardOutput()), SLOT(slotSkipOut()));
       connect(SpicePrep, SIGNAL(readyReadStandardError()), SLOT(slotGetPrepErr()));
     }
@@ -391,7 +390,7 @@ bool SpiceDialog::loadSpiceNetList(const QString& s)
       }
       prestream = new QTextStream(&PrepFile);
     }
-    SpicePrep->start(spiceCommand);
+    SpicePrep->start(interpreter, args);
     if ((SpicePrep->state() != QProcess::Starting) &&
         (SpicePrep->state() != QProcess::Running))
     {

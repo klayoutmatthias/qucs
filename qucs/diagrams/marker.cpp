@@ -415,11 +415,11 @@ void Marker::paint(ViewPainter *p, int x0, int y0)
   // keep track of painter state
   p->Painter->save();
 
+  // @@@
   // Workaround for bug in Qt: If WorldMatrix is turned off, \n in the
   // text creates a terrible mess.
   p->Painter->setWorldMatrixEnabled(true);
-  QMatrix wm = p->Painter->worldMatrix();
-  p->Painter->setWorldMatrix(QMatrix());
+  p->Painter->setWorldTransform(QTransform());
 
   int x2_, y2_;
   p->Painter->setPen(QPen(Qt::black,1));
@@ -430,8 +430,6 @@ void Marker::paint(ViewPainter *p, int x0, int y0)
     p->eraseRect(x0+x1, y0+y1, x2_, y2_);
     p->drawText(Text, x0+x1+3, y0+y1+3);
   }
-  p->Painter->setWorldMatrix(wm);
-  p->Painter->setWorldMatrixEnabled(false);
 
   // restore painter state
   p->Painter->restore();

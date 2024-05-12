@@ -626,8 +626,7 @@ int Schematic::insertWire(const WireList::holder &w)
     // ................................................................
     // Check if the new line covers existing nodes.
     // In order to also check new appearing wires -> use "for"-loop
-    // @@@ was from "current" before ...
-    for(auto pw = Wires->begin(); pw != Wires->end(); ++pw) {
+    for(auto pw = --Wires->end(); pw != Wires->end(); ++pw) {
         for(auto pn = Nodes->begin(); pn != Nodes->end(); )    // check every node
         {
             if(pn->cx == pw->x1)

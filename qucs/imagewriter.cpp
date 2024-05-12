@@ -76,14 +76,15 @@ ImageWriter::noGuiPrint(QWidget *doc, QString printFile, QString color)
     delete svg1;
 
     if (!printFile.endsWith(".svg")) {
-        QString cmd = "inkscape -z --file=";
-        cmd += tempfile + " ";
-
+        QString cmd = "inkscape";
+        QStringList args;
+        args.append("-z");
+        args.append("--file=" + tempfile);
         if (printFile.endsWith(".eps")) {
-          cmd += "--export-eps=" + printFile;
+          args.append("--export-eps=" + printFile);
         }
 
-        int result = QProcess::execute(cmd);
+        int result = QProcess::execute(cmd, args);
 
         if (result!=0) {
             QMessageBox* msg =  new QMessageBox(QMessageBox::Critical,"Export to image", "Inkscape start error!", QMessageBox::Ok);
@@ -240,24 +241,27 @@ int ImageWriter::print(QWidget *doc)
         delete svgwriter;
 
         if (dlg->needsInkscape()) {
-            QString cmd = "inkscape -z --file=";
-            cmd += filename+".tmp.svg ";
+            QString cmd = "inkscape";
+            QStringList args;
+            args.append("-z");
+            args.append("--file=" + filename + ".tmp.svg ");
 
             if (dlg->isPdf_Tex()) {
                 QString tmp = filename;
                 tmp.chop(4);
-                cmd = cmd + "--export-pdf="+ tmp + " --export-latex";
+                args.append("--export-pdf=" + tmp);
+                args.append("--export-latex");
             }
 
             if (dlg->isPdf()) {
-                cmd = cmd + "--export-pdf=" + filename;
+                args.append("--export-pdf=" + filename);
             }
 
             if (dlg->isEps()) {
-                cmd = cmd + "--export-eps=" + filename;
+                args.append("--export-eps=" + filename);
             }
 
-            int result = QProcess::execute(cmd);
+            int result = QProcess::execute(cmd, args);
 
             if (result!=0) {
                 QMessageBox::critical(0, QObject::tr("Export to image"), 

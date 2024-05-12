@@ -114,8 +114,8 @@ int TruthDiagram::calcDiagram()
     colWidth = 0;
     Texts.append(new Text(x-4, y2-2, Str)); // independent variable
     if(NumAll != 0) {
-      z = metrics.width("1");
-      colWidth = metrics.width("0");
+      z = metrics.horizontalAdvance("1");
+      colWidth = metrics.horizontalAdvance("0");
       if(z > colWidth)  colWidth = z;
       colWidth += 2;
       counting = int(log(double(NumAll)) / log(2.0) + 0.9999); // number of bits
@@ -182,7 +182,7 @@ int TruthDiagram::calcDiagram()
           py = (char*)g->cPointsY;
           counting = strlen((char*)py);    // count number of "bits"
 
-          digitWidth = metrics.width("X") + 2;
+          digitWidth = metrics.horizontalAdvance("X") + 2;
           if((x+digitWidth*counting) >= x2) {    // enough space for "bit vector" ?
             checkColumnWidth("0", metrics, 0, x2, y);
             goto funcEnd;

@@ -120,7 +120,7 @@ void RFedd2P::createSymbol()
 
   // component text name
   tmp = Props.at(0).Value;
-  w = smallmetrics.width(tmp);
+  w = smallmetrics.horizontalAdvance(tmp);
   Texts.append(Text(-w/2, -fHeight/2, tmp)); // text centered in the box
 
   // add port numbers text
@@ -129,7 +129,7 @@ void RFedd2P::createSymbol()
   Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
   Ports.append(Port(-30,  y));
   tmp = QString::number(i+1);
-  w = smallmetrics.width(tmp);
+  w = smallmetrics.horizontalAdvance(tmp);
   Texts.append(Text(-25-w, y-fHeight-2, tmp)); // text right-aligned
   i++;
 

@@ -140,7 +140,7 @@ void VHDL_File::createSymbol()
   Lines.append(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
 
   tmp = QObject::tr("vhdl");
-  int w = metrics.width(tmp);
+  int w = metrics.horizontalAdvance(tmp);
   Texts.append(Text(w/-2, fHeight/-2, tmp));
 
   int y = 15-h, i = 0;
@@ -151,7 +151,7 @@ void VHDL_File::createSymbol()
     pp.Type = TypeNames.section(',', i, i);
     Ports.append(pp);
     tmp = PortNames.section(',', i, i);
-    w = metrics.width(tmp);
+    w = metrics.horizontalAdvance(tmp);
     Texts.append(Text(-19-w, y-fHeight-2, tmp));
     i++;
 

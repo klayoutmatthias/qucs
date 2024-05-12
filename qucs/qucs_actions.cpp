@@ -803,7 +803,7 @@ void QucsApp::slotCallPowerComb()
  * \param progDesc  program description string (used for error messages)
  * \param args  arguments to pass to the executable
  */
-void QucsApp::launchTool(const QString& prog, const QString& progDesc, const QString& args) {
+void QucsApp::launchTool(const QString& prog, const QString& progDesc, const QStringList &args) {
   QProcess *tool = new QProcess();
 
 #ifdef __MINGW32__
@@ -826,15 +826,14 @@ void QucsApp::launchTool(const QString& prog, const QString& progDesc, const QSt
     tool->setWorkingDirectory(QucsSettings.BinDir);
   }
 
-  qDebug() << "Command :" << cmd + " " + args;
+  qDebug() << "Command :" << cmd + " " + args.join(" ");
 
-  // FIXME: use start(const QString& program, const QStringList& arguments);
-  tool->start(cmd + " " + args);
+  tool->start(cmd, args);
   
   // BUG: use signals. see QUCSATOR invocation
   if(!tool->waitForStarted(1000) ) {
     QMessageBox::critical(this, tr("Error"),
-	tr("Cannot start %1 program! \n\n(%2)").arg(progDesc, cmd + " " + args));
+        tr("Cannot start %1 program! \n\n(%2)").arg(progDesc, cmd + " " + args.join(" ")));
     delete tool;
     return;
   }
@@ -856,7 +855,9 @@ void QucsApp::slotHelpOnline()
 // --------------------------------------------------------------
 void QucsApp::showHTML(const QString& Page)
 {
-  launchTool("qucshelp", "help", Page);
+  QStringList args;
+  args.push_back(Page);
+  launchTool("qucshelp", "help", args);
 }
 
 
@@ -988,11 +989,9 @@ void QucsApp::slotCursorLeft(bool left)
     if(markerCount > 0) {  // only move marker if nothing else selected
       Doc->markerLeftRight(left, movingElements);
     } else if(left) {
-      if(Doc->scrollLeft(Doc->horizontalScrollBar()->singleStep()))
-        Doc->scrollBy(-Doc->horizontalScrollBar()->singleStep(), 0);
+      Doc->scrollLeft(Doc->horizontalScrollBar()->singleStep());
     }else{ // right
-      if(Doc->scrollRight(-Doc->horizontalScrollBar()->singleStep()))
-        Doc->scrollBy(Doc->horizontalScrollBar()->singleStep(), 0);
+      Doc->scrollRight(-Doc->horizontalScrollBar()->singleStep());
     }
 
     Doc->viewport()->update();
@@ -1057,11 +1056,9 @@ void QucsApp::slotCursorUp(bool up)
     if(markerCount > 0) {  // only move marker if nothing else selected
       Doc->markerUpDown(up, movingElements);
     } else if(up) { // nothing selected at all
-      if(Doc->scrollUp(Doc->verticalScrollBar()->singleStep()))
-        Doc->scrollBy(0, -Doc->verticalScrollBar()->singleStep());
+      Doc->scrollUp(Doc->verticalScrollBar()->singleStep());
     } else { // down
-      if(Doc->scrollDown(-Doc->verticalScrollBar()->singleStep()))
-        Doc->scrollBy(0, Doc->verticalScrollBar()->singleStep());
+      Doc->scrollDown(-Doc->verticalScrollBar()->singleStep());
     }
 
     Doc->viewport()->update();
@@ -1156,7 +1153,7 @@ void QucsApp::slotApplyCompText()
 
   // avoid seeing the property text behind the line edit
   s = pp->Value;
-  editText->setMinimumWidth(editText->fontMetrics().width(s)+4);
+  editText->setMinimumWidth(editText->fontMetrics().horizontalAdvance(s)+4);
 
 
   Doc->contentsToViewport(int(Doc->Scale * float(view->MAx1 - Doc->ViewX1)),
@@ -1165,7 +1162,7 @@ void QucsApp::slotApplyCompText()
   editText->setReadOnly(false);
   if(pp) {  // is it a property ?
     s = pp->Value;
-    view->MAx2 += editText->fontMetrics().width(pp->Name+"=");
+    view->MAx2 += editText->fontMetrics().horizontalAdvance(pp->Name+"=");
     if(pp->Description.indexOf('[') >= 0)  // is selection list ?
       editText->setReadOnly(true);
     Expr_CompProp.setPattern("[^\"]*");
@@ -1194,7 +1191,7 @@ void QucsApp::slotApplyCompText()
 // the width of the edit field.
 void QucsApp::slotResizePropEdit(const QString& t)
 {
-  editText->resize(editText->fontMetrics().width(t)+4,
+  editText->resize(editText->fontMetrics().horizontalAdvance(t)+4,
                    editText->fontMetrics().lineSpacing());
 }
 

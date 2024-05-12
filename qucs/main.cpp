@@ -317,7 +317,7 @@ void createIcons() {
         image.fill(Qt::transparent);
 
         QPainter painter(&image);
-        QPainter::RenderHints hints = 0;
+        QPainter::RenderHints hints;
         // Ask to antialias drawings if requested
         if (QucsSettings.GraphAntiAliasing) hints |= QPainter::Antialiasing;
         // Ask to antialias text if requested

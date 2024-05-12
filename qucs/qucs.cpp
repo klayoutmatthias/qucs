@@ -358,7 +358,7 @@ void QucsApp::initView()
   QString path = QucsSettings.QucsHomeDir.absolutePath();
   QDir ProjDir(path);
   // initial projects directory is the Qucs home directory
-  QucsSettings.projsDir = path;
+  QucsSettings.projsDir.setPath(path);
 
   // create home dir if not exist
   if(!ProjDir.exists()) {
@@ -1224,7 +1224,7 @@ void QucsApp::slotListProjOpen(const QModelIndex &idx)
     openProject(QucsSettings.projsDir.filePath(dName));
   } else { // it's a normal directory
     // change projects directory to the selected one
-    QucsSettings.projsDir = QucsSettings.projsDir.filePath(dName);
+    QucsSettings.projsDir.setPath(QucsSettings.projsDir.filePath(dName));
     readProjects();
     //repaint();
   }
@@ -2333,7 +2333,9 @@ void QucsApp::slotOpenContent(const QModelIndex &idx)
       //Program->setCommunication(0);
       QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
       Program->setProcessEnvironment(env);
-      Program->start(com.join(" "));
+      QString cmd = com.first();
+      com.erase(com.begin());
+      Program->start(cmd, com);
       if(Program->state()!=QProcess::Running&&
               Program->state()!=QProcess::Starting) {
         QMessageBox::critical(this, tr("Error"),
@@ -2728,7 +2730,7 @@ void QucsApp::slotEditElement()
 // looses the focus.
 void QucsApp::slotHideEdit()
 {
-  editText->setParent(this, 0);
+  editText->setParent(this, Qt::WindowFlags());
   editText->setHidden(true);
 }
 
@@ -2918,8 +2920,8 @@ bool loadSettings()
     //if(settings.contains("BinDir"))QucsSettings.BinDir = settings.value("BinDir").toString();
     //if(settings.contains("LangDir"))QucsSettings.LangDir = settings.value("LangDir").toString();
     //if(settings.contains("LibDir"))QucsSettings.LibDir = settings.value("LibDir").toString();
-    if(settings.contains("AdmsXmlBinDir"))QucsSettings.AdmsXmlBinDir = settings.value("AdmsXmlBinDir").toString();
-    if(settings.contains("AscoBinDir"))QucsSettings.AscoBinDir = settings.value("AscoBinDir").toString();
+    if(settings.contains("AdmsXmlBinDir"))QucsSettings.AdmsXmlBinDir.setPath(settings.value("AdmsXmlBinDir").toString());
+    if(settings.contains("AscoBinDir"))QucsSettings.AscoBinDir.setPath(settings.value("AscoBinDir").toString());
     //if(settings.contains("OctaveDir"))QucsSettings.OctaveDir = settings.value("OctaveDir").toString();
     //if(settings.contains("ExamplesDir"))QucsSettings.ExamplesDir = settings.value("ExamplesDir").toString();
     //if(settings.contains("DocDir"))QucsSettings.DocDir = settings.value("DocDir").toString();
@@ -2952,7 +2954,7 @@ bool loadSettings()
 
     if(settings.contains("ShowDescription")) QucsSettings.ShowDescriptionProjectTree = settings.value("ShowDescription").toBool();
 
-    QucsSettings.RecentDocs = settings.value("RecentDocs").toString().split("*",QString::SkipEmptyParts);
+    QucsSettings.RecentDocs = settings.value("RecentDocs").toString().split("*",Qt::SkipEmptyParts);
     QucsSettings.numRecentDocs = QucsSettings.RecentDocs.count();
 
 

@@ -427,7 +427,7 @@ void Schematic::paintEvent(QPaintEvent * /*event*/)
       x = pn->cx;
       y = pn->cy + 4;
       z = pn->x1;
-      if(z & 1) x -= Painter.Painter->fontMetrics().width(pn->Name);
+      if(z & 1) x -= Painter.Painter->fontMetrics().horizontalAdvance (pn->Name);
       if(!(z & 2)) {
         y -= (Painter.LineSpacing>>1) + 4;
         if(z & 1) x -= 4;
@@ -761,7 +761,7 @@ void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImag
         x = pn->cx;
         y = pn->cy + 4;
         z = pn->x1;
-        if(z & 1) x -= p->Painter->fontMetrics().width(pn->Name);
+        if(z & 1) x -= p->Painter->fontMetrics().horizontalAdvance(pn->Name);
         if(!(z & 2)) {
           y -= (p->LineSpacing>>1) + 4;
           if(z & 1) x -= 4;
@@ -788,7 +788,6 @@ void Schematic::resizeContents(int w, int h)
 {
   int vpw = viewport()->width();
   int vph = viewport()->height();
-printf("@@@ resizeContents(%d,%d)\n", w, h); fflush(stdout);
   horizontalScrollBar()->setPageStep(vpw);
   horizontalScrollBar()->setMaximum(std::max(0, w - vpw));
   verticalScrollBar()->setPageStep(vph);
@@ -799,7 +798,6 @@ printf("@@@ resizeContents(%d,%d)\n", w, h); fflush(stdout);
 // -----------------------------------------------------------
 void Schematic::scrollBy(int dx, int dy)
 {
-printf("@@@ scrollBy(%d,%d)\n", dx, dy); fflush(stdout);
   horizontalScrollBar()->setValue(horizontalScrollBar()->value() + dx);
   verticalScrollBar()->setValue(verticalScrollBar()->value() + dy);
   viewport()->update();
@@ -808,7 +806,6 @@ printf("@@@ scrollBy(%d,%d)\n", dx, dy); fflush(stdout);
 // -----------------------------------------------------------
 void Schematic::setContentsPos(int x, int y)
 {
-  printf("@@@ setContentsPos(%d,%d)\n", x, y); fflush(stdout);
   horizontalScrollBar()->setValue(x);
   verticalScrollBar()->setValue(y);
   viewport()->update();
@@ -1178,7 +1175,7 @@ bool Schematic::rotateElements()
         pc = (Component*)pe;
         pc->rotate();   //rotate component !before! rotating its center
         pc->setCenter(pc->cy - y1 + x1, x1 - pc->cx + y1);
-        insertRawComponent(ComponentList::holder(pc)); // @@@ tmp
+        insertRawComponent(ComponentList::holder(pc));
         break;
 
       case isWire:
@@ -1198,7 +1195,7 @@ bool Schematic::rotateElements()
             pl->Type = isVWireLabel;
           else pl->Type = isHWireLabel;
         }
-        insertWire(WireList::holder(pw)); // @@@ tmp
+        insertWire(WireList::holder(pw));
         break;
 
       case isHWireLabel:
@@ -1267,7 +1264,7 @@ bool Schematic::mirrorXComponents()
 	pc = (Component*)pe;
 	pc->mirrorX();   // mirror component !before! mirroring its center
 	pc->setCenter(pc->cx, y1 - pc->cy);
-        insertRawComponent(ComponentList::holder(pc)); // @@@ tmp
+        insertRawComponent(ComponentList::holder(pc));
 	break;
       case isWire:
 	pw = (Wire*)pe;
@@ -1275,7 +1272,7 @@ bool Schematic::mirrorXComponents()
 	pw->y2 = y1 - pw->y2;
 	pl = pw->Label;
 	if(pl)  pl->cy = y1 - pl->cy;
-        insertWire(WireList::holder(pw)); // @@@ tmp
+        insertWire(WireList::holder(pw));
         break;
       case isHWireLabel:
       case isVWireLabel:
@@ -1330,7 +1327,7 @@ bool Schematic::mirrorYComponents()
         pc = (Component*)pe;
         pc->mirrorY();   // mirror component !before! mirroring its center
         pc->setCenter(x1 - pc->cx, pc->cy);
-        insertRawComponent(ComponentList::holder(pc));  // @@@ tmp
+        insertRawComponent(ComponentList::holder(pc));
         break;
       case isWire:
         pw = (Wire*)pe;
@@ -1338,7 +1335,7 @@ bool Schematic::mirrorYComponents()
         pw->x2 = x1 - pw->x2;
         pl = pw->Label;
         if(pl)  pl->cx = x1 - pl->cx;
-        insertWire(WireList::holder(pw)); // @@@ tmp
+        insertWire(WireList::holder(pw));
         break;
       case isHWireLabel:
       case isVWireLabel:
@@ -1506,7 +1503,6 @@ int Schematic::adjustPortNumbers()
   setOnGrid(x1, y2);
 
 
-  Painting *pp;
   // delete all port names in symbol
   for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
     if(pp->Name == ".PortSym ")
@@ -1538,7 +1534,7 @@ int Schematic::adjustPortNumbers()
       VInfo = VHDL_File_Info (Name, true);
 
     if (!VInfo.PortNames.isEmpty())
-      Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
+      Names = VInfo.PortNames.split(",", Qt::SkipEmptyParts);
 
     for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
@@ -1546,11 +1542,11 @@ int Schematic::adjustPortNumbers()
         id.Prefix = VInfo.EntityName.toUpper();
         id.Parameter.clear();
 	if (!VInfo.GenNames.isEmpty())
-	  GNames = VInfo.GenNames.split(",", QString::SkipEmptyParts);
+          GNames = VInfo.GenNames.split(",", Qt::SkipEmptyParts);
 	if (!VInfo.GenTypes.isEmpty())
-	  GTypes = VInfo.GenTypes.split(",", QString::SkipEmptyParts);
+          GTypes = VInfo.GenTypes.split(",", Qt::SkipEmptyParts);
 	if (!VInfo.GenDefs.isEmpty())
-	  GDefs = VInfo.GenDefs.split(",", QString::SkipEmptyParts);;
+          GDefs = VInfo.GenDefs.split(",", Qt::SkipEmptyParts);;
 	for(Number = 1, it = GNames.begin(); it != GNames.end(); ++it) {
           id.Parameter.append(new SubParameter(
  	    true,
@@ -1566,11 +1562,12 @@ int Schematic::adjustPortNumbers()
 
       Str = QString::number(Number);
       // search for matching port symbol
-      for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
+      auto pp = SymbolPaints.begin();
+      for( ; pp != SymbolPaints.end(); ++pp)
         if(pp->Name == ".PortSym ")
           if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
-      if(pp)
+      if(pp != SymbolPaints.end())
         static_cast<PortSymbol &>(*pp).nameStr = *it;
       else {
 	SymbolPaints.append(new PortSymbol(x1, y2, Str, *it));
@@ -1598,7 +1595,7 @@ int Schematic::adjustPortNumbers()
     else
       VInfo = Verilog_File_Info (Name, true);
     if (!VInfo.PortNames.isEmpty())
-      Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
+      Names = VInfo.PortNames.split(",", Qt::SkipEmptyParts);
 
     for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
@@ -1612,12 +1609,13 @@ int Schematic::adjustPortNumbers()
 
       Str = QString::number(Number);
       // search for matching port symbol
-      for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
+      auto pp = SymbolPaints.begin();
+      for( ; pp != SymbolPaints.end(); ++pp)
 	if(pp->Name == ".PortSym ")
           if(static_cast<PortSymbol &>(*pp).numberStr == Str) break;
 
-      if(pp)
-	((PortSymbol*)pp)->nameStr = *it;
+      if(pp != SymbolPaints.end())
+        ((PortSymbol&)(*pp)).nameStr = *it;
       else {
 	SymbolPaints.append(new PortSymbol(x1, y2, Str, *it));
 	y2 += 40;
@@ -1645,7 +1643,7 @@ int Schematic::adjustPortNumbers()
       VInfo = VerilogA_File_Info (Name, true);
 
     if (!VInfo.PortNames.isEmpty())
-      Names = VInfo.PortNames.split(",", QString::SkipEmptyParts);
+      Names = VInfo.PortNames.split(",", Qt::SkipEmptyParts);
 
     for(auto pp = SymbolPaints.begin(); pp != SymbolPaints.end(); ++pp)
       if(pp->Name == ".ID ") {
@@ -1809,7 +1807,7 @@ bool Schematic::redo()
 // Sets selected elements on grid.
 bool Schematic::elementsOnGrid()
 {
-  int x, y, No;
+  int x, y;
   bool count = false;
   WireLabel *pl, *pLabel;
   QVector<WireLabel *> LabelCache;
@@ -1855,7 +1853,6 @@ bool Schematic::elementsOnGrid()
 
   // test all wires and wire labels
   for(auto pw = Wires->end(); pw != Wires->begin(); ) {
-    auto pwNext = pw;
     --pw;
     pl = pw->Label;
     pw->Label = 0;
@@ -1980,13 +1977,24 @@ void Schematic::wheelEvent(QWheelEvent *Event)
 {
   App->editText->setHidden(true);  // disable edit of component property
   // use smaller steps; typically the returned delta() is a multiple of 120
-  int delta = Event->delta() >> 1;
+  QPoint numPixels = Event->pixelDelta();
+  QPoint numDegrees = Event->angleDelta() / 2;
+
+  int delta = 0;
+  bool scrollHorizontal = false;
+  if (!numPixels.isNull()) {
+    scrollHorizontal = numPixels.x() != 0;
+    delta = scrollHorizontal ? numPixels.x() : numPixels.y();
+  } else if (!numDegrees.isNull()) {
+    scrollHorizontal = numDegrees.x() != 0;
+    delta = scrollHorizontal ? numDegrees.x() : numDegrees.y();
+  }
 
   // ...................................................................
   if((Event->modifiers() & Qt::ShiftModifier) ||
-     (Event->orientation() == Qt::Horizontal)) { // scroll horizontally ?
-      if(delta > 0) { if(scrollLeft(delta)) scrollBy(-delta, 0); }
-      else { if(scrollRight(delta)) scrollBy(-delta, 0); }
+      scrollHorizontal) { // scroll horizontally ?
+      if(delta > 0) { scrollLeft(delta); }
+      else { scrollRight(delta); }
       viewport()->update(); // because QScrollView thinks nothing has changed
       App->view->drawn = false;
   }
@@ -2001,8 +2009,8 @@ void Schematic::wheelEvent(QWheelEvent *Event)
   }
   // ...................................................................
   else {     // scroll vertically !
-      if(delta > 0) { if(scrollUp(delta)) scrollBy(0, -delta); }
-      else { if(scrollDown(delta)) scrollBy(0, -delta); }
+      if(delta > 0) { scrollUp(delta); }
+      else { scrollDown(delta); }
       viewport()->update(); // because QScrollView thinks nothing has changed
       App->view->drawn = false;
   }
@@ -2013,7 +2021,7 @@ void Schematic::wheelEvent(QWheelEvent *Event)
 // -----------------------------------------------------------
 // Scrolls the visible area upwards and enlarges or reduces the view
 // area accordingly.
-bool Schematic::scrollUp(int step)
+void Schematic::scrollUp(int step)
 {
   int diff;
 
@@ -2022,7 +2030,7 @@ bool Schematic::scrollUp(int step)
     resizeContents(contentsWidth(), contentsHeight()-diff);
     ViewY1 += diff / Scale;
     setContentsPos(contentsX(), 0);
-    return false;
+    return;
   }
 
   diff = ViewY2 - UsedY2 - 20;    // keep border of 20
@@ -2032,13 +2040,13 @@ bool Schematic::scrollUp(int step)
     ViewY2 -= diff / Scale;
   }
 
-  return true;
+  scrollBy(0, -step);
 }
 
 // -----------------------------------------------------------
 // Scrolls the visible area downwards and enlarges or reduces the view
 // area accordingly. ("step" must be negative!)
-bool Schematic::scrollDown(int step)
+void Schematic::scrollDown(int step)
 {
   int diff;
 
@@ -2047,7 +2055,7 @@ bool Schematic::scrollDown(int step)
     resizeContents(contentsWidth(), contentsHeight()-diff);
     ViewY2 -= diff / Scale;
     setContentsPos(contentsX(), contentsHeight() - visibleHeight());
-    return false;
+    return;
   }
 
   diff = ViewY1 - UsedY1 + 20;    // keep border of 20
@@ -2055,16 +2063,16 @@ bool Schematic::scrollDown(int step)
     if(step > diff) diff = step;
     resizeContents(contentsWidth(), contentsHeight()+diff);
     ViewY1 -= diff / Scale;
-    return false;
+    return;
   }
 
-  return true;
+  scrollBy(0, -step);
 }
 
 // -----------------------------------------------------------
 // Scrolls the visible area to the left and enlarges or reduces the view
 // area accordingly.
-bool Schematic::scrollLeft(int step)
+void Schematic::scrollLeft(int step)
 {
   int diff;
 
@@ -2073,7 +2081,7 @@ bool Schematic::scrollLeft(int step)
     resizeContents(contentsWidth()-diff, contentsHeight());
     ViewX1 += diff / Scale;
     setContentsPos(0, contentsY());
-    return false;
+    return;
   }
 
   diff = ViewX2 - UsedX2 - 20;    // keep border of 20
@@ -2083,13 +2091,13 @@ bool Schematic::scrollLeft(int step)
     ViewX2 -= diff / Scale;
   }
 
-  return true;
+  scrollBy(-step, 0);
 }
 
 // -----------------------------------------------------------
 // Scrolls the visible area to the right and enlarges or reduces the
 // view area accordingly. ("step" must be negative!)
-bool Schematic::scrollRight(int step)
+void Schematic::scrollRight(int step)
 {
   int diff;
 
@@ -2098,7 +2106,7 @@ bool Schematic::scrollRight(int step)
     resizeContents(contentsWidth()-diff, contentsHeight());
     ViewX2 -= diff / Scale;
     setContentsPos(contentsWidth() - visibleWidth(), contentsY());
-    return false;
+    return;
   }
 
   diff = ViewX1 - UsedX1 + 20;    // keep border of 20
@@ -2106,10 +2114,10 @@ bool Schematic::scrollRight(int step)
     if(step > diff) diff = step;
     resizeContents(contentsWidth()+diff, contentsHeight());
     ViewX1 -= diff / Scale;
-    return false;
+    return;
   }
 
-  return true;
+  scrollBy(-step, 0);
 }
 
 // *********************************************************************

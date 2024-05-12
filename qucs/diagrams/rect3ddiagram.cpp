@@ -698,7 +698,7 @@ int Rect3DDiagram::calcAxis(Axis *Axis, int x, int y,
       
       tmp = misc::StringNiceNum(yD);
       if(Axis->up < 0.0)  tmp = '-'+tmp;
-      w = metrics.width(tmp);  // width of text
+      w = metrics.horizontalAdvance(tmp);  // width of text
       if(maxWidth < w) maxWidth = w;
       
       xLen = int(ystepD * cos(phi) + 0.5) + x;
@@ -734,7 +734,7 @@ int Rect3DDiagram::calcAxis(Axis *Axis, int x, int y,
       if(fabs(GridNum) < 0.01*pow(10.0, Expo)) GridNum = 0.0; // make 0 really 0
       tmp = misc::StringNiceNum(GridNum);
       
-      w = metrics.width(tmp);  // width of text
+      w = metrics.horizontalAdvance(tmp);  // width of text
       if(maxWidth < w) maxWidth = w;
 
       // it seems that the text used to have a left/right alignment
@@ -804,7 +804,7 @@ void Rect3DDiagram::createAxis(Axis *Axis, bool Right,
       }
       x += int(double(metrics.lineSpacing())*sin_phi);
       y -= int(double(metrics.lineSpacing())*cos_phi);
-      w = metrics.width(s);
+      w = metrics.horizontalAdvance(s);
       Texts.append(new Text(x+int(double((z-w)>>1)*cos_phi),
                             y+int(double((z-w)>>1)*sin_phi),
                             s, pg->Color, 12.0, cos_phi, sin_phi));
@@ -813,7 +813,7 @@ void Rect3DDiagram::createAxis(Axis *Axis, bool Right,
   else {
     x += int(double(metrics.lineSpacing())*sin_phi);
     y -= int(double(metrics.lineSpacing())*cos_phi);
-    w = metrics.width(Axis->Label);
+    w = metrics.horizontalAdvance(Axis->Label);
     Texts.append(new Text(x+int(double((z-w)>>1)*cos_phi),
                           y+int(double((z-w)>>1)*sin_phi),
                           Axis->Label, Qt::black, 12.0, cos_phi, sin_phi));
