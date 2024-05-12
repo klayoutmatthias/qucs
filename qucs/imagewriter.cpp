@@ -333,7 +333,7 @@ void ImageWriter::getSelAreaWidthAndHeight(Schematic *sch, int &wsel, int &hsel,
             qDebug() << pw->x1 << pw->x2 << pw->y1 << pw->y2;
         }
         if (pw->Label) {
-          WireLabel *pl = pw->Label;
+          auto pl = std::dynamic_pointer_cast<WireLabel>(pw->Label);
           if (pl->isSelected) {
             int x1,y1,x2,y2;
             pl->getLabelBounding(x1,y1,x2,y2);
@@ -344,7 +344,7 @@ void ImageWriter::getSelAreaWidthAndHeight(Schematic *sch, int &wsel, int &hsel,
     }
 
     for(auto pn = sch->Nodes->begin(); pn != sch->Nodes->end(); ++pn) {
-        WireLabel *pl = pn->Label;
+        auto pl = std::dynamic_pointer_cast<WireLabel>(pn->Label);
         if(pl) {     // check position of node label
             if (pl->isSelected) {
                 int x1,x2,y1,y2;
@@ -364,7 +364,7 @@ void ImageWriter::getSelAreaWidthAndHeight(Schematic *sch, int &wsel, int &hsel,
             updateMinMax(xmin,xmax,ymin,ymax,x1,x2,y1,y2);
 
             for (auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg) {
-                foreach (Marker *pm, pg->Markers) {
+                for (auto pm = pg->Markers.begin(); pm != pg->Markers.end(); ++pm) {
                     if (pm->isSelected) {
                         int x1,y1,x2,y2;
                         pm->Bounding(x1,y1,x2,y2);
