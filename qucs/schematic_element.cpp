@@ -1790,9 +1790,8 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
     // Inserts wires, if a connection to a not moving element is found.
     // The order of the "for"-loops is important to guarantee a stable
     // operation: components, new wires, old wires
-    auto pTo = p.begin() + count;
     auto i = p.begin();
-    for( ; i != pTo; ++i)
+    for(size_t j = 0; j < count; ++j, ++i)
     {
         auto pc = std::dynamic_pointer_cast<Component>(i.ref());
         for(auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
