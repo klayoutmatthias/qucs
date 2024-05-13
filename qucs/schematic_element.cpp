@@ -622,23 +622,22 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
     int  n1, n2;
 
     QSet<Wire *> wiresToDelete;
+    QSet<Node *> nodesToDelete;
 
     // ................................................................
     // Check if the new line covers existing nodes.
     // In order to also check new appearing wires -> use "for"-loop
     for(auto pw = --Wires->end(); pw != Wires->end(); ++pw) {
-        for(auto pn = Nodes->begin(); pn != Nodes->end(); )    // check every node
+        for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn)    // check every node
         {
             if(pn->cx == pw->x1)
             {
                 if(pn->cy <= pw->y1)
                 {
-                    ++pn;
                     continue;
                 }
                 if(pn->cy >= pw->y2)
                 {
-                    ++pn;
                     continue;
                 }
             }
@@ -646,24 +645,22 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
             {
                 if(pn->cx <= pw->x1)
                 {
-                    ++pn;
                     continue;
                 }
                 if(pn->cx >= pw->x2)
                 {
-                    ++pn;
                     continue;
                 }
             }
             else
             {
-                ++pn;
                 continue;
             }
 
             n1 = 2;
             n2 = 3;
-            Node *pn1 = 0, *pn2 = 0;
+            Node *pn1 = pn.operator->();
+            Node *pn2 = pn1;
             // check all connections of the current node
             for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
             {
@@ -679,7 +676,7 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                 n2  = pn2->Connections.size();
                 if(n1 == 1)
                 {
-                    Nodes->erase(pn1);       // delete node 1 if open
+                    nodesToDelete.insert(pn1);  // delete node 1 if open
                     pn2->removeConnection(nw);  // remove connection
                     pn1 = pn2;
                 }
@@ -687,7 +684,7 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                 if(n2 == 1)
                 {
                     pn1->removeConnection(nw);  // remove connection
-                    Nodes->erase(pn2);       // delete node 2 if open
+                    nodesToDelete.insert(pn2);  // delete node 2 if open
                     pn2 = pn1;
                 }
 
@@ -703,26 +700,22 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                 break;
             }
 
-            if (n1 == 1) if(n2 == 1) continue;
+            if (n1 == 1 && n2 == 1) continue;
 
-            if (pn1 && pn2) {
-
-              // split wire into two wires
-              if((pw->x1 != pn1->cx) || (pw->y1 != pn1->cy))
-              {
-                  std::shared_ptr<Wire> newWire (new Wire(pw->x1, pw->y1, pn->cx, pn->cy, pw->Port1, pn1));
-                  pn1->appendConnection(newWire);
-                  Wires->append(newWire);
-                  pw->Port1->appendConnection(newWire);
-              }
-
-              pw->Port1->removeConnection(pw.ref());
-              pw->x1 = pn2->cx;
-              pw->y1 = pn2->cy;
-              pw->Port1 = pn2;
-              pn2->appendConnection(pw.ref());
-
+            // split wire into two wires
+            if((pw->x1 != pn1->cx) || (pw->y1 != pn1->cy))
+            {
+                std::shared_ptr<Wire> newWire (new Wire(pw->x1, pw->y1, pn->cx, pn->cy, pw->Port1, pn1));
+                pn1->appendConnection(newWire);
+                Wires->append(newWire);
+                pw->Port1->appendConnection(newWire);
             }
+
+            pw->Port1->removeConnection(pw.ref());
+            pw->x1 = pn2->cx;
+            pw->y1 = pn2->cy;
+            pw->Port1 = pn2;
+            pn2->appendConnection(pw.ref());
 
         }
     }
@@ -730,6 +723,11 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
     //  remove the obsolete wires
     for (auto i = wiresToDelete.begin(); i != wiresToDelete.end(); ++i) {
       Wires->erase(*i);
+    }
+
+    //  remove the obsolete nodes
+    for (auto i = nodesToDelete.begin(); i != nodesToDelete.end(); ++i) {
+      Nodes->erase(*i);
     }
 
     if (Wires->find(w.get()) != Wires->end())  // if two wire lines with different labels ...
