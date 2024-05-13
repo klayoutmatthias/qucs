@@ -50,9 +50,9 @@ Graph::~Graph()
 }
 
 // ---------------------------------------------------------------------
-void Graph::createMarkerText() const
+void Graph::createMarkerText()
 {
-  for(auto pm : Markers) {
+  for(auto pm = Markers.begin(); pm != Markers.end(); ++pm) {
     pm->createText();
   }
 }
@@ -122,7 +122,7 @@ QString Graph::save()
 	      " "+QString::number(numMode)+" "+QString::number(Style)+
 	      " "+QString::number(yAxisNo)+">";
 
-  foreach(Marker *pm, Markers)
+  for(auto pm = Markers.begin(); pm != Markers.end(); ++pm)
     s += "\n\t  "+pm->save();
 
   return s;
@@ -334,7 +334,7 @@ Graph* Graph::sameNewOne()
   pg->numMode   = numMode;
   pg->yAxisNo   = yAxisNo;
 
-  foreach(Marker *pm, Markers)
+  for(auto pm = Markers.begin(); pm != Markers.end(); ++pm)
     pg->Markers.append(pm->sameNewOne(pg));
 
   return pg;

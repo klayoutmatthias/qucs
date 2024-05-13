@@ -123,7 +123,7 @@ protected:
   bool getPen(const QString&, QPen&, int);
   bool getBrush(const QString&, QBrush&, int);
 
-  void copyComponent(Component*);
+  void copyComponent(const Component &);
   Property &getProperty(const QString&);
   Schematic* containingSchematic;
 };

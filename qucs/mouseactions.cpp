@@ -21,6 +21,7 @@
 #include "schematic.h"
 #include "mouseactions.h"
 #include "module.h"
+#include "opt_sim.h"
 #include "components/component.h"
 #include "components/spicedialog.h"
 #include "components/spicefile.h"
@@ -1941,13 +1942,13 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
          if(c->obsolete_model_hack() == "GND") { // BUG
 	   return;
 	 }else if(c->obsolete_model_hack() == "SPICE") { // BUG. use cast
-           SpiceDialog *sd = new SpiceDialog(App, (SpiceFile*)c.get(), Doc);
+           SpiceDialog *sd = new SpiceDialog(App, std::dynamic_pointer_cast<SpiceFile>(c), Doc);
            if(sd->exec() != 1) break;   // dialog is WDestructiveClose
          } else if(c->obsolete_model_hack() == ".Opt") { // BUG again...
-           OptimizeDialog *od = new OptimizeDialog((Optimize_Sim*)c.get(), Doc);
+           OptimizeDialog *od = new OptimizeDialog(std::dynamic_pointer_cast<Optimize_Sim>(c), Doc);
            if(od->exec() != 1) break;   // dialog is WDestructiveClose
          } else {
-           ComponentDialog * cd = new ComponentDialog(c.get(), Doc);
+           ComponentDialog * cd = new ComponentDialog(c, Doc);
            if(cd->exec() != 1) break;   // dialog is WDestructiveClose
 
            auto cp = Doc->Components->find(c.get());

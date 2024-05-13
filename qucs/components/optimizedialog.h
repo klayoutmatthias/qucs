@@ -18,6 +18,8 @@
 #ifndef OPTIMIZEDIALOG_H
 #define OPTIMIZEDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 #include <QRegExp>
 
@@ -36,7 +38,7 @@ class QIntValidator;
 class OptimizeDialog : public QDialog  {
 Q_OBJECT
 public:
-  OptimizeDialog(Optimize_Sim*, Schematic*);
+  OptimizeDialog(const std::shared_ptr<Optimize_Sim> &Sim, Schematic*);
  ~OptimizeDialog();
 
 private slots:
@@ -65,7 +67,7 @@ private:
   void createASCOFiles();
 
 public:
-  Optimize_Sim *Comp;
+  std::shared_ptr<Optimize_Sim> Comp;
   Schematic *Doc;
   bool changed;
   int numPrec;

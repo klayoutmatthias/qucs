@@ -1276,32 +1276,32 @@ Property &Component::getProperty(const QString& name)
 }
 
 // ---------------------------------------------------------------------
-void Component::copyComponent(Component *pc)
+void Component::copyComponent(const Component &c)
 {
-  Type = pc->Type;
-  x1 = pc->x1;
-  y1 = pc->y1;
-  x2 = pc->x2;
-  y2 = pc->y2;
+  Type = c.Type;
+  x1 = c.x1;
+  y1 = c.y1;
+  x2 = c.x2;
+  y2 = c.y2;
 
-  Model = pc->Model;
-  Name  = pc->Name;
-  showName = pc->showName;
-  Description = pc->Description;
+  Model = c.Model;
+  Name  = c.Name;
+  showName = c.showName;
+  Description = c.Description;
 
-  isActive = pc->isActive;
-  rotated  = pc->rotated;
-  mirroredX = pc->mirroredX;
-  tx = pc->tx;
-  ty = pc->ty;
+  isActive = c.isActive;
+  rotated  = c.rotated;
+  mirroredX = c.mirroredX;
+  tx = c.tx;
+  ty = c.ty;
 
-  Props  = pc->Props;
-  Ports  = pc->Ports;
-  Lines  = pc->Lines;
-  Arcs   = pc->Arcs;
-  Rects  = pc->Rects;
-  Ellips = pc->Ellips;
-  Texts  = pc->Texts;
+  Props  = c.Props;
+  Ports  = c.Ports;
+  Lines  = c.Lines;
+  Arcs   = c.Arcs;
+  Rects  = c.Rects;
+  Ellips = c.Ellips;
+  Texts  = c.Texts;
 }
 
 
@@ -1316,7 +1316,7 @@ void MultiViewComponent::recreate(Schematic *Doc)
   if(Doc) {
     auto i = Doc->Components->find(this);
     assert(i != Doc->Components->end());
-    holder = *i;
+    holder = i.ref();
   }
 
   Ellips.clear();
@@ -1601,7 +1601,7 @@ void GateComponent::createSymbol()
 // better: Component* SomeParserClass::getComponent(SomeDataStream& s)
 std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
 {
-  Component *c = 0;
+  std::shared_ptr<Component> c;
 
   Line = Line.trimmed();
   if(Line.at(0) != '<') {
@@ -1612,17 +1612,17 @@ std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
 
   QString cstr = Line.section (' ',0,0); // component type
   cstr.remove (0,1);    // remove leading "<"
-  if (cstr == "Lib") c = new LibComp ();
-  else if (cstr == "Eqn") c = new Equation ();
-  else if (cstr == "SPICE") c = new SpiceFile();
-  else if (cstr == "Rus") c = new Resistor (false);  // backward compatible
+  if (cstr == "Lib") c.reset(new LibComp ());
+  else if (cstr == "Eqn") c.reset(new Equation ());
+  else if (cstr == "SPICE") c.reset(new SpiceFile());
+  else if (cstr == "Rus") c.reset(new Resistor (false));  // backward compatible
   else if (cstr.left (6) == "SPfile" && cstr != "SPfile") {
     // backward compatible
-    c = new SPEmbed ();
+    c.reset(new SPEmbed ());
     c->Props.last().Value = cstr.mid (6);
   }else{
 	  // FIXME: fetch proto from dictionary.
-    c = Module::getComponent (cstr);
+    c = Module::getComponent(cstr);
   }
 
   if(!c) {
@@ -1638,7 +1638,7 @@ std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
           int r = msg->exec();
           delete msg;
           if (r == QMessageBox::Yes) {
-              c = new Subcircuit();
+              c.reset(new Subcircuit());
               // Hack: insert dummy File property before the first property
               int pos1 = Line.indexOf('"');
               QString filestr = QString("\"%1.sch\" 1 ").arg(cstr);
@@ -1653,10 +1653,9 @@ std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
   }
 
   // BUG: don't use schematic.
-  if(!p->loadComponent(Line, c)) {
+  if(!p->loadComponent(Line, c.get())) {  // @@@ c.get()
     QMessageBox::critical(0, QObject::tr("Error"),
 	QObject::tr("Format Error:\nWrong 'component' line format!"));
-    delete c;
     return 0;
   }
 

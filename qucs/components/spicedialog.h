@@ -38,7 +38,7 @@ class QTextStream;
 class SpiceDialog : public QDialog {
    Q_OBJECT
 public:
-  SpiceDialog(QucsApp*, SpiceFile*, Schematic*);
+  SpiceDialog(QucsApp*, const std::shared_ptr<SpiceFile> &, Schematic*);
  ~SpiceDialog();
 
 private slots:
@@ -77,7 +77,7 @@ private:
   QPushButton *ButtBrowse, *ButtEdit, *ButtAdd, *ButtRemove,
               *ButtOK, *ButtApply, *ButtCancel;
   QComboBox   *PrepCombo;
-  SpiceFile   *Comp;
+  std::shared_ptr<SpiceFile> Comp;
   Schematic   *Doc;
   bool        changed;
   int         currentPrep;

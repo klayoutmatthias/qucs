@@ -41,7 +41,7 @@ class QVBoxLayout;
 class ComponentDialog : public QDialog {
    Q_OBJECT
 public:
-  ComponentDialog(Component*, Schematic*);
+  ComponentDialog(const std::shared_ptr<Component> &, Schematic*);
  ~ComponentDialog();
 
 private slots:
@@ -95,7 +95,7 @@ private:
   QPushButton *BrowseButt, *EditButt, *ButtAdd, *ButtRem;
   QPushButton *ButtUp, *ButtDown;
   QCheckBox   *disp;
-  Component   *Comp;
+  std::shared_ptr<Component> Comp;
   Schematic   *Doc;
   bool        changed;
   int         tx_Dist, ty_Dist;   // remember the text position

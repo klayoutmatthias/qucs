@@ -162,7 +162,7 @@ void Diagram::paintMarkers(ViewPainter *p, bool paintAll)
 {
     // draw markers last, so they are at the top of painting layers
     for(auto pg = Graphs.begin(); pg != Graphs.end(); ++pg)
-      foreach(Marker *pm, pg->Markers)
+        for(auto pm = pg->Markers.begin(); pm != pg->Markers.end(); ++pm)
           if ((pm->Type & 1)||paintAll) pm->paint(p, cx, cy);
 }
 

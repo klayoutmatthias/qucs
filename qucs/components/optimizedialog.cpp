@@ -46,7 +46,7 @@
 #include <QInputDialog>
 
 
-OptimizeDialog::OptimizeDialog(Optimize_Sim *c_, Schematic *d_)
+OptimizeDialog::OptimizeDialog(const std::shared_ptr<Optimize_Sim> &c_, Schematic *d_)
 			: QDialog(d_)
 {
   Comp = c_;
@@ -346,7 +346,7 @@ OptimizeDialog::OptimizeDialog(Optimize_Sim *c_, Schematic *d_)
   // ...........................................................
 
   for(auto pc=Doc->Components->begin(); pc!=Doc->Components->end(); ++pc)
-    if(pc.operator->() != Comp)
+    if(pc.ref() != Comp)
       if(pc->obsolete_model_hack()[0] == '.' && pc->obsolete_model_hack() != ".Opt")
         SimEdit->insertItem(SimEdit->count(), pc->name());
 

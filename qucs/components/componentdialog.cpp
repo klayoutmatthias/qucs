@@ -37,7 +37,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 
-ComponentDialog::ComponentDialog(Component *c, Schematic *d)
+ComponentDialog::ComponentDialog(const std::shared_ptr<Component> &c, Schematic *d)
 			: QDialog(d)
 {
   resize(450, 250);
@@ -177,10 +177,9 @@ ComponentDialog::ComponentDialog(Component *c, Schematic *d)
     gp->addWidget(checkNumber, row++,2);
 
     if(Comp->obsolete_model_hack() == ".SW") {   // parameter sweep
-      for(ComponentList::const_iterator pi=Doc->components().begin(); pi!=Doc->components().end(); ++pi) {
-        Component const* pc = pi.operator->();
+      for(auto pc=Doc->components().begin(); pc!=Doc->components().end(); ++pc) {
 	// insert all schematic available simulations in the Simulation combo box
-        if(pc != Comp)
+        if(pc.ref() != Comp)
           if(pc->obsolete_model_hack()[0] == '.')
             comboSim->insertItem(comboSim->count(), pc->name());
       }

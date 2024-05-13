@@ -173,7 +173,7 @@ private: // painting
   void drawArrowSymbols(int, int, ViewPainter*) const;
   void drawvect(int, int, ViewPainter*) const;
 public: // marker related
-  void createMarkerText() const;
+  void createMarkerText();
   std::pair<double,double> findSample(std::vector<double>&) const;
   Diagram const* parentDiagram() const{return diagram;}
 private:

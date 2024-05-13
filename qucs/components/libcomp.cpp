@@ -185,9 +185,9 @@ int LibComp::loadSymbol()
     if(z < 0)  return z;
 
     // Note: the component returned from getComponentFromName does not have an ownership yet.
-    std::unique_ptr<Component> pc (getComponentFromName(Line));
+    std::shared_ptr<Component> pc(getComponentFromName(Line));
     if(!pc)  return -20;
-    copyComponent(pc.get());
+    copyComponent(*pc);
 
     return 1;
   }
