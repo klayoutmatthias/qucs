@@ -1798,7 +1798,7 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
     {
         auto pc = std::dynamic_pointer_cast<Component>(i.ref());
         for(auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-            newMovingWires(p, pp->getConnection().get(), count);  //  @@@ .get()
+            newMovingWires(p, pp->getConnection().get(), count);
     }
 
     for( ; i != p.end(); ++i) {
@@ -2676,7 +2676,7 @@ void Schematic::activateCompsWithinRect(int x1, int y1, int x2, int y2)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
                                     // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().getConnection().get());  // @@@ .get()
+                                    oneLabel(pc->Ports.first().getConnection().get());
 				}
                         }
                         changed = true;
@@ -2709,7 +2709,7 @@ bool Schematic::activateSpecifiedComponent(int x, int y)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
 				  // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().getConnection().get());  // @@@ .get()
+                                    oneLabel(pc->Ports.first().getConnection().get());
 				}
                         }
                         setChanged(true, true);
@@ -2741,7 +2741,7 @@ bool Schematic::activateSelectedComponents()
                 if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                     if(pc->obsolete_model_hack() == "GND"){
 		      // if existing, delete label on wire line
-                        oneLabel(pc->Ports.first().getConnection().get());   // @@@ .get()
+                        oneLabel(pc->Ports.first().getConnection().get());
 		    }
             }
             sel = true;
