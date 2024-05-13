@@ -111,7 +111,7 @@ QString SubCirPort::vhdlCode(int)
 
   // Insert dummy buffer to avoid reading from an output port.
   QString s = "  net_out";
-  Node *pn = Ports.first().Connection;
+  auto pn = Ports.first().getConnection();
   s += pn->Name + " <= ";
   s += pn->Name + ";\n";
   return s;

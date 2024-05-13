@@ -150,27 +150,27 @@ QString dmux4to16::vhdlCode( int )
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString En = Ports.at(0).Connection->Name;
-  QString A  = Ports.at(1).Connection->Name;
-  QString B  = Ports.at(2).Connection->Name;
-  QString C  = Ports.at(3).Connection->Name;
-  QString D  = Ports.at(4).Connection->Name;
-  QString Y15 = Ports.at(5).Connection->Name;
-  QString Y14 = Ports.at(6).Connection->Name;
-  QString Y13 = Ports.at(7).Connection->Name;
-  QString Y12 = Ports.at(8).Connection->Name;
-  QString Y11 = Ports.at(9).Connection->Name;
-  QString Y10 = Ports.at(10).Connection->Name;
-  QString Y9 = Ports.at(11).Connection->Name;
-  QString Y8 = Ports.at(12).Connection->Name;
-  QString Y7 = Ports.at(13).Connection->Name;
-  QString Y6 = Ports.at(14).Connection->Name;
-  QString Y5 = Ports.at(15).Connection->Name;
-  QString Y4 = Ports.at(16).Connection->Name;
-  QString Y3 = Ports.at(17).Connection->Name;
-  QString Y2 = Ports.at(18).Connection->Name;
-  QString Y1 = Ports.at(19).Connection->Name;
-  QString Y0 = Ports.at(20).Connection->Name;
+  QString En = Ports.at(0).getConnection()->Name;
+  QString A  = Ports.at(1).getConnection()->Name;
+  QString B  = Ports.at(2).getConnection()->Name;
+  QString C  = Ports.at(3).getConnection()->Name;
+  QString D  = Ports.at(4).getConnection()->Name;
+  QString Y15 = Ports.at(5).getConnection()->Name;
+  QString Y14 = Ports.at(6).getConnection()->Name;
+  QString Y13 = Ports.at(7).getConnection()->Name;
+  QString Y12 = Ports.at(8).getConnection()->Name;
+  QString Y11 = Ports.at(9).getConnection()->Name;
+  QString Y10 = Ports.at(10).getConnection()->Name;
+  QString Y9 = Ports.at(11).getConnection()->Name;
+  QString Y8 = Ports.at(12).getConnection()->Name;
+  QString Y7 = Ports.at(13).getConnection()->Name;
+  QString Y6 = Ports.at(14).getConnection()->Name;
+  QString Y5 = Ports.at(15).getConnection()->Name;
+  QString Y4 = Ports.at(16).getConnection()->Name;
+  QString Y3 = Ports.at(17).getConnection()->Name;
+  QString Y2 = Ports.at(18).getConnection()->Name;
+  QString Y1 = Ports.at(19).getConnection()->Name;
+  QString Y0 = Ports.at(20).getConnection()->Name;
 
   s = "\n  "+Name+":process ("+En+", "+A+", "+B+", "+C+", "+D+")\n"+
       "  begin\n" +
@@ -202,27 +202,27 @@ QString dmux4to16::verilogCode( int )
   
   QString l = "";
 
-  QString En = Ports.at(0).Connection->Name;
-  QString A  = Ports.at(1).Connection->Name;
-  QString B  = Ports.at(2).Connection->Name;
-  QString C  = Ports.at(3).Connection->Name;
-  QString D  = Ports.at(4).Connection->Name;
-  QString Y15 = Ports.at(5).Connection->Name;
-  QString Y14 = Ports.at(6).Connection->Name;
-  QString Y13 = Ports.at(7).Connection->Name;
-  QString Y12 = Ports.at(8).Connection->Name;
-  QString Y11 = Ports.at(9).Connection->Name;
-  QString Y10 = Ports.at(10).Connection->Name;
-  QString Y9 = Ports.at(11).Connection->Name;
-  QString Y8 = Ports.at(12).Connection->Name;
-  QString Y7 = Ports.at(13).Connection->Name;
-  QString Y6 = Ports.at(14).Connection->Name;
-  QString Y5 = Ports.at(15).Connection->Name;
-  QString Y4 = Ports.at(16).Connection->Name;
-  QString Y3 = Ports.at(17).Connection->Name;
-  QString Y2 = Ports.at(18).Connection->Name;
-  QString Y1 = Ports.at(19).Connection->Name;
-  QString Y0 = Ports.at(20).Connection->Name;
+  QString En = Ports.at(0).getConnection()->Name;
+  QString A  = Ports.at(1).getConnection()->Name;
+  QString B  = Ports.at(2).getConnection()->Name;
+  QString C  = Ports.at(3).getConnection()->Name;
+  QString D  = Ports.at(4).getConnection()->Name;
+  QString Y15 = Ports.at(5).getConnection()->Name;
+  QString Y14 = Ports.at(6).getConnection()->Name;
+  QString Y13 = Ports.at(7).getConnection()->Name;
+  QString Y12 = Ports.at(8).getConnection()->Name;
+  QString Y11 = Ports.at(9).getConnection()->Name;
+  QString Y10 = Ports.at(10).getConnection()->Name;
+  QString Y9 = Ports.at(11).getConnection()->Name;
+  QString Y8 = Ports.at(12).getConnection()->Name;
+  QString Y7 = Ports.at(13).getConnection()->Name;
+  QString Y6 = Ports.at(14).getConnection()->Name;
+  QString Y5 = Ports.at(15).getConnection()->Name;
+  QString Y4 = Ports.at(16).getConnection()->Name;
+  QString Y3 = Ports.at(17).getConnection()->Name;
+  QString Y2 = Ports.at(18).getConnection()->Name;
+  QString Y1 = Ports.at(19).getConnection()->Name;
+  QString Y0 = Ports.at(20).getConnection()->Name;
 
   QString Y15R = "net_reg" + Name + Y15;
   QString Y14R = "net_reg" + Name + Y14;

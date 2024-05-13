@@ -278,7 +278,7 @@ QString LibComp::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1->Connection->Name;   // node names
+    s += " "+p1->getConnection()->Name;   // node names
 
   // output property
   s += " Type=\""+createType()+"\"";   // type for subcircuit
@@ -298,9 +298,9 @@ QString LibComp::verilogCode(int)
   // output all node names
   auto iport = Ports.begin();
   if (iport != Ports.end()) {
-    s += iport->Connection->Name;
+    s += iport->getConnection()->Name;
     while (++iport != Ports.end())
-      s += ", "+iport->Connection->Name;   // node names
+      s += ", "+iport->getConnection()->Name;   // node names
   }
 
   s += ");\n";
@@ -315,9 +315,9 @@ QString LibComp::vhdlCode(int)
   // output all node names
   auto iport = Ports.begin();
   if (iport != Ports.end()) {
-    s += iport->Connection->Name;
+    s += iport->getConnection()->Name;
     while (++iport != Ports.end())
-      s += ", "+iport->Connection->Name;   // node names
+      s += ", "+iport->getConnection()->Name;   // node names
   }
 
   s += ");\n";

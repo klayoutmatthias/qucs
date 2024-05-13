@@ -620,7 +620,7 @@ QString Component::netlist()
   // as a resistor as well, and the changes were made to their .cpp
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1){
     i++;
-    s += " " + p1->Connection->Name;   // node names
+    s += " " + p1->getConnection()->Name;   // node names
   }
 
   // output all properties
@@ -651,12 +651,12 @@ QString Component::getNetlist()
   // Component is shortened.
   int z=0;
   auto iport = Ports.begin();
-  QString Node1 = iport->Connection->Name;
+  QString Node1 = iport->getConnection()->Name;
   QString s = "";
   ++iport;
   for ( ; iport != Ports.end(); ++iport)
     s += "R:" + Name + "." + QString::number(z++) + " " +
-      Node1 + " " + iport->Connection->Name + " R=\"0\"\n";
+      Node1 + " " + iport->getConnection()->Name + " R=\"0\"\n";
   return s;
 }
 
@@ -678,11 +678,11 @@ QString Component::get_Verilog_Code(int NumPorts)
 
   // Component is shortened.
   auto iport = Ports.begin();
-  QString Node1 = iport->Connection->Name;
+  QString Node1 = iport->getConnection()->Name;
   QString s = "";
   ++iport;
   for ( ; iport != Ports.end(); ++iport)
-    s += "  assign " + iport->Connection->Name + " = " + Node1 + ";\n";
+    s += "  assign " + iport->getConnection()->Name + " = " + Node1 + ";\n";
   return s;
 }
 
@@ -707,8 +707,8 @@ QString Component::get_VHDL_Code(int NumPorts)
   // This is logically correct for the inverter only, but makes
   // some sense for the gates (OR, AND etc.).
   // Has anyone a better idea?
-  QString Node1 = Ports.at(0).Connection->Name;
-  return "  " + Node1 + " <= " + Ports.at(1).Connection->Name + ";\n";
+  QString Node1 = Ports.at(0).getConnection()->Name;
+  return "  " + Node1 + " <= " + Ports.at(1).getConnection()->Name + ";\n";
 }
 
 // -------------------------------------------------------
@@ -1379,7 +1379,7 @@ QString GateComponent::netlist()
 
   // output all node names
   for (auto pp = Ports.begin(); pp != Ports.end(); ++pp)
-    s += " "+pp->Connection->Name;   // node names
+    s += " "+pp->getConnection()->Name;   // node names
 
   // output all properties
   s += " " + Props[0].Name + "=\"" + Props[0].Value + "\"";
@@ -1393,7 +1393,7 @@ QString GateComponent::vhdlCode(int NumPorts)
 {
   auto iport = Ports.begin();
   ++iport;
-  QString s = "  " + iport->Connection->Name + " <= ";  // output port
+  QString s = "  " + iport->getConnection()->Name + " <= ";  // output port
 
   // xnor NOT defined for std_logic, so here use not and xor
   if (Model == "XNOR") {
@@ -1401,11 +1401,11 @@ QString GateComponent::vhdlCode(int NumPorts)
 
     // first input port
     ++iport;
-    QString rhs = iport->Connection->Name;
+    QString rhs = iport->getConnection()->Name;
 
     // output all input ports with node names
     while(++iport != Ports.end()) {
-      rhs = "not ((" + rhs + ")" + Op + iport->Connection->Name + ")";
+      rhs = "not ((" + rhs + ")" + Op + iport->getConnection()->Name + ")";
     }
     s += rhs;
   }
@@ -1417,11 +1417,11 @@ QString GateComponent::vhdlCode(int NumPorts)
     }
 
     ++iport;
-    s += iport->Connection->Name;   // first input port
+    s += iport->getConnection()->Name;   // first input port
 
     // output all input ports with node names
     while(++iport != Ports.end()) {
-      s += Op + iport->Connection->Name;
+      s += Op + iport->getConnection()->Name;
     }
     if(Model.at(0) == 'N')
       s += ')';
@@ -1463,15 +1463,15 @@ QString GateComponent::verilogCode(int NumPorts)
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
-    s += " " + iport->Connection->Name + " = ";  // output port
+    s += " " + iport->getConnection()->Name + " = ";  // output port
     if(Model.at(0) == 'N') s += "~(";
 
     ++iport;
-    s += iport->Connection->Name;   // first input port
+    s += iport->getConnection()->Name;   // first input port
 
     // output all input ports with node names
     while (++iport != Ports.end()) {
-      s += " " + op + " " + iport->Connection->Name;
+      s += " " + op + " " + iport->getConnection()->Name;
     }
 
     if(Model.at(0) == 'N') s += ")";
@@ -1485,14 +1485,14 @@ QString GateComponent::verilogCode(int NumPorts)
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
-    s += " " + Name + " (" + iport->Connection->Name;  // output port
+    s += " " + Name + " (" + iport->getConnection()->Name;  // output port
 
     ++iport;
-    s += ", " + iport->Connection->Name;   // first input port
+    s += ", " + iport->getConnection()->Name;   // first input port
 
     // output all input ports with node names
     while (++iport != Ports.end()) {
-      s += ", " + iport->Connection->Name;
+      s += ", " + iport->getConnection()->Name;
     }
 
     s += ");\n";

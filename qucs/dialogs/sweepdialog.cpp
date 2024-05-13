@@ -142,9 +142,8 @@ void SweepDialog::slotNewValue(int)
   }
   Index *= 2;  // because of complex values
 
-  QList<Node *>::iterator node_it;
   QList<double *>::const_iterator value_it = ValueList.begin();
-  for(node_it = NodeList.begin(); node_it != NodeList.end(); node_it++) {
+  for(auto node_it = NodeList.begin(); node_it != NodeList.end(); node_it++) {
     qDebug() << "SweepDialog::slotNewValue:(*node_it)->Name:" << (*node_it)->Name;
     (*node_it)->Name = misc::num2str(*((*value_it)+Index));
     (*node_it)->Name += ((*node_it)->x1 & 0x10)? "A" : "V";
@@ -211,7 +210,7 @@ Graph* SweepDialog::setBiasPoints()
     pg->lastLoaded = QDateTime(); // Note 1 at the start of this function
     if(pg->loadDatFile(DataSet) == 2) {
       pn->Name = misc::num2str(*(pg->cPointsY)) + "V";
-      NodeList.append(pn.operator->());             // remember node ...
+      NodeList.push_back(pn.ref());             // remember node ...
       ValueList.append(pg->cPointsY);  // ... and all of its values
       pg->cPointsY = 0;   // do not delete it next time !
     }
@@ -235,16 +234,16 @@ Graph* SweepDialog::setBiasPoints()
   // create DC current through each probe
   for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc)
     if(pc->obsolete_model_hack() == "IProbe") { // BUG.
-      Node *pn = pc->Ports.first().Connection;
+      auto pn = pc->Ports.first().getConnection();
       if(!pn->Name.isEmpty())   // preserve node voltage ?
-        pn = pc->Ports.at(1).Connection;
+        pn = pc->Ports.at(1).getConnection();
 
       pn->x1 = 0x10;   // mark current
       pg->Var = pc->name() + ".I";
       pg->lastLoaded = QDateTime(); // Note 1 at the start of this function
       if(pg->loadDatFile(DataSet) == 2) {
         pn->Name = misc::num2str(*(pg->cPointsY)) + "A";
-        NodeList.append(pn);             // remember node ...
+        NodeList.push_back(pn);             // remember node ...
         ValueList.append(pg->cPointsY);  // ... and all of its values
         pg->cPointsY = 0;   // do not delete it next time !
       }

@@ -82,9 +82,9 @@ QString VHDL_File::vhdlCode(int)
 
     // output all node names
     s += " port map (";
-    s += iport->Connection->Name;
+    s += iport->getConnection()->Name;
     while (++iport != Ports.end()) {
-      s += ", "+iport->Connection->Name;   // node names
+      s += ", "+iport->getConnection()->Name;   // node names
     }
     s += ");\n";
   }

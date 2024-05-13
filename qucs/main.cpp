@@ -487,7 +487,9 @@ void createListComponentEntry(){
       // add dummy ports/wires, avoid segfault
       int port = 0;
       for (auto p = c->Ports.begin(); p != c->Ports.end(); ++p) {
-        Node *n = new Node(0,0);
+        static std::list<std::shared_ptr<Node> > heap;  //  FIXME: lost
+        std::shared_ptr<Node> n(new Node(0,0));
+        heap.push_back(n);
         n->Name="_net"+QString::number(port);
         p->Connection = n;
         port +=1;

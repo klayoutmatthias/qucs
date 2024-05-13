@@ -155,7 +155,7 @@ QString SpiceFile::netlist()
 
   QString s = "Sub:"+Name;   // SPICE netlist is subcircuit
   for(auto pp = Ports.begin(); pp != Ports.end(); ++pp)
-    s += " "+pp->Connection->Name;   // output all node names
+    s += " "+pp->getConnection()->Name;   // output all node names
 
   QString f = misc::properFileName(Props.first().Value);
   s += " Type=\""+misc::properName(f)+"\"\n";

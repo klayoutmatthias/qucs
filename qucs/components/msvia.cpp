@@ -75,7 +75,7 @@ QString MSvia::netlist()
   QString s = Model+":"+Name;
 
   // output node name and add ground node
-  s += " " + Ports.first().Connection->Name + " gnd";
+  s += " " + Ports.first().getConnection()->Name + " gnd";
 
   // output all properties
   for(auto p2 = Props.begin(); p2 != Props.end(); ++p2)

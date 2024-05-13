@@ -78,7 +78,7 @@ QString Verilog_File::verilogCode(int)
         s += ", ";
       }
       first = false;
-      s += iport->Connection->Name;   // node names
+      s += iport->getConnection()->Name;   // node names
     }
 
     s += ");\n";

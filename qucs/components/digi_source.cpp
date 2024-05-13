@@ -85,7 +85,7 @@ QString Digi_Source::netlist()
   QString s = Model+":"+Name;
 
   // output node names
-  s += " "+Ports.first().Connection->Name;
+  s += " "+Ports.first().getConnection()->Name;
   
   // output all properties
   auto pp = Props.begin();
@@ -103,7 +103,7 @@ QString Digi_Source::netlist()
 QString Digi_Source::vhdlCode(int NumPorts)
 {
   QString s, t;
-  QString Out("    " + Ports.first().Connection->Name + " <= '");
+  QString Out("    " + Ports.first().getConnection()->Name + " <= '");
 
   s  = "\n  " + Name + ":process\n  begin\n";
 
@@ -149,7 +149,7 @@ QString Digi_Source::verilogCode(int NumPorts)
   QString s, t, n, r;
 
   auto pp = Ports.begin();
-  n = pp->Connection->Name;
+  n = pp->getConnection()->Name;
   r = "net_src" + Name + n;
   s = "\n  // " + Name + " digital source\n";
   s += "  assign " + n + " = " + r + ";\n";

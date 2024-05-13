@@ -125,8 +125,8 @@ QString MOSFET::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1->Connection->Name;   // node names
-  s += " "+Ports[2].Connection->Name;  // connect substrate to source
+    s += " "+p1->getConnection()->Name;   // node names
+  s += " "+Ports[2].getConnection()->Name;  // connect substrate to source
 
   // output all properties
   for(auto p2 = Props.begin(); p2 != Props.end(); ++p2)

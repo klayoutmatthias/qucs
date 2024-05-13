@@ -76,7 +76,7 @@ QString EqnDefined::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1->Connection->Name;   // node names
+    s += " "+p1->getConnection()->Name;   // node names
 
   // output all properties
   int i = 2;

@@ -132,24 +132,24 @@ QString andor4x4::vhdlCode( int )
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString a11 = Ports.at(0).Connection->Name;
-  QString a12 = Ports.at(1).Connection->Name;
-  QString a13 = Ports.at(2).Connection->Name;
-  QString a14 = Ports.at(3).Connection->Name;
-  QString a21 = Ports.at(4).Connection->Name;
-  QString a22 = Ports.at(5).Connection->Name;
-  QString a23 = Ports.at(6).Connection->Name;
-  QString a24 = Ports.at(7).Connection->Name;
-  QString a31 = Ports.at(8).Connection->Name;
-  QString a32 = Ports.at(9).Connection->Name;
-  QString a33 = Ports.at(10).Connection->Name;
-  QString a34 = Ports.at(11).Connection->Name;
-  QString a41 = Ports.at(12).Connection->Name;
-  QString a42 = Ports.at(13).Connection->Name;
-  QString a43 = Ports.at(14).Connection->Name;
-  QString a44 = Ports.at(15).Connection->Name;
+  QString a11 = Ports.at(0).getConnection()->Name;
+  QString a12 = Ports.at(1).getConnection()->Name;
+  QString a13 = Ports.at(2).getConnection()->Name;
+  QString a14 = Ports.at(3).getConnection()->Name;
+  QString a21 = Ports.at(4).getConnection()->Name;
+  QString a22 = Ports.at(5).getConnection()->Name;
+  QString a23 = Ports.at(6).getConnection()->Name;
+  QString a24 = Ports.at(7).getConnection()->Name;
+  QString a31 = Ports.at(8).getConnection()->Name;
+  QString a32 = Ports.at(9).getConnection()->Name;
+  QString a33 = Ports.at(10).getConnection()->Name;
+  QString a34 = Ports.at(11).getConnection()->Name;
+  QString a41 = Ports.at(12).getConnection()->Name;
+  QString a42 = Ports.at(13).getConnection()->Name;
+  QString a43 = Ports.at(14).getConnection()->Name;
+  QString a44 = Ports.at(15).getConnection()->Name;
 
-  QString y   = Ports.at(16).Connection->Name;
+  QString y   = Ports.at(16).getConnection()->Name;
 
   s = "\n  " + Name + ":process (" +
       a11 + ", " +  a12 + ", " + a13 + ", " + a14 + ", " +
@@ -170,24 +170,24 @@ QString andor4x4::verilogCode( int )
   QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
-  QString a11 = Ports.at(0).Connection->Name;
-  QString a12 = Ports.at(1).Connection->Name;
-  QString a13 = Ports.at(2).Connection->Name;
-  QString a14 = Ports.at(3).Connection->Name;
-  QString a21 = Ports.at(4).Connection->Name;
-  QString a22 = Ports.at(5).Connection->Name;
-  QString a23 = Ports.at(6).Connection->Name;
-  QString a24 = Ports.at(7).Connection->Name;
-  QString a31 = Ports.at(8).Connection->Name;
-  QString a32 = Ports.at(9).Connection->Name;
-  QString a33 = Ports.at(10).Connection->Name;
-  QString a34 = Ports.at(11).Connection->Name;
-  QString a41 = Ports.at(12).Connection->Name;
-  QString a42 = Ports.at(13).Connection->Name;
-  QString a43 = Ports.at(14).Connection->Name;
-  QString a44 = Ports.at(15).Connection->Name;
+  QString a11 = Ports.at(0).getConnection()->Name;
+  QString a12 = Ports.at(1).getConnection()->Name;
+  QString a13 = Ports.at(2).getConnection()->Name;
+  QString a14 = Ports.at(3).getConnection()->Name;
+  QString a21 = Ports.at(4).getConnection()->Name;
+  QString a22 = Ports.at(5).getConnection()->Name;
+  QString a23 = Ports.at(6).getConnection()->Name;
+  QString a24 = Ports.at(7).getConnection()->Name;
+  QString a31 = Ports.at(8).getConnection()->Name;
+  QString a32 = Ports.at(9).getConnection()->Name;
+  QString a33 = Ports.at(10).getConnection()->Name;
+  QString a34 = Ports.at(11).getConnection()->Name;
+  QString a41 = Ports.at(12).getConnection()->Name;
+  QString a42 = Ports.at(13).getConnection()->Name;
+  QString a43 = Ports.at(14).getConnection()->Name;
+  QString a44 = Ports.at(15).getConnection()->Name;
 
-  QString y   = Ports.at(16).Connection->Name;
+  QString y   = Ports.at(16).getConnection()->Name;
 
   QString l = "";
  

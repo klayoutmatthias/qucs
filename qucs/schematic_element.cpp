@@ -1759,8 +1759,9 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
 
             // delete all port connections
             for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
-                pp->Connection->removeConnection(pc.ref());
-                pp->Connection->State = 4;
+                auto pcc = std::shared_ptr<Node>(pp->Connection);
+                pcc->removeConnection(pc.ref());
+                pcc->State = 4;
             }
 
             Components->erase(pc);   // take component out of the document
@@ -1797,7 +1798,7 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
     {
         auto pc = std::dynamic_pointer_cast<Component>(i.ref());
         for(auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-            newMovingWires(p, pp->Connection, count);
+            newMovingWires(p, std::shared_ptr<Node>(pp->Connection).get(), count);  //  @@@ .get()
     }
 
     for( ; i != p.end(); ++i) {
@@ -2487,7 +2488,7 @@ void Schematic::insertComponentNodes(const std::shared_ptr<Component> &c, bool n
 
     // connect every node of the component to corresponding schematic node
     for (auto pp = c->Ports.begin(); pp != c->Ports.end(); ++pp)
-        pp->Connection = insertNode(pp->x+c->cx, pp->y+c->cy, c).get(); // @@@
+        pp->Connection = insertNode(pp->x+c->cx, pp->y+c->cy, c);
 
     if(noOptimize)  return;
 
@@ -2497,7 +2498,7 @@ void Schematic::insertComponentNodes(const std::shared_ptr<Component> &c, bool n
     ++pp;
     while (pp != c->Ports.end())
     {
-        Node *pn = pp->Connection;
+        auto pn = std::shared_ptr<Node>(pp->Connection);
         for(auto i = pn->Connections.begin(); i != pn->Connections.end(); ++i)
         {
             std::shared_ptr<Element> pe(*i);
@@ -2505,7 +2506,7 @@ void Schematic::insertComponentNodes(const std::shared_ptr<Component> &c, bool n
             {
                 std::list<std::weak_ptr<Element> > *pL;
                 std::shared_ptr<Wire> pw = std::dynamic_pointer_cast<Wire>(pe);
-                if (pw->Port1 == pn)
+                if (pw->Port1 == pn.get())
                   pL = &pw->Port2->Connections;
                 else
                   pL = &pw->Port1->Connections;
@@ -2535,7 +2536,7 @@ void Schematic::insertRawComponent(const ComponentList::holder &c, bool noOptimi
     // a ground symbol erases an existing label on the wire line
     if(c->obsolete_model_hack() == "GND") { // BUG.
         c->gnd_obsolete_model_override_hack("x");
-        auto pe = getWireLabel(c->Ports.first().Connection);
+        auto pe = getWireLabel(std::shared_ptr<Node>(c->Ports.first().Connection).get());
         if(pe) if((pe->Type & isComponent) == 0)
             {
                 std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
@@ -2554,13 +2555,15 @@ void Schematic::recreateComponent(const std::shared_ptr<Component> &Comp)
     {
         // Save the labels whose node is not connected to somewhere else.
         // Otherwise the label would be deleted.
-        for (auto pp = Comp->Ports.begin(); pp != Comp->Ports.end(); ++pp)
-            if(pp->Connection->Connections.size() < 2)
+        for (auto pp = Comp->Ports.begin(); pp != Comp->Ports.end(); ++pp) {
+            auto pcc = std::shared_ptr<Node>(pp->Connection);
+            if(pcc->Connections.size() < 2)
             {
-                plMem.push_back(pp->Connection->Label);
-                pp->Connection->Label = 0;
+                plMem.push_back(pcc->Label);
+                pcc->Label = 0;
             }
             else plMem.push_back(0);
+        }
     }
 
 
@@ -2589,8 +2592,9 @@ void Schematic::recreateComponent(const std::shared_ptr<Component> &Comp)
         {
             if(*pl != 0)
             {
-                (*pl)->cx = pp->Connection->cx;
-                (*pl)->cy = pp->Connection->cy;
+                auto pcc = std::shared_ptr<Node>(pp->Connection);
+                (*pl)->cx = pcc->cx;
+                (*pl)->cy = pcc->cy;
                 placeNodeLabel(*pl);
             }
             ++pl;
@@ -2612,7 +2616,7 @@ void Schematic::insertComponent(const std::shared_ptr<Component> &c)
         // a ground symbol erases an existing label on the wire line
         if(c->obsolete_model_hack() == "GND") { // BUG
             c->gnd_obsolete_model_override_hack("x");
-            auto pe = getWireLabel(c->Ports.first().Connection);
+            auto pe = getWireLabel(std::shared_ptr<Node>(c->Ports.first().Connection).get());
             if(pe && (pe->Type & isComponent) == 0)
                 std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
             c->gnd_obsolete_model_override_hack("GND");
@@ -2672,7 +2676,7 @@ void Schematic::activateCompsWithinRect(int x1, int y1, int x2, int y2)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
                                     // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().Connection);
+                                    oneLabel(std::shared_ptr<Node>(pc->Ports.first().Connection).get());  // @@@ .get()
 				}
                         }
                         changed = true;
@@ -2705,7 +2709,7 @@ bool Schematic::activateSpecifiedComponent(int x, int y)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
 				  // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().Connection);
+                                    oneLabel(std::shared_ptr<Node>(pc->Ports.first().Connection).get());  // @@@ .get()
 				}
                         }
                         setChanged(true, true);
@@ -2737,7 +2741,7 @@ bool Schematic::activateSelectedComponents()
                 if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                     if(pc->obsolete_model_hack() == "GND"){
 		      // if existing, delete label on wire line
-                        oneLabel(pc->Ports.first().Connection);
+                        oneLabel(std::shared_ptr<Node>(pc->Ports.first().Connection).get());   // @@@ .get()
 		    }
             }
             sel = true;
@@ -2755,23 +2759,24 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
 
     for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
     {
-        pp->Connection->removeConnection(pc);  // delete connections
-        switch(pp->Connection->Connections.size())
+        auto pcc = std::shared_ptr<Node>(pp->Connection);
+        pcc->removeConnection(pc);  // delete connections
+        switch(pcc->Connections.size())
         {
         case 0:
             {
-                auto pl = pp->Connection->Label;
+                auto pl = pcc->Label;
                 if(pl)
                 {
                     LabelCache.push_back(pl);
                     pl->cx = pp->x + pc->cx;
                     pl->cy = pp->y + pc->cy;
                 }
-                Nodes->erase(pp->Connection);
+                Nodes->erase(pcc.get());
             }
             break;
         case 2:
-            oneTwoWires(std::shared_ptr<Node>(pp->Connection)); // try to connect two wires to one
+            oneTwoWires(pcc); // try to connect two wires to one
         default:
             ;
         }
@@ -2780,7 +2785,7 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
     // Re-connect component node to schematic node. This must be done completely
     // after the first loop in order to avoid problems with node labels.
     for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-        pp->Connection = insertNode(pp->x+pc->cx, pp->y+pc->cy, pc).get();  // @@@
+        pp->Connection = insertNode(pp->x+pc->cx, pp->y+pc->cy, pc);
 
     for(auto pl = LabelCache.begin(); pl != LabelCache.end(); ++pl)
         insertNodeLabel(*pl);
@@ -2846,21 +2851,23 @@ std::shared_ptr<Component> Schematic::selectedComponent(int x, int y)
 void Schematic::deleteComp(const ComponentList::iterator &c)
 {
     // delete all port connections
-    for (auto pn = c->Ports.begin(); pn != c->Ports.end(); ++pn)
-        switch(pn->Connection->Connections.size())
+    for (auto pn = c->Ports.begin(); pn != c->Ports.end(); ++pn) {
+        auto pcc = std::shared_ptr<Node>(pn->Connection);
+        switch(pcc->Connections.size())
         {
         case 1  :
-            Nodes->erase(pn->Connection);  // delete open nodes
-            pn->Connection = 0;		  //  (auto-delete)
+            Nodes->erase(pcc.get());  // delete open nodes
+            pn->Connection = std::weak_ptr<Node>();  //  should be automatic @@@
             break;
         case 3  :
-            pn->Connection->removeConnection(c.ref());// delete connection
-            oneTwoWires(std::shared_ptr<Node>(pn->Connection));  // two wires -> one wire
+            pcc->removeConnection(c.ref());// delete connection
+            oneTwoWires(pcc);  // two wires -> one wire
             break;
         default :
-            pn->Connection->removeConnection(c.ref());// remove connection
+            pcc->removeConnection(c.ref());// remove connection
             break;
         }
+    }
 
     Components->erase(c);
 }
@@ -2887,19 +2894,21 @@ int Schematic::copyComponents(int& x1, int& y1, int& x2, int& y2,
             ElementCache.append(pc.ref());
 
             // rescue non-selected node labels
-            for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-                if(pp->Connection->Label)
-                    if(pp->Connection->Connections.size() < 2)
+            for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
+                auto pcc = std::shared_ptr<Node>(pp->Connection);
+                if(pcc->Label)
+                    if(pcc->Connections.size() < 2)
                     {
-                        ElementCache.append(pp->Connection->Label);
+                        ElementCache.append(pcc->Label);
 
                         // Don't set pp->Connection->Label->pOwner=0,
                         // so text position stays unchanged, but
                         // remember component for align/distribute.
-                        pp->Connection->Label->pOwner = (Node*)pc.operator->();
+                        pcc->Label->pOwner = (Node*)pc.operator->();
 
-                        pp->Connection->Label = 0;
+                        pcc->Label = 0;
                     }
+            }
 
             deleteComp(pc);
         }
@@ -2927,15 +2936,17 @@ void Schematic::copyComponents2(int& x1, int& y1, int& x2, int& y2,
             ElementCache.append(pc.ref());
 
             // rescue non-selected node labels
-            for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-                if(pp->Connection->Label)
-                    if(pp->Connection->Connections.size() < 2)
+            for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
+                auto pcc = std::shared_ptr<Node>(pp->Connection);
+                if(pcc->Label)
+                    if(pcc->Connections.size() < 2)
                     {
-                        ElementCache.append(pp->Connection->Label);
-                        pp->Connection->Label = 0;
-                        // Don't set pp->Connection->Label->pOwner=0,
+                        ElementCache.append(pcc->Label);
+                        pcc->Label = 0;
+                        // Don't set pcc->Label->pOwner=0,
                         // so text position stays unchanged.
                     }
+            }
 
             deleteComp(pc);
         }

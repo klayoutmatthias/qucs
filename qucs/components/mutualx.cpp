@@ -78,7 +78,7 @@ QString MutualX::netlist()
 
     // output all node names
     for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1) {
-      s += " "+p1->Connection->Name;   // node names
+      s += " "+p1->getConnection()->Name;   // node names
     }
 
     int coils = Props.at(0).Value.toInt();

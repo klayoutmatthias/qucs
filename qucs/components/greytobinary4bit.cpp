@@ -107,14 +107,14 @@ QString greytobinary4bit::vhdlCode( int )
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString G0 = Ports.at(0).Connection->Name;
-  QString G1 = Ports.at(1).Connection->Name;
-  QString G2 = Ports.at(2).Connection->Name;
-  QString G3 = Ports.at(3).Connection->Name;
-  QString B3 = Ports.at(4).Connection->Name;
-  QString B2 = Ports.at(5).Connection->Name;
-  QString B1 = Ports.at(6).Connection->Name;
-  QString B0 = Ports.at(7).Connection->Name;
+  QString G0 = Ports.at(0).getConnection()->Name;
+  QString G1 = Ports.at(1).getConnection()->Name;
+  QString G2 = Ports.at(2).getConnection()->Name;
+  QString G3 = Ports.at(3).getConnection()->Name;
+  QString B3 = Ports.at(4).getConnection()->Name;
+  QString B2 = Ports.at(5).getConnection()->Name;
+  QString B1 = Ports.at(6).getConnection()->Name;
+  QString B0 = Ports.at(7).getConnection()->Name;
  
   s = "\n  " + Name + ":process ("+G0+", "+G1+", "+G2+", "+G3+")\n"+
       "  begin\n"+
@@ -131,14 +131,14 @@ QString greytobinary4bit::verilogCode( int )
   QString td = Props.at(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
 
-  QString G0 = Ports.at(0).Connection->Name;
-  QString G1 = Ports.at(1).Connection->Name;
-  QString G2 = Ports.at(2).Connection->Name;
-  QString G3 = Ports.at(3).Connection->Name;
-  QString B3 = Ports.at(4).Connection->Name;
-  QString B2 = Ports.at(5).Connection->Name;
-  QString B1 = Ports.at(6).Connection->Name;
-  QString B0 = Ports.at(7).Connection->Name; 
+  QString G0 = Ports.at(0).getConnection()->Name;
+  QString G1 = Ports.at(1).getConnection()->Name;
+  QString G2 = Ports.at(2).getConnection()->Name;
+  QString G3 = Ports.at(3).getConnection()->Name;
+  QString B3 = Ports.at(4).getConnection()->Name;
+  QString B2 = Ports.at(5).getConnection()->Name;
+  QString B1 = Ports.at(6).getConnection()->Name;
+  QString B0 = Ports.at(7).getConnection()->Name;
  
   QString l = "";
  

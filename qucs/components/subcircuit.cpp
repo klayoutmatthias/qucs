@@ -202,7 +202,7 @@ QString Subcircuit::netlist()
 
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
-    s += " "+p1->Connection->Name;   // node names
+    s += " "+p1->getConnection()->Name;   // node names
 
   // type for subcircuit
   QString f = misc::properFileName(Props.first().Value);
@@ -236,7 +236,7 @@ QString Subcircuit::vhdlCode(int)
   for (int i = 0; i < Ports.count(); ++i) {
     if (i > 0)
       s += ", ";
-    s += Ports[i].Connection->Name;  // node names
+    s += Ports[i].getConnection()->Name;  // node names
   }
   s += ");\n";
 
@@ -265,7 +265,7 @@ QString Subcircuit::verilogCode(int)
   for (int i = 0; i < Ports.count(); ++i) {
     if (i > 0)
       s += ", ";
-    s += Ports[i].Connection->Name;  // node names
+    s += Ports[i].getConnection()->Name;  // node names
   }
   s += ");\n";
 

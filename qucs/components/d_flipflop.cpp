@@ -66,14 +66,14 @@ QString D_FlipFlop::vhdlCode(int NumPorts)
   s += ";\n";
 
   s = "  " + Name + " : process (" +
-      Ports.at(0).Connection->Name + ", " +
-      Ports.at(1).Connection->Name + ")\n  begin\n    if (" +
-      Ports.at(3).Connection->Name + "='1') then  " +
-      Ports.at(2).Connection->Name + " <= '0'" + s +"    elsif (" +
-      Ports.at(1).Connection->Name + "='1' and " +
-      Ports.at(1).Connection->Name + "'event) then\n      " +
-      Ports.at(2).Connection->Name + " <= " +
-      Ports.at(0).Connection->Name + s + "    end if;\n  end process;\n\n";
+      Ports.at(0).getConnection()->Name + ", " +
+      Ports.at(1).getConnection()->Name + ")\n  begin\n    if (" +
+      Ports.at(3).getConnection()->Name + "='1') then  " +
+      Ports.at(2).getConnection()->Name + " <= '0'" + s +"    elsif (" +
+      Ports.at(1).getConnection()->Name + "='1' and " +
+      Ports.at(1).getConnection()->Name + "'event) then\n      " +
+      Ports.at(2).getConnection()->Name + " <= " +
+      Ports.at(0).getConnection()->Name + s + "    end if;\n  end process;\n\n";
   return s;
 }
 
@@ -88,10 +88,10 @@ QString D_FlipFlop::verilogCode(int NumPorts)
   }
   
   QString s = "";
-  QString q = Ports.at(2).Connection->Name;
-  QString d = Ports.at(0).Connection->Name;
-  QString r = Ports.at(3).Connection->Name;
-  QString c = Ports.at(1).Connection->Name;
+  QString q = Ports.at(2).getConnection()->Name;
+  QString d = Ports.at(0).getConnection()->Name;
+  QString r = Ports.at(3).getConnection()->Name;
+  QString c = Ports.at(1).getConnection()->Name;
   QString v = "net_reg" + Name + q;
   
   s = "\n  // " + Name + " D-flipflop\n" +

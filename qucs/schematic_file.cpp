@@ -619,7 +619,7 @@ bool Schematic::loadProperties(QTextStream *stream)
 // Inserts a component without performing logic for wire optimization.
 void Schematic::simpleInsertComponent(const std::shared_ptr<Component> &c)
 {
-  Node *pn;
+  std::shared_ptr<Node> pn;
   int x, y;
   // connect every node of component
   for (auto pp = c->Ports.begin(); pp != c->Ports.end(); ++pp) {
@@ -639,8 +639,8 @@ void Schematic::simpleInsertComponent(const std::shared_ptr<Component> &c)
       }
     }
 
-    if(pn == 0) { // create new node, if no existing one lies at this position
-      pn = new Node(x, y);
+    if(!pn) { // create new node, if no existing one lies at this position
+      pn.reset(new Node(x, y));
       DocNodes.append(pn);
     }
     pn->Connections.push_back(c);  // connect schematic node to component node
@@ -1268,7 +1268,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
 
     // handle ground symbol
     if(pc->obsolete_model_hack() == "GND") { // BUG.
-      pc->Ports.first().Connection->Name = "gnd";
+      std::shared_ptr<Node>(pc->Ports.first().Connection)->Name = "gnd";
       continue;
     }
 
@@ -1288,7 +1288,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
           // apply in/out signal types of subcircuit
           for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
             pp->Type = it.value().PortTypes[i];
-            pp->Connection->DType = pp->Type;
+            std::shared_ptr<Node>(pp->Connection)->DType = pp->Type;
             i++;
           }
         }
@@ -1326,7 +1326,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
         for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
             //if(i>=d->PortTypes.count())break;
             pp->Type = d->PortTypes[i];
-            pp->Connection->DType = pp->Type;
+            std::shared_ptr<Node>(pp->Connection)->DType = pp->Type;
             i++;
         }
         sub.PortTypes = d->PortTypes;
@@ -1570,12 +1570,12 @@ int NumPorts)
         it_name++;
         it_type++;
       }
-      (*it_name) = pc->Ports.first().Connection->Name;
+      (*it_name) = std::shared_ptr<Node>(pc->Ports.first().Connection)->Name;
       DigMap::Iterator it = Signals.find(*it_name);
       if(it!=Signals.end())
         (*it_type) = it.value().Type;
       // propagate type to port symbol
-      pc->Ports.first().Connection->DType = *it_type;
+      std::shared_ptr<Node>(pc->Ports.first().Connection)->DType = *it_type;
 
       if(!isAnalog) {
         if (isVerilog) {
