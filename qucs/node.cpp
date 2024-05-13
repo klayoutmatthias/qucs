@@ -47,8 +47,8 @@ void Node::paint(ViewPainter *p)
                p->drawEllipse(cx-4, cy-4, 8, 8);
              }
              return;
-    case 2:  if(std::shared_ptr<Element>(Connections.front())->Type == isWire)
-               if(std::shared_ptr<Element>(Connections.back())->Type == isWire) return;
+    case 2:  if(Connections.front().lock()->Type == isWire)
+               if(Connections.back().lock()->Type == isWire) return;
              p->fillRect(cx-2, cy-2, 4, 4, Qt::darkBlue);
              break;
     default: p->Painter->setBrush(Qt::darkBlue);  // more than 2 connections
@@ -86,7 +86,7 @@ void Node::setName(const QString& Name_, const QString& Value_, int x_, int y_)
 void Node::removeConnection(const std::shared_ptr<Element> &e)
 {
   for (auto i = Connections.begin(); i != Connections.end(); ++i) {
-    if (std::shared_ptr<Element>(*i) == e) {
+    if (i->lock() == e) {
       Connections.erase (i);
       break;
     }

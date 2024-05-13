@@ -703,7 +703,7 @@ void Schematic::paintSchToViewpainter(ViewPainter *p, bool printAll, bool toImag
 
   for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn) {
     for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
-      if(std::shared_ptr<Element>(*pe)->isSelected || printAll) {
+      if(pe->lock()->isSelected || printAll) {
         pn->paint(p); // paint all nodes with selected elements
         break;
       }

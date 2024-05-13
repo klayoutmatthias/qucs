@@ -222,7 +222,7 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
     for( ; pw != n->Connections.begin(); )
     {
         --pw;
-        auto pws = std::shared_ptr<Element>(*pw);
+        auto pws = pw->lock();
         if(pws->Type != isWire) continue;
         auto wire = std::dynamic_pointer_cast<Wire>(pws);
         if(!wire->isHorizontal()) continue;
@@ -287,7 +287,7 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
     for( ; pw != n->Connections.begin(); )
     {
         --pw;
-        auto pws = std::shared_ptr<Element>(*pw);
+        auto pws = pw->lock();
         if(pws->Type != isWire) continue;
         auto wire = std::dynamic_pointer_cast<Wire>(pws);
         if(wire->isHorizontal()) continue;
@@ -460,7 +460,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
     for( ; pw != n->Connections.begin(); )
     {
         --pw;
-        auto pws = std::shared_ptr<Element>(*pw);
+        auto pws = pw->lock();
         if(pws->Type != isWire) continue;
         auto wire = std::dynamic_pointer_cast<Wire>(pws);
         if(!wire->isHorizontal()) continue;
@@ -517,7 +517,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
     for( ; pw != n->Connections.begin(); )
     {
         --pw;
-        auto pws = std::shared_ptr<Element>(*pw);
+        auto pws = pw->lock();
         if(pws->Type != isWire) continue;
         auto wire = std::dynamic_pointer_cast<Wire>(pws);
         if(wire->isHorizontal()) continue;
@@ -667,7 +667,7 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
             // check all connections of the current node
             for(auto pe = pn->Connections.begin(); pe != pn->Connections.end(); ++pe)
             {
-                auto pes = std::shared_ptr<Element>(*pe);
+                auto pes = pe->lock();
                 if(pes->Type != isWire) continue;
                 auto nw = std::dynamic_pointer_cast<Wire>(pes);
                 // wire lies within the new ?
@@ -746,10 +746,10 @@ void Schematic::selectWireLine(const std::shared_ptr<Element> &_pe, Node *pn, bo
     Node *pn_1st = pn;
     while(pn->Connections.size() == 2)
     {
-        if(std::shared_ptr<Element>(pn->Connections.front()) == pe)
-          pe = std::shared_ptr<Element>(pn->Connections.back());
+        if(pn->Connections.front().lock() == pe)
+          pe = pn->Connections.back().lock();
         else
-          pe = std::shared_ptr<Element>(pn->Connections.front());
+          pe = pn->Connections.front().lock();
 
         if(pe->Type != isWire) break;
         if(ctrl) pe->isSelected ^= ctrl;
@@ -804,8 +804,8 @@ std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, cons
 // If possible, make one wire out of two wires.
 bool Schematic::oneTwoWires(const std::shared_ptr<Node> &n)
 {
-    auto e1 = std::shared_ptr<Element>(n->Connections.front());  // two wires -> one wire
-    auto e2 = std::shared_ptr<Element>(n->Connections.back());
+    auto e1 = n->Connections.front().lock();  // two wires -> one wire
+    auto e2 = n->Connections.back().lock();
 
     if(e1->Type == isWire && e2->Type == isWire)
     {
@@ -1627,7 +1627,7 @@ void Schematic::newMovingWires(SharedObjectList<Element> &p, Node *pn, int pos)
         if(pn->State & 16)  // node was already worked on
             break;
 
-        pe = std::shared_ptr<Element>(pn->Connections.front());
+        pe = pn->Connections.front().lock();
         if(!pe)  return;
 
         if(pn->Connections.size() > 1)
@@ -1646,8 +1646,8 @@ void Schematic::newMovingWires(SharedObjectList<Element> &p, Node *pn, int pos)
         if(pn2->Connections.size() == 2) // two existing wires connected ?
             if((pn2->State & (8+4)) == 0)
             {
-                std::shared_ptr<Element> pe2 = std::shared_ptr<Element>(pn2->Connections.front());
-                if(pe2 == pe) pe2 = std::shared_ptr<Element>(pn2->Connections.back());
+                std::shared_ptr<Element> pe2 = pn2->Connections.front().lock();
+                if(pe2 == pe) pe2 = pn2->Connections.back().lock();
                 // connected wire connected to exactly one wire ?
                 if(pe2->Type == isWire)
                     pw2  = std::dynamic_pointer_cast<Wire>(pe2);
@@ -2501,7 +2501,7 @@ void Schematic::insertComponentNodes(const std::shared_ptr<Component> &c, bool n
         auto pn = pp->getConnection();
         for(auto i = pn->Connections.begin(); i != pn->Connections.end(); ++i)
         {
-            std::shared_ptr<Element> pe(*i);
+            auto pe = i->lock();
             if(pe->Type == isWire)
             {
                 std::list<std::weak_ptr<Element> > *pL;
@@ -2991,7 +2991,7 @@ void Schematic::oneLabel(Node *n1)
 
         for(auto j = pn->Connections.begin(); j != pn->Connections.end(); ++j)
         {
-            std::shared_ptr<Element> pe(*j);
+            auto pe = j->lock();
             if(pe->Type != isWire)
             {
                 std::shared_ptr<Component> pc = std::dynamic_pointer_cast<Component>(pe);
@@ -3090,7 +3090,7 @@ std::shared_ptr<Element> Schematic::getWireLabel(Node *pn_)
         {
             for(auto j = pn->Connections.begin(); j != pn->Connections.end(); ++j)
             {
-                std::shared_ptr<Element> pe(*j);
+                auto pe = j->lock();
                 if(pe->Type != isWire)
                 {
                     auto pc = std::dynamic_pointer_cast<Component>(pe);

@@ -76,7 +76,7 @@ struct Port {
   bool  avail;
   QString Type;
   std::weak_ptr<Node> Connection;
-  std::shared_ptr<Node> getConnection() const { return std::shared_ptr<Node>(Connection); }
+  std::shared_ptr<Node> getConnection() const { return Connection.lock(); }
 };
 
 struct Text {

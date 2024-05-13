@@ -1203,8 +1203,8 @@ void Schematic::propagateNode(QStringList& Collect,
   for(int i = 0; i < Cons.count(); ++i) {
     Node *p2 = Cons[i];
     for(auto pe = p2->Connections.begin(); pe != p2->Connections.end(); ++pe) {
-      if(std::shared_ptr<Element>(*pe)->Type == isWire) {
-        auto pw = std::dynamic_pointer_cast<Wire>(std::shared_ptr<Element>(*pe));
+      if(pe->lock()->Type == isWire) {
+        auto pw = std::dynamic_pointer_cast<Wire>(pe->lock());
         if(p2 != pw->Port1) {
 	  if(pw->Port1->Name.isEmpty()) {
 	    pw->Port1->Name = pn->Name;
@@ -1268,7 +1268,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
 
     // handle ground symbol
     if(pc->obsolete_model_hack() == "GND") { // BUG.
-      std::shared_ptr<Node>(pc->Ports.first().Connection)->Name = "gnd";
+      pc->Ports.first().Connection.lock()->Name = "gnd";
       continue;
     }
 
@@ -1288,7 +1288,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
           // apply in/out signal types of subcircuit
           for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
             pp->Type = it.value().PortTypes[i];
-            std::shared_ptr<Node>(pp->Connection)->DType = pp->Type;
+            pp->Connection.lock()->DType = pp->Type;
             i++;
           }
         }
@@ -1326,7 +1326,7 @@ bool Schematic::throughAllComps(QTextStream *stream, int& countInit,
         for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
             //if(i>=d->PortTypes.count())break;
             pp->Type = d->PortTypes[i];
-            std::shared_ptr<Node>(pp->Connection)->DType = pp->Type;
+            pp->Connection.lock()->DType = pp->Type;
             i++;
         }
         sub.PortTypes = d->PortTypes;
