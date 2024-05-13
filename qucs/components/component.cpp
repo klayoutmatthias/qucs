@@ -783,16 +783,16 @@ void Schematic::saveComponent(QTextStream& s, Component /*const*/ * c) const
 }
 // -------------------------------------------------------
 // FIXME: must be Component* SchematicParser::loadComponent(Stream&, Component*);
-Component* Schematic::loadComponent(const QString& _s, Component* c) const
+bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component> &c) const
 {
   bool ok;
   int  ttx, tty, tmp;
   QString s = _s;
 
   if(s.at(0) != '<'){
-    return NULL;
+    return false;
   }else if(s.at(s.length()-1) != '>'){
-    return NULL;
+    return false;
   }
   s = s.mid(1, s.length()-2);   // cut off start and end character
 
@@ -803,7 +803,7 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
   n  = s.section(' ',2,2);      // isActive
   tmp = n.toInt(&ok);
   if(!ok){
-    return NULL;
+    return false;
   }
   c->isActive = tmp & 3;
 
@@ -815,19 +815,19 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
 
   n  = s.section(' ',3,3);    // cx
   c->cx = n.toInt(&ok);
-  if(!ok) return NULL;
+  if(!ok) return false;
 
   n  = s.section(' ',4,4);    // cy
   c->cy = n.toInt(&ok);
-  if(!ok) return NULL;
+  if(!ok) return false;
 
   n  = s.section(' ',5,5);    // tx
   ttx = n.toInt(&ok);
-  if(!ok) return NULL;
+  if(!ok) return false;
 
   n  = s.section(' ',6,6);    // ty
   tty = n.toInt(&ok);
-  if(!ok) return NULL;
+  if(!ok) return false;
 
   if(c->obsolete_model_hack().at(0) != '.') {  // is simulation component (dc, ac, ...) ?
 
@@ -835,11 +835,11 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
     if(n.toInt(&ok) == 1){
       c->mirrorX();
     }
-    if(!ok) return NULL;
+    if(!ok) return false;
 
     n  = s.section(' ',8,8);    // rotated
     tmp = n.toInt(&ok);
-    if(!ok) return NULL;
+    if(!ok) return false;
     if(c->rotated > tmp)  // neccessary because of historical flaw in ...
       tmp += 4;        // ... components like "volt_dc"
     for(int z=c->rotated; z<tmp; z++){
@@ -939,7 +939,7 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
         }
       }
 
-      return c;
+      return true;
     }
 
     // for equations
@@ -956,7 +956,7 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
       }
     if(Model == "R" && z == 6 && counts == 6) {    // backward compatible
       c->Props.last().Value = n;
-      return c;
+      return true;
     }
     p1->Value = n;
 
@@ -964,7 +964,7 @@ Component* Schematic::loadComponent(const QString& _s, Component* c) const
     p1->display = (n.at(1) == '1');
   }
 
-  return c;
+  return true;
 }
 
 // -------------------------------------------------------
@@ -1653,7 +1653,7 @@ std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
   }
 
   // BUG: don't use schematic.
-  if(!p->loadComponent(Line, c.get())) {  // @@@ c.get()
+  if(!p->loadComponent(Line, c)) {
     QMessageBox::critical(0, QObject::tr("Error"),
 	QObject::tr("Format Error:\nWrong 'component' line format!"));
     return 0;

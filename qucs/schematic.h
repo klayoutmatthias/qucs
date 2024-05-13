@@ -342,7 +342,7 @@ private:
   QStringList PortTypes;
 
 public: // for now. move to parser asap
-	Component* loadComponent(const QString& _s, Component* c) const;
+        bool loadComponent(const QString& _s, const std::shared_ptr<Component> &c) const;
 
 public:
   bool isAnalog;

@@ -136,7 +136,7 @@ int Schematic::insertWireNode1(const std::shared_ptr<Wire> &w)
                             w->Label = ptr2->Label;
                             w->Label->pOwner = w.get(); // @@@
                         }
-                        w->Port1->removeConnection(ptr2.operator->());  // two -> one wire
+                        w->Port1->removeConnection(ptr2.ref());  // two -> one wire
                         w->Port1->appendConnection(w);
                         Nodes->erase(ptr2->Port2);
                         Wires->erase(ptr2);
@@ -176,7 +176,7 @@ int Schematic::insertWireNode1(const std::shared_ptr<Wire> &w)
                             w->Label = ptr2->Label;
                             w->Label->pOwner = w.get();  // @@@
                         }
-                        ptr2->Port1->removeConnection(ptr2.operator->()); // two -> one wire
+                        ptr2->Port1->removeConnection(ptr2.ref()); // two -> one wire
                         ptr2->Port1->appendConnection(w);
                         Nodes->erase(ptr2->Port2);
                         Wires->erase(ptr2);
@@ -243,14 +243,14 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
             w->x1 = wire->x1;
             w->Port1 = wire->Port1;      // new wire lengthens an existing one
             Nodes->erase(n);
-            w->Port1->removeConnection(wire.get());
+            w->Port1->removeConnection(wire);
             w->Port1->appendConnection(w);
             Wires->erase(wire.get());
             return true;
         }
         if(pws->x2 >= w->x2)    // new wire lies within an existing one ?
         {
-            w->Port1->removeConnection(w.get()); // second node not yet made
+            w->Port1->removeConnection(w); // second node not yet made
             return false;
         }
         if(wire->Port2->Connections.size() < 2)
@@ -261,13 +261,13 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
                 w->Label = wire->Label;
                 w->Label->pOwner = w.get(); // @@@
             }
-            wire->Port1->removeConnection(wire.get());
+            wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
             Wires->erase(wire.get()); // @@@
             return true;
         }
         w->x1 = wire->x2;    // shorten new wire according to an existing one
-        w->Port1->removeConnection(w.get());  // @@@
+        w->Port1->removeConnection(w);
         w->Port1 = wire->Port2;
         w->Port1->appendConnection(w);
         return true;
@@ -308,14 +308,14 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
             w->y1 = wire->y1;
             w->Port1 = wire->Port1;         // new wire lengthens an existing one
             Nodes->erase(n);
-            w->Port1->removeConnection(wire.get());  // @@@
+            w->Port1->removeConnection(wire);
             w->Port1->appendConnection(w);
             Wires->erase(wire.get());  // @@@
             return true;
         }
         if(wire->y2 >= w->y2)    // new wire lies complete within an existing one ?
         {
-            w->Port1->removeConnection(w.get()); // @@@ // second node not yet made
+            w->Port1->removeConnection(w); // second node not yet made
             return false;
         }
         if(wire->Port2->Connections.size() < 2)
@@ -326,13 +326,13 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
                 w->Label = wire->Label;
                 w->Label->pOwner = w.get();  // @@@
             }
-            wire->Port1->removeConnection(wire.get());  // @@@
+            wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
             Wires->erase(wire.get());  // @@@
             return true;
         }
         w->y1 = wire->y2;    // shorten new wire according to an existing one
-        w->Port1->removeConnection(w.get());  // @@@
+        w->Port1->removeConnection(w);
         w->Port1 = wire->Port2;
         w->Port1->appendConnection(w);
         return true;
@@ -381,7 +381,7 @@ int Schematic::insertWireNode2(const std::shared_ptr<Wire> &w)
                     }
                     w->y2 = ptr2->y2;
                     w->Port2 = ptr2->Port2;
-                    ptr2->Port2->removeConnection(ptr2.operator->());  // two -> one wire
+                    ptr2->Port2->removeConnection(ptr2.ref());  // two -> one wire
                     ptr2->Port2->appendConnection(w);
                     Nodes->erase(ptr2->Port1);
                     Wires->erase(ptr2);
@@ -415,7 +415,7 @@ int Schematic::insertWireNode2(const std::shared_ptr<Wire> &w)
                     }
                     w->x2 = ptr2->x2;
                     w->Port2 = ptr2->Port2;
-                    ptr2->Port2->removeConnection(ptr2.operator->());  // two -> one wire
+                    ptr2->Port2->removeConnection(ptr2.ref());  // two -> one wire
                     ptr2->Port2->appendConnection(w);
                     Nodes->erase(ptr2->Port1);
                     Wires->erase(ptr2);
@@ -475,7 +475,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
             w->x2 = wire->x2;
             w->Port2 = wire->Port2;      // new wire lengthens an existing one
             Nodes->erase(n);
-            w->Port2->removeConnection(wire.get());  // @@@
+            w->Port2->removeConnection(wire);
             w->Port2->appendConnection(w);
             Wires->erase(wire.get());  // @@@
             return true;
@@ -491,13 +491,13 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
                 w->Label = wire->Label;
                 w->Label->pOwner = w.get();  // @@@
             }
-            wire->Port2->removeConnection(wire.get());  // @@@
+            wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
             Wires->erase(wire.get());  // @@@
             return true;
         }
         w->x2 = wire->x1;    // shorten new wire according to an existing one
-        w->Port2->removeConnection(w.get());  // @@@
+        w->Port2->removeConnection(w);
         w->Port2 = wire->Port1;
         w->Port2->appendConnection(w);
         return true;
@@ -532,7 +532,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
             w->y2 = wire->y2;
             w->Port2 = wire->Port2;     // new wire lengthens an existing one
             Nodes->erase(n);
-            w->Port2->removeConnection(wire.get());  // @@@
+            w->Port2->removeConnection(wire);
             w->Port2->appendConnection(w);
             Wires->erase(wire.get());  // @@@
             return true;
@@ -548,13 +548,13 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
                 w->Label = wire->Label;
                 w->Label->pOwner = w.get();  // @@@
             }
-            wire->Port2->removeConnection(wire.get());  // @@@
+            wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
             Wires->erase(wire.get());  // @@@
             return true;
         }
         w->y2 = wire->y1;    // shorten new wire according to an existing one
-        w->Port2->removeConnection(w.get());  // @@@
+        w->Port2->removeConnection(w);
         w->Port2 = wire->Port1;
         w->Port2->appendConnection(w);
         return true;
@@ -680,13 +680,13 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                 if(n1 == 1)
                 {
                     Nodes->erase(pn1);       // delete node 1 if open
-                    pn2->removeConnection(nw.get());  // @@@ // remove connection
+                    pn2->removeConnection(nw);  // remove connection
                     pn1 = pn2;
                 }
 
                 if(n2 == 1)
                 {
-                    pn1->removeConnection(nw.get());  // @@@  // remove connection
+                    pn1->removeConnection(nw);  // remove connection
                     Nodes->erase(pn2);       // delete node 2 if open
                     pn2 = pn1;
                 }
@@ -716,7 +716,7 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                   pw->Port1->appendConnection(newWire);
               }
 
-              pw->Port1->removeConnection(pw.operator->());
+              pw->Port1->removeConnection(pw.ref());
               pw->x1 = pn2->cx;
               pw->y1 = pn2->cy;
               pw->Port1 = pn2;
@@ -783,7 +783,7 @@ std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, Node
     newWire->Port2->Connections.push_front(newWire);
     pn->Connections.push_front(pw);
     pn->Connections.push_front(newWire);
-    newWire->Port2->removeConnection(pw.get());  // @@@
+    newWire->Port2->removeConnection(pw);
     Wires->append(newWire);
 
     if(pw->Label)
@@ -833,7 +833,7 @@ bool Schematic::oneTwoWires(Node *n)
             w1->y2 = w2->y2;
             w1->Port2 = w2->Port2;
             Nodes->erase(n);    // delete node (is auto delete)
-            w1->Port2->removeConnection(w2.get());  // @@@
+            w1->Port2->removeConnection(w2);
             w1->Port2->appendConnection(w1);
             Wires->erase(w2.get());
             return true;
@@ -852,7 +852,7 @@ void Schematic::deleteWire(const WireList::iterator &w)
     }
     else
     {
-        w->Port1->removeConnection(w.operator->());   // remove connection
+        w->Port1->removeConnection(w.ref());   // remove connection
         if(w->Port1->Connections.size() == 2)
             oneTwoWires(w->Port1);  // two wires -> one wire
     }
@@ -863,7 +863,7 @@ void Schematic::deleteWire(const WireList::iterator &w)
     }
     else
     {
-        w->Port2->removeConnection(w.operator->());   // remove connection
+        w->Port2->removeConnection(w.ref());   // remove connection
         if(w->Port2->Connections.size() == 2)
             oneTwoWires(w->Port2);  // two wires -> one wire
     }
@@ -1651,9 +1651,9 @@ void Schematic::newMovingWires(SharedObjectList<Element> &p, Node *pn, int pos)
         assert(wi != Wires->end());
         p.insert(p.begin() + pos, wi.ref());
         Wires->erase(wi);
-        pw->Port1->removeConnection(pw.get());  // @@@  // remove connection 1
+        pw->Port1->removeConnection(pw);  // remove connection 1
         pw->Port1->State |= 16+4;
-        pw->Port2->removeConnection(pw.get());  // @@@   // remove connection 2
+        pw->Port2->removeConnection(pw);  // remove connection 2
         pw->Port2->State |= 16+4;
 
         if(pw->isHorizontal()) mask = 2;
@@ -1701,9 +1701,9 @@ void Schematic::newMovingWires(SharedObjectList<Element> &p, Node *pn, int pos)
         assert(iw2 != Wires->end());
         p.insert(p.begin() + pos, iw2.ref());
         Wires->erase(iw2);
-        pw2->Port1->removeConnection(pw2.get());  // @@@   // remove connection 1
+        pw2->Port1->removeConnection(pw2);  // remove connection 1
         pw2->Port1->State |= 16+4;
-        pw2->Port2->removeConnection(pw2.get());  // @@@   // remove connection 2
+        pw2->Port2->removeConnection(pw2);  // remove connection 2
         pw2->Port2->State |= 16+4;
 
         if(pw2->Port1 != pn2)
@@ -1750,7 +1750,7 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
 
             // delete all port connections
             for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
-                pp->Connection->removeConnection(pc.operator->());
+                pp->Connection->removeConnection(pc.ref());
                 pp->Connection->State = 4;
             }
 
@@ -1770,9 +1770,9 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
         {
             p.append(pw.ref());
 
-            pw->Port1->removeConnection(pw.operator->());   // remove connection 1
+            pw->Port1->removeConnection(pw.ref());   // remove connection 1
             pw->Port1->State = 4;
-            pw->Port2->removeConnection(pw.operator->());   // remove connection 2
+            pw->Port2->removeConnection(pw.ref());   // remove connection 2
             pw->Port2->State = 4;
             Wires->erase(pw);
         }
@@ -2746,7 +2746,7 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
 
     for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
     {
-        pp->Connection->removeConnection(pc.get());  // @@@ // delete connections
+        pp->Connection->removeConnection(pc);  // delete connections
         switch(pp->Connection->Connections.size())
         {
         case 0:
@@ -2845,11 +2845,11 @@ void Schematic::deleteComp(const ComponentList::iterator &c)
             pn->Connection = 0;		  //  (auto-delete)
             break;
         case 3  :
-            pn->Connection->removeConnection(c.operator->());// delete connection
+            pn->Connection->removeConnection(c.ref());// delete connection
             oneTwoWires(pn->Connection);  // two wires -> one wire
             break;
         default :
-            pn->Connection->removeConnection(c.operator->());// remove connection
+            pn->Connection->removeConnection(c.ref());// remove connection
             break;
         }
 

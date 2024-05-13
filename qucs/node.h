@@ -31,7 +31,7 @@ public:
   void  paint(ViewPainter*);
   bool  getSelected(int, int);
   void  setName(const QString&, const QString&, int x_=0, int y_=0);
-  void  removeConnection(Element *);
+  void  removeConnection(const std::shared_ptr<Element> &);
   void  appendConnection(const std::shared_ptr<Element> &);
 
   std::list<std::weak_ptr<Element> > Connections;

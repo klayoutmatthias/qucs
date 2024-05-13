@@ -83,10 +83,10 @@ void Node::setName(const QString& Name_, const QString& Value_, int x_, int y_)
 }
 
 // ----------------------------------------------------------------
-void Node::removeConnection(Element *e)
+void Node::removeConnection(const std::shared_ptr<Element> &e)
 {
   for (auto i = Connections.begin(); i != Connections.end(); ++i) {
-    if (std::shared_ptr<Element>(*i).get() == e) {
+    if (std::shared_ptr<Element>(*i) == e) {
       Connections.erase (i);
       break;
     }
