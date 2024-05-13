@@ -1570,12 +1570,12 @@ int NumPorts)
         it_name++;
         it_type++;
       }
-      (*it_name) = std::shared_ptr<Node>(pc->Ports.first().Connection)->Name;
+      (*it_name) = pc->Ports.first().getConnection()->Name;
       DigMap::Iterator it = Signals.find(*it_name);
       if(it!=Signals.end())
         (*it_type) = it.value().Type;
       // propagate type to port symbol
-      std::shared_ptr<Node>(pc->Ports.first().Connection)->DType = *it_type;
+      pc->Ports.first().getConnection()->DType = *it_type;
 
       if(!isAnalog) {
         if (isVerilog) {

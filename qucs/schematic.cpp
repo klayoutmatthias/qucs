@@ -1837,7 +1837,7 @@ bool Schematic::elementsOnGrid()
 
       // rescue non-selected node labels
       for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp) {
-        auto pc = std::shared_ptr<Node>(pp->Connection);
+        auto pc = pp->getConnection();
         if(pc->Label)
           if(pc->Connections.size() < 2) {
             LabelCache.append(pc->Label);
