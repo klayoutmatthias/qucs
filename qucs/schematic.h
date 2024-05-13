@@ -249,7 +249,7 @@ public:
   void    markerUpDown(bool, SharedObjectList<Element> &);
 
   std::shared_ptr<Element> selectElement(float, float, bool, int *index=0);
-  void     deselectElements(Element*);
+  void     deselectElements(const std::shared_ptr<Element> &);
   int      selectElements(int, int, int, int, bool);
   void     selectMarkers();
   void     newMovingWires(SharedObjectList<Element> &, Node*, int);
@@ -329,9 +329,9 @@ private:
   QString createSymbolUndoString(char);
   bool    rebuildSymbol(const QString &);
 
-  static void createNodeSet(QStringList&, int&, Conductor*, Node*);
+  static void createNodeSet(QStringList&, int&, const std::shared_ptr<Conductor> &, const std::shared_ptr<Node> &pn);
   void throughAllNodes(bool, QStringList&, int&);
-  void propagateNode(QStringList&, int&, Node*);
+  void propagateNode(QStringList&, int&, const std::shared_ptr<Node> &);
   void collectDigitalSignals(void);
   bool giveNodeNames(QTextStream *, int&, QStringList&, QPlainTextEdit*, int);
   void beginNetlistDigital(QTextStream &);

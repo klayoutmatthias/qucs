@@ -1088,7 +1088,7 @@ void MouseActions::MPressSelect(Schematic *Doc, QMouseEvent *Event, float fX, fl
     if(!Ctrl)
     {
       if(!focusElement->isSelected)// Don't move selected elements if clicked
-        Doc->deselectElements(focusElement.get()); // @@@ // element was not selected.
+        Doc->deselectElements(focusElement); // element was not selected.
       focusElement->isSelected = true;
     }
     Doc->setOnGrid(MAx1, MAy1);
@@ -1565,7 +1565,7 @@ void MouseActions::MReleaseSelect(Schematic *Doc, QMouseEvent *Event)
 {
   bool ctrl = Event->modifiers().testFlag(Qt::ControlModifier);
 
-  if(!ctrl) Doc->deselectElements(focusElement.get());
+  if(!ctrl) Doc->deselectElements(focusElement);
 
   if(focusElement)  if(Event->button() == Qt::LeftButton)
     if(focusElement->Type == isWire) {

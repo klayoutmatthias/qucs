@@ -245,7 +245,7 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
             Nodes->erase(n);
             w->Port1->removeConnection(wire);
             w->Port1->appendConnection(w);
-            Wires->erase(wire.get());
+            Wires->erase(wire);
             return true;
         }
         if(pws->x2 >= w->x2)    // new wire lies within an existing one ?
@@ -263,7 +263,7 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
             }
             wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
-            Wires->erase(wire.get()); // @@@
+            Wires->erase(wire);
             return true;
         }
         w->x1 = wire->x2;    // shorten new wire according to an existing one
@@ -310,7 +310,7 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
             Nodes->erase(n);
             w->Port1->removeConnection(wire);
             w->Port1->appendConnection(w);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         if(wire->y2 >= w->y2)    // new wire lies complete within an existing one ?
@@ -328,7 +328,7 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
             }
             wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         w->y1 = wire->y2;    // shorten new wire according to an existing one
@@ -477,7 +477,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
             Nodes->erase(n);
             w->Port2->removeConnection(wire);
             w->Port2->appendConnection(w);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         // (if new wire lies complete within an existing one, was already
@@ -493,7 +493,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
             }
             wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         w->x2 = wire->x1;    // shorten new wire according to an existing one
@@ -534,7 +534,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
             Nodes->erase(n);
             w->Port2->removeConnection(wire);
             w->Port2->appendConnection(w);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         // (if new wire lies complete within an existing one, was already
@@ -550,7 +550,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
             }
             wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
-            Wires->erase(wire.get());  // @@@
+            Wires->erase(wire);
             return true;
         }
         w->y2 = wire->y1;    // shorten new wire according to an existing one
@@ -835,10 +835,10 @@ bool Schematic::oneTwoWires(const std::shared_ptr<Node> &n)
             w1->x2 = w2->x2;
             w1->y2 = w2->y2;
             w1->Port2 = w2->Port2;
-            Nodes->erase(n.get());    // delete node (is auto delete)
+            Nodes->erase(n);    // delete node (is auto delete)
             w1->Port2->removeConnection(w2);
             w1->Port2->appendConnection(w1);
-            Wires->erase(w2.get());
+            Wires->erase(w2);
             return true;
         }
     }
@@ -1433,43 +1433,43 @@ void Schematic::highlightWireLabels ()
 
 // ---------------------------------------------------
 // Deselects all elements except 'e'.
-void Schematic::deselectElements(Element *e)
+void Schematic::deselectElements(const std::shared_ptr<Element> &e)
 {
     // test all components
     for(auto pc = Components->begin(); pc != Components->end(); ++pc)
-        if(e != pc.operator->())  pc->isSelected = false;
+        if(e != pc.ref())  pc->isSelected = false;
 
     // test all wires
     for(auto pw = Wires->begin(); pw != Wires->end(); ++pw)
     {
-        if(e != pw.operator->())  pw->isSelected = false;
-        if(pw->Label) if(pw->Label.get() != e)  pw->Label->isSelected = false;
+        if(e != pw.ref())  pw->isSelected = false;
+        if(pw->Label) if(pw->Label != e)  pw->Label->isSelected = false;
     }
 
     // test all node labels
     for(auto pn = Nodes->begin(); pn != Nodes->end(); ++pn)
-        if(pn->Label) if(pn->Label.get() != e)  pn->Label->isSelected = false;
+        if(pn->Label) if(pn->Label != e)  pn->Label->isSelected = false;
 
     // test all diagrams
     for(auto pd = Diagrams->begin(); pd != Diagrams->end(); ++pd)
     {
-        if(e != pd.operator->())  pd->isSelected = false;
+        if(e != pd.ref())  pd->isSelected = false;
 
         // test graphs of diagram
         for(auto pg = pd->Graphs.begin(); pg != pd->Graphs.end(); ++pg)
         {
-            if(e != pg.operator->()) pg->isSelected = false;
+            if(e != pg.ref()) pg->isSelected = false;
 
             // test markers of graph
             for(auto pm = pg->Markers.begin(); pm != pg->Markers.end(); ++pm)
-                if(e != pm.operator->()) pm->isSelected = false;
+                if(e != pm.ref()) pm->isSelected = false;
         }
 
     }
 
     // test all paintings
     for(auto pp = Paintings->begin(); pp != Paintings->end(); ++pp)
-        if(e != pp.operator->())  pp->isSelected = false;
+        if(e != pp.ref())  pp->isSelected = false;
 }
 
 // ---------------------------------------------------
@@ -2772,7 +2772,7 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
                     pl->cx = pp->x + pc->cx;
                     pl->cy = pp->y + pc->cy;
                 }
-                Nodes->erase(pcc.get());
+                Nodes->erase(pcc);
             }
             break;
         case 2:
@@ -2856,8 +2856,8 @@ void Schematic::deleteComp(const ComponentList::iterator &c)
         switch(pcc->Connections.size())
         {
         case 1  :
-            Nodes->erase(pcc.get());  // delete open nodes
-            pn->Connection = std::weak_ptr<Node>();  //  should be automatic @@@
+            Nodes->erase(pcc);  // delete open nodes
+            pn->Connection = std::weak_ptr<Node>();  //  TODO: should be automatic, but we leave that here for safety
             break;
         case 3  :
             pcc->removeConnection(c.ref());// delete connection

@@ -1074,7 +1074,7 @@ bool Schematic::rebuildSymbol(const QString &s)
 // ***************************************************************
 
 void Schematic::createNodeSet(QStringList& Collect, int& countInit,
-			      Conductor *pw, Node *p1)
+                              const std::shared_ptr<Conductor> &pw, const std::shared_ptr<Node> &p1)
 {
   if(pw->Label)
     if(!pw->Label->initValue.isEmpty())
@@ -1103,10 +1103,10 @@ void Schematic::throughAllNodes(bool User, QStringList& Collect,
       continue;  // already worked on
     }
 
-    if(isAnalog) createNodeSet(Collect, countInit, pn.operator->(), pn.operator->());
+    if(isAnalog) createNodeSet(Collect, countInit, pn.ref(), pn.ref());
 
     pn->State = 1;
-    propagateNode(Collect, countInit, pn.operator->());
+    propagateNode(Collect, countInit, pn.ref());
   }
 }
 
@@ -1194,12 +1194,12 @@ void Schematic::collectDigitalSignals(void)
 // ---------------------------------------------------
 // Propagates the given node to connected component ports.
 void Schematic::propagateNode(QStringList& Collect,
-			      int& countInit, Node *pn)
+                          int& countInit, const std::shared_ptr<Node> &pn)
 {
   bool setName=false;
   QVector<Node *> Cons;
 
-  Cons.append(pn);
+  Cons.append(pn.get());
   for(int i = 0; i < Cons.count(); ++i) {
     Node *p2 = Cons[i];
     for(auto pe = p2->Connections.begin(); pe != p2->Connections.end(); ++pe) {
@@ -1222,7 +1222,7 @@ void Schematic::propagateNode(QStringList& Collect,
 	  }
 	}
 	if(setName) {
-          if (isAnalog) createNodeSet(Collect, countInit, pw.get(), pn);  // @@@ pw.get()
+          if (isAnalog) createNodeSet(Collect, countInit, pw, pn);
 	  setName = false;
 	}
       }

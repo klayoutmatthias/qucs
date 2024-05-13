@@ -142,10 +142,28 @@ public:
     return i;
   }
 
+  //  finds an element by pointer
+  Iterator find(const holder &ref)
+  {
+    auto i = begin();
+    for ( ; i != end() && i.ref() != ref; ++i)
+      ;
+    return i;
+  }
+
   //  removes an element by pointer
   void erase(const T *ptr)
   {
     auto i = find(ptr);
+    if (i != end()) {
+      erase(i);
+    }
+  }
+
+  //  removes an element by pointer
+  void erase(const holder &ref)
+  {
+    auto i = find(ref);
     if (i != end()) {
       erase(i);
     }
