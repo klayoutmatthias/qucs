@@ -703,7 +703,7 @@ void Schematic::simpleInsertWire(const std::shared_ptr<Wire> &pw)
     pn->Label = pw->Label;   // wire with length zero are just node labels
     if (pn->Label) {
       pn->Label->Type = isNodeLabel;
-      pn->Label->pOwner = pn.operator->();
+      pn->Label->setOwner(pn.ref());
     }
     return;
   }

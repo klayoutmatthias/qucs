@@ -34,7 +34,7 @@ class WireLabel;
 class LabelDialog : public QDialog  {
 Q_OBJECT
 public:
-  LabelDialog(WireLabel*, QWidget *parent=0);
+  LabelDialog(const std::shared_ptr<WireLabel> &, QWidget *parent=0);
  ~LabelDialog();
 
   QLineEdit  *NodeName, *InitValue;
@@ -51,7 +51,7 @@ private:
   QRegExp      Expr1, Expr2;
   QLabel      *Label2;
 
-  WireLabel *pLabel;
+  std::shared_ptr<WireLabel> pLabel;
 };
 
 #endif

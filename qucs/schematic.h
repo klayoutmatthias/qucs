@@ -228,7 +228,7 @@ private:
    ******************************************************************** */
 
 public:
-  Node* insertNode(int, int, const std::shared_ptr<Element> &);
+  std::shared_ptr<Node> insertNode(int, int, const std::shared_ptr<Element> &);
   Node* selectedNode(int, int);
 
   int   insertWireNode1(const std::shared_ptr<Wire> &);
@@ -238,10 +238,10 @@ public:
   bool  connectHWires2(const std::shared_ptr<Wire> &);
   bool  connectVWires2(const std::shared_ptr<Wire> &);
   int   insertWire(const std::shared_ptr<Wire> &);
-  void  selectWireLine(Element*, Node*, bool);
-  Wire* selectedWire(int, int);
-  std::shared_ptr<Wire> splitWire(const std::shared_ptr<Wire> &, Node*);
-  bool  oneTwoWires(Node*);
+  void  selectWireLine(const std::shared_ptr<Element> &, Node *, bool);
+  std::shared_ptr<Wire> selectedWire(int, int);
+  std::shared_ptr<Wire> splitWire(const std::shared_ptr<Wire> &, const std::shared_ptr<Node> &);
+  bool  oneTwoWires(const std::shared_ptr<Node> &);
   void  deleteWire(const WireList::iterator &);
 
   Marker* setMarker(int, int);
@@ -274,7 +274,7 @@ public:
 
   void     oneLabel(Node*);
   int      placeNodeLabel(const std::shared_ptr<WireLabel> &);
-  Element* getWireLabel(Node*);
+  std::shared_ptr<Element> getWireLabel(Node*);
   void     insertNodeLabel(const std::shared_ptr<WireLabel> &);
   void     copyLabels(int&, int&, int&, int&, SharedObjectList<Element> &);
 

@@ -38,9 +38,11 @@ public:
   void setCenter(int x, int y, bool relative=false);
   bool getSelected(int, int);
   void setName(const QString& Name_);
-  void setHighlighted (bool newval) { isHighlighted = newval; };
+  void setHighlighted (bool newval) { isHighlighted = newval; }
+  void setOwner(const std::shared_ptr<Conductor> &owner) { pOwner = owner.get(); }  //  FIXME
 
-
+  //  TODO: would like to turn this into a weak_ptr, but this creates
+  //  some trouble when "this" is assigned to the owner, e.g. in Wire::setName
   Conductor *pOwner;  // Wire or Node where label belongs to
   QString Name, initValue;
 

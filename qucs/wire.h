@@ -39,7 +39,9 @@ public:
   bool getSelected(int, int);
   void setName(const QString&, const QString&, int delta_=0, int x_=0, int y_=0);
 
-  Node      *Port1, *Port2;  //  @@@ weak_ptr!!
+  //  TODO: would like to turn this into a weak pointer, but the pointer value
+  //  is sometimes used as flag set while moving the full wire.
+  Node      *Port1, *Port2;
 
   void    rotate();
   QString save();

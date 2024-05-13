@@ -24,7 +24,7 @@
 #include <QGridLayout>
 
 
-LabelDialog::LabelDialog(WireLabel *pl, QWidget *parent)
+LabelDialog::LabelDialog(const std::shared_ptr<WireLabel> &pl, QWidget *parent)
                      : QDialog(parent) 
 {
   setWindowTitle(tr("Insert Nodename"));

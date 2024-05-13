@@ -39,7 +39,7 @@ public:
   void setPainter(Schematic*);
   bool pasteElements(Schematic*);
   void editElement(Schematic*, QMouseEvent*);
-  void editLabel(Schematic*, WireLabel*);
+  void editLabel(Schematic*, const std::shared_ptr<WireLabel> &);
 
   bool drawn;  // indicates whether the scheme element was drawn last time
   std::shared_ptr<Element> selElem;  // component/diagram/painting selected in IconView

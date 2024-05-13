@@ -143,7 +143,7 @@ bool MouseActions::pasteElements(Schematic *Doc)
 }
 
 // -----------------------------------------------------------
-void MouseActions::editLabel(Schematic *Doc, WireLabel *pl)
+void MouseActions::editLabel(Schematic *Doc, const std::shared_ptr<WireLabel> &pl)
 {
   LabelDialog *Dia = new LabelDialog(pl, Doc);
   int Result = Dia->exec();
@@ -155,7 +155,6 @@ void MouseActions::editLabel(Schematic *Doc, WireLabel *pl)
 
   if(Name.isEmpty() && Value.isEmpty()) { // if nothing entered, delete label
     pl->pOwner->Label = 0;   // delete name of wire
-    delete pl;
   }
   else {
 /*    Name.replace(' ', '_');	// label must not contain spaces
@@ -876,16 +875,16 @@ void MouseActions::rightPressMenu(Schematic *Doc, QMouseEvent *Event, float fX, 
 void MouseActions::MPressLabel(Schematic *Doc, QMouseEvent*, float fX, float fY)
 {
   int x = int(fX), y = int(fY);
-  Wire *pw = 0;
-  WireLabel *pl=0;
-  Node *pn = Doc->selectedNode(x, y);
+  std::shared_ptr<Wire> pw;
+  std::shared_ptr<WireLabel> pl;
+  auto pn = Doc->selectedNode(x, y);
   if(!pn) {
     pw = Doc->selectedWire(x, y);
     if(!pw) return;
   }
 
   QString Name, Value;
-  Element *pe=0;
+  std::shared_ptr<Element> pe;
   // is wire line already labeled ?
   if(pw) pe = Doc->getWireLabel(pw->Port1);
   else pe = Doc->getWireLabel(pn);
@@ -895,7 +894,7 @@ void MouseActions::MPressLabel(Schematic *Doc, QMouseEvent*, float fX, float fY)
                  QObject::tr("The ground potential cannot be labeled!"));
       return;
     }
-    pl = ((Conductor*)pe)->Label.get();
+    pl = std::dynamic_pointer_cast<Conductor>(pe)->Label;
   }
 
   LabelDialog *Dia = new LabelDialog(pl, Doc);
@@ -907,7 +906,7 @@ void MouseActions::MPressLabel(Schematic *Doc, QMouseEvent*, float fX, float fY)
 
   if(Name.isEmpty() && Value.isEmpty() ) { // if nothing entered, delete name
     if(pe) {
-      ((Conductor*)pe)->Label = 0;
+      std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
     }
     else {
       if(pw) pw->setName("", "");   // delete name of wire
@@ -920,7 +919,7 @@ void MouseActions::MPressLabel(Schematic *Doc, QMouseEvent*, float fX, float fY)
     if(Name.isEmpty()) return;
 */
     if(pe) {
-      ((Conductor*)pe)->Label = 0;
+      std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
     }
 
     int xl = x+30;
@@ -1571,8 +1570,8 @@ void MouseActions::MReleaseSelect(Schematic *Doc, QMouseEvent *Event)
   if(focusElement)  if(Event->button() == Qt::LeftButton)
     if(focusElement->Type == isWire) {
       auto w = std::dynamic_pointer_cast<Wire>(focusElement);
-      Doc->selectWireLine(focusElement.get(), w->Port1, ctrl);
-      Doc->selectWireLine(focusElement.get(), w->Port2, ctrl);
+      Doc->selectWireLine(focusElement, w->Port1, ctrl);
+      Doc->selectWireLine(focusElement, w->Port2, ctrl);
     }
 
   Doc->releaseKeyboard();  // allow keyboard inputs again
@@ -2019,7 +2018,7 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
     case isNodeLabel:
     case isHWireLabel:
     case isVWireLabel:
-         editLabel(Doc, std::dynamic_pointer_cast<WireLabel>(focusElement).get());
+         editLabel(Doc, std::dynamic_pointer_cast<WireLabel>(focusElement));
          // update highlighting, labels may have changed
          Doc->highlightWireLabels ();
          break;

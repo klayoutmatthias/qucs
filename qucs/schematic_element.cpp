@@ -30,7 +30,7 @@
 
 // Inserts a port into the schematic and connects it to another node if
 // the coordinates are identical. The node is returned.
-Node* Schematic::insertNode(int x, int y, const std::shared_ptr<Element> &e)
+std::shared_ptr<Node> Schematic::insertNode(int x, int y, const std::shared_ptr<Element> &e)
 {
     // check if new node lies upon existing node
     auto pn = Nodes->begin();
@@ -42,11 +42,11 @@ Node* Schematic::insertNode(int x, int y, const std::shared_ptr<Element> &e)
             }
 
     if(pn != Nodes->end()) {
-      return pn.operator->();
+      return pn.ref();
     }
 
     // create new node, if no existing one lies at this position
-    Node *newNode = new Node(x, y);
+    std::shared_ptr<Node> newNode(new Node(x, y));
     Nodes->append(newNode);
     newNode->Connections.push_back(e);  // connect schematic node to component node
 
@@ -134,7 +134,7 @@ int Schematic::insertWireNode1(const std::shared_ptr<Wire> &w)
                         if(ptr2->Label)
                         {
                             w->Label = ptr2->Label;
-                            w->Label->pOwner = w.get(); // @@@
+                            w->Label->setOwner(w);
                         }
                         w->Port1->removeConnection(ptr2.ref());  // two -> one wire
                         w->Port1->appendConnection(w);
@@ -174,7 +174,7 @@ int Schematic::insertWireNode1(const std::shared_ptr<Wire> &w)
                         if(ptr2->Label)
                         {
                             w->Label = ptr2->Label;
-                            w->Label->pOwner = w.get();  // @@@
+                            w->Label->setOwner(w);
                         }
                         ptr2->Port1->removeConnection(ptr2.ref()); // two -> one wire
                         ptr2->Port1->appendConnection(w);
@@ -194,20 +194,20 @@ int Schematic::insertWireNode1(const std::shared_ptr<Wire> &w)
         }
         else continue;
 
-        Node *newNode = new Node(w->x1, w->y1);   // create new node
+        std::shared_ptr<Node> newNode(new Node(w->x1, w->y1));   // create new node
         Nodes->append(newNode);
         newNode->appendConnection(w);  // connect schematic node to the new wire
-        w->Port1 = newNode;
+        w->Port1 = newNode.get();
 
         // split the wire into two wires
         splitWire(ptr2.ref(), newNode);
         return 2;
     }
 
-    Node *newNode = new Node(w->x1, w->y1);   // create new node
+    std::shared_ptr<Node> newNode(new Node(w->x1, w->y1));   // create new node
     Nodes->append(newNode);
     newNode->appendConnection(w);  // connect schematic node to the new wire
-    w->Port1 = newNode;
+    w->Port1 = newNode.get();
     return 1;
 }
 
@@ -232,12 +232,12 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get(); // @@@
+                w->Label->setOwner(w);
             }
             else if(n->Label)
             {
                 w->Label = n->Label;
-                w->Label->pOwner = w.get(); // @@@
+                w->Label->setOwner(w);
                 w->Label->Type = isHWireLabel;
             }
             w->x1 = wire->x1;
@@ -259,7 +259,7 @@ bool Schematic::connectHWires1(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get(); // @@@
+                w->Label->setOwner(w);
             }
             wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
@@ -297,12 +297,12 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             else if(n->Label)
             {
                 w->Label = n->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
                 w->Label->Type = isVWireLabel;
             }
             w->y1 = wire->y1;
@@ -324,7 +324,7 @@ bool Schematic::connectVWires1(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             wire->Port1->removeConnection(wire);
             Nodes->erase(wire->Port2);
@@ -377,7 +377,7 @@ int Schematic::insertWireNode2(const std::shared_ptr<Wire> &w)
                     if(ptr2->Label)
                     {
                         w->Label = ptr2->Label;
-                        w->Label->pOwner = w.get();   // @@@
+                        w->Label->setOwner(w);
                     }
                     w->y2 = ptr2->y2;
                     w->Port2 = ptr2->Port2;
@@ -411,7 +411,7 @@ int Schematic::insertWireNode2(const std::shared_ptr<Wire> &w)
                     if(ptr2->Label)
                     {
                         w->Label = ptr2->Label;
-                        w->Label->pOwner = w.get();  // @@@
+                        w->Label->setOwner(w);
                     }
                     w->x2 = ptr2->x2;
                     w->Port2 = ptr2->Port2;
@@ -432,20 +432,20 @@ int Schematic::insertWireNode2(const std::shared_ptr<Wire> &w)
         }
         else continue;
 
-        Node *newNode = new Node(w->x2, w->y2);   // create new node
+        std::shared_ptr<Node> newNode(new Node(w->x2, w->y2));   // create new node
         Nodes->append(newNode);
         newNode->Connections.push_back(w);  // connect schematic node to the new wire
-        w->Port2 = newNode;
+        w->Port2 = newNode.get();
 
         // split the wire into two wires
         splitWire(ptr2.ref(), newNode);
         return 2;
     }
 
-    Node *newNode = new Node(w->x2, w->y2);   // create new node
+    std::shared_ptr<Node> newNode(new Node(w->x2, w->y2));   // create new node
     Nodes->append(newNode);
     newNode->Connections.push_back(w);  // connect schematic node to the new wire
-    w->Port2 = newNode;
+    w->Port2 = newNode.get();
     return 1;
 }
 
@@ -470,7 +470,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             w->x2 = wire->x2;
             w->Port2 = wire->Port2;      // new wire lengthens an existing one
@@ -489,7 +489,7 @@ bool Schematic::connectHWires2(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
@@ -527,7 +527,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             w->y2 = wire->y2;
             w->Port2 = wire->Port2;     // new wire lengthens an existing one
@@ -546,7 +546,7 @@ bool Schematic::connectVWires2(const std::shared_ptr<Wire> &w)
             if(wire->Label)
             {
                 w->Label = wire->Label;
-                w->Label->pOwner = w.get();  // @@@
+                w->Label->setOwner(w);
             }
             wire->Port2->removeConnection(wire);
             Nodes->erase(wire->Port1);
@@ -696,7 +696,7 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
                     if(nw->Label)
                     {
                         pw->Label = nw->Label;
-                        pw->Label->pOwner = pw.operator->();  // @@@
+                        pw->Label->setOwner(pw.ref());
                     }
                     wiresToDelete.insert(nw.get());
                 }
@@ -739,46 +739,49 @@ int Schematic::insertWire(const std::shared_ptr<Wire> &w)
 
 // ---------------------------------------------------
 // Follows a wire line and selects it.
-void Schematic::selectWireLine(Element *pe, Node *pn, bool ctrl)
+void Schematic::selectWireLine(const std::shared_ptr<Element> &_pe, Node *pn, bool ctrl)
 {
+    std::shared_ptr<Element> pe = _pe;
+    //  as we assign pn from Port1 or Port2, we have to use pointers
     Node *pn_1st = pn;
     while(pn->Connections.size() == 2)
     {
-        if(std::shared_ptr<Element>(pn->Connections.front()).get() == pe)
-          pe = std::shared_ptr<Element>(pn->Connections.back()).get();
+        if(std::shared_ptr<Element>(pn->Connections.front()) == pe)
+          pe = std::shared_ptr<Element>(pn->Connections.back());
         else
-          pe = std::shared_ptr<Element>(pn->Connections.front()).get();
+          pe = std::shared_ptr<Element>(pn->Connections.front());
 
         if(pe->Type != isWire) break;
         if(ctrl) pe->isSelected ^= ctrl;
         else pe->isSelected = true;
 
-        if(((Wire*)pe)->Port1 == pn)  pn = ((Wire*)pe)->Port2;
-        else  pn = ((Wire*)pe)->Port1;
+        auto pw = std::dynamic_pointer_cast<Wire>(pe);
+        if(pw->Port1 == pn)  pn = pw->Port2;
+        else  pn = pw->Port1;
         if(pn == pn_1st) break;  // avoid endless loop in wire loops
     }
 }
 
 // ---------------------------------------------------
-Wire* Schematic::selectedWire(int x, int y)
+std::shared_ptr<Wire> Schematic::selectedWire(int x, int y)
 {
     for(auto pw = Wires->begin(); pw != Wires->end(); ++pw)
         if(pw->getSelected(x, y))
-            return pw.operator->();
+            return pw.ref();
 
     return 0;
 }
 
 // ---------------------------------------------------
 // Splits the wire "*pw" into two pieces by the node "*pn".
-std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, Node *pn)
+std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, const std::shared_ptr<Node> &pn)
 {
-    std::shared_ptr<Wire> newWire(new Wire(pn->cx, pn->cy, pw->x2, pw->y2, pn, pw->Port2));
+    std::shared_ptr<Wire> newWire(new Wire(pn->cx, pn->cy, pw->x2, pw->y2, pn.get(), pw->Port2));
     newWire->isSelected = pw->isSelected;
 
     pw->x2 = pn->cx;
     pw->y2 = pn->cy;
-    pw->Port2 = pn;
+    pw->Port2 = pn.get();
 
     newWire->Port2->Connections.push_front(newWire);
     pn->Connections.push_front(pw);
@@ -791,7 +794,7 @@ std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, Node
         {
             newWire->Label = pw->Label;   // label goes to the new wire
             pw->Label = 0;
-            newWire->Label->pOwner = newWire.get();  // @@@
+            newWire->Label->setOwner(newWire);
         }
 
     return newWire;
@@ -799,7 +802,7 @@ std::shared_ptr<Wire> Schematic::splitWire(const std::shared_ptr<Wire> &pw, Node
 
 // ---------------------------------------------------
 // If possible, make one wire out of two wires.
-bool Schematic::oneTwoWires(Node *n)
+bool Schematic::oneTwoWires(const std::shared_ptr<Node> &n)
 {
     auto e1 = std::shared_ptr<Element>(n->Connections.front());  // two wires -> one wire
     auto e2 = std::shared_ptr<Element>(n->Connections.back());
@@ -817,12 +820,12 @@ bool Schematic::oneTwoWires(Node *n)
             if(w2->Label)     // take over the node name label ?
             {
                 w1->Label = w2->Label;
-                w1->Label->pOwner = w1.get(); // @@@
+                w1->Label->setOwner(w1);
             }
             else if(n->Label)
             {
                 w1->Label = n->Label;
-                w1->Label->pOwner = w1.get(); // @@@
+                w1->Label->setOwner(w1);
                 if(w1->isHorizontal())
                     w1->Label->Type = isHWireLabel;
                 else
@@ -832,7 +835,7 @@ bool Schematic::oneTwoWires(Node *n)
             w1->x2 = w2->x2;
             w1->y2 = w2->y2;
             w1->Port2 = w2->Port2;
-            Nodes->erase(n);    // delete node (is auto delete)
+            Nodes->erase(n.get());    // delete node (is auto delete)
             w1->Port2->removeConnection(w2);
             w1->Port2->appendConnection(w1);
             Wires->erase(w2.get());
@@ -853,8 +856,11 @@ void Schematic::deleteWire(const WireList::iterator &w)
     else
     {
         w->Port1->removeConnection(w.ref());   // remove connection
-        if(w->Port1->Connections.size() == 2)
-            oneTwoWires(w->Port1);  // two wires -> one wire
+        if(w->Port1->Connections.size() == 2) {
+            auto n1 = Nodes->find(w->Port1);
+            assert(n1 != Nodes->end());
+            oneTwoWires(n1.ref());  // two wires -> one wire
+        }
     }
 
     if(w->Port2->Connections.size() == 1)
@@ -864,8 +870,11 @@ void Schematic::deleteWire(const WireList::iterator &w)
     else
     {
         w->Port2->removeConnection(w.ref());   // remove connection
-        if(w->Port2->Connections.size() == 2)
-            oneTwoWires(w->Port2);  // two wires -> one wire
+        if(w->Port2->Connections.size() == 2) {
+            auto n2 = Nodes->find(w->Port2);
+            assert(n2 != Nodes->end());
+            oneTwoWires(n2.ref());  // two wires -> one wire
+        }
     }
 
     Wires->erase(w);
@@ -899,7 +908,7 @@ int Schematic::copyWires(int& x1, int& y1, int& x2, int& y2,
 
                     // Don't set pn->Label->pOwner=0 , so text position stays unchanged.
                     // But remember its wire.
-                    pn->Label->pOwner = pw.operator->();
+                    pn->Label->setOwner(pw.ref());
                     pn->Label = 0;
                 }
             pn = pw->Port2;
@@ -910,7 +919,7 @@ int Schematic::copyWires(int& x1, int& y1, int& x2, int& y2,
 
                     // Don't set pn->Label->pOwner=0 , so text position stays unchanged.
                     // But remember its wire.
-                    pn->Label->pOwner = pw.operator->();
+                    pn->Label->setOwner(pw.ref());
                     pn->Label = 0;
                 }
 
@@ -1816,7 +1825,7 @@ int Schematic::copySelectedElements(SharedObjectList<Element> &p)
         ++pnn;
         if(pn->State & 8)
             if(pn->Connections.size() == 2)
-                if(oneTwoWires(pn.operator->()))    // if possible, connect two wires to one
+                if(oneTwoWires(pn.ref()))    // if possible, connect two wires to one
                 {
                     continue;
                 }
@@ -2478,7 +2487,7 @@ void Schematic::insertComponentNodes(const std::shared_ptr<Component> &c, bool n
 
     // connect every node of the component to corresponding schematic node
     for (auto pp = c->Ports.begin(); pp != c->Ports.end(); ++pp)
-        pp->Connection = insertNode(pp->x+c->cx, pp->y+c->cy, c);
+        pp->Connection = insertNode(pp->x+c->cx, pp->y+c->cy, c).get(); // @@@
 
     if(noOptimize)  return;
 
@@ -2526,10 +2535,10 @@ void Schematic::insertRawComponent(const ComponentList::holder &c, bool noOptimi
     // a ground symbol erases an existing label on the wire line
     if(c->obsolete_model_hack() == "GND") { // BUG.
         c->gnd_obsolete_model_override_hack("x");
-        Element *pe = getWireLabel(c->Ports.first().Connection);
+        auto pe = getWireLabel(c->Ports.first().Connection);
         if(pe) if((pe->Type & isComponent) == 0)
             {
-                ((Conductor*)pe)->Label = 0;
+                std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
             }
         c->gnd_obsolete_model_override_hack("GND");
     }
@@ -2603,9 +2612,9 @@ void Schematic::insertComponent(const std::shared_ptr<Component> &c)
         // a ground symbol erases an existing label on the wire line
         if(c->obsolete_model_hack() == "GND") { // BUG
             c->gnd_obsolete_model_override_hack("x");
-            Element *pe = getWireLabel(c->Ports.first().Connection);
+            auto pe = getWireLabel(c->Ports.first().Connection);
             if(pe && (pe->Type & isComponent) == 0)
-                ((Conductor*)pe)->Label = 0;
+                std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
             c->gnd_obsolete_model_override_hack("GND");
         }
     }
@@ -2762,7 +2771,7 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
             }
             break;
         case 2:
-            oneTwoWires(pp->Connection); // try to connect two wires to one
+            oneTwoWires(std::shared_ptr<Node>(pp->Connection)); // try to connect two wires to one
         default:
             ;
         }
@@ -2771,7 +2780,7 @@ void Schematic::setCompPorts(std::shared_ptr<Component> &pc)
     // Re-connect component node to schematic node. This must be done completely
     // after the first loop in order to avoid problems with node labels.
     for (auto pp = pc->Ports.begin(); pp != pc->Ports.end(); ++pp)
-        pp->Connection = insertNode(pp->x+pc->cx, pp->y+pc->cy, pc);
+        pp->Connection = insertNode(pp->x+pc->cx, pp->y+pc->cy, pc).get();  // @@@
 
     for(auto pl = LabelCache.begin(); pl != LabelCache.end(); ++pl)
         insertNodeLabel(*pl);
@@ -2846,7 +2855,7 @@ void Schematic::deleteComp(const ComponentList::iterator &c)
             break;
         case 3  :
             pn->Connection->removeConnection(c.ref());// delete connection
-            oneTwoWires(pn->Connection);  // two wires -> one wire
+            oneTwoWires(std::shared_ptr<Node>(pn->Connection));  // two wires -> one wire
             break;
         default :
             pn->Connection->removeConnection(c.ref());// remove connection
@@ -3027,7 +3036,7 @@ int Schematic::placeNodeLabel(const std::shared_ptr<WireLabel> &pl)
 
     if(pn == Nodes->end())  return -1;
 
-    Element *pe = getWireLabel(pn.operator->());
+    auto pe = getWireLabel(pn.operator->());
     if(pe)      // name found ?
     {
         if(pe->Type & isComponent)
@@ -3035,19 +3044,19 @@ int Schematic::placeNodeLabel(const std::shared_ptr<WireLabel> &pl)
             return -2;  // ground potential
         }
 
-        ((Conductor*)pe)->Label = 0;
+        std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
     }
 
     pn->Label = pl;   // insert node label
     pl->Type = isNodeLabel;
-    pl->pOwner = pn.operator->();
+    pl->setOwner(pn.ref());
     return 0;
 }
 
 // ---------------------------------------------------
 // Test, if wire line is already labeled and returns a pointer to the
 // labeled element.
-Element* Schematic::getWireLabel(Node *pn_)
+std::shared_ptr<Element> Schematic::getWireLabel(Node *pn_)
 {
     QVector<Node *> Cons;
 
@@ -3059,8 +3068,15 @@ Element* Schematic::getWireLabel(Node *pn_)
     for(int i = 0; i < Cons.size(); ++i)
     {
         Node *pn = Cons[i];
-        if(pn->Label) return pn;
+        if(pn->Label)
+        {
+            //  TOOD: this is required as we cannot make Port1 and Port2 weak pointers ...
+            auto i = Nodes->find(pn);
+            assert(i != Nodes->end());
+            return i.ref();
+        }
         else
+        {
             for(auto j = pn->Connections.begin(); j != pn->Connections.end(); ++j)
             {
                 std::shared_ptr<Element> pe(*j);
@@ -3068,12 +3084,12 @@ Element* Schematic::getWireLabel(Node *pn_)
                 {
                     auto pc = std::dynamic_pointer_cast<Component>(pe);
                     if(pc->isActive == COMP_IS_ACTIVE)
-                        if(pc->obsolete_model_hack() == "GND") return pe.get();  // @@@
+                        if(pc->obsolete_model_hack() == "GND") return pe;
                     continue;
                 }
 
                 auto pw = std::dynamic_pointer_cast<Wire>(pe);
-                if(pw->Label) return pw.get();  // @@@
+                if(pw->Label) return pw;
 
                 Node *pNode;
                 if(pn != pw->Port1)
@@ -3085,6 +3101,7 @@ Element* Schematic::getWireLabel(Node *pn_)
                 pNode->y1 = 1;  // mark Node as already checked
                 Cons.append(pNode);
             }
+        }
     }
     return 0;   // no wire label found
 }
@@ -3098,7 +3115,7 @@ void Schematic::insertNodeLabel(const std::shared_ptr<WireLabel> &pl)
 
     // Go on, if label don't lie on existing node.
 
-    Wire *pw = selectedWire(pl->cx, pl->cy);
+    auto pw = selectedWire(pl->cx, pl->cy);
     if(pw)    // lies label on existing wire ?
     {
         if(getWireLabel(pw->Port1) == 0)  // wire not yet labeled ?
@@ -3107,12 +3124,12 @@ void Schematic::insertNodeLabel(const std::shared_ptr<WireLabel> &pl)
     }
 
 
-    Node *pn = new Node(pl->cx, pl->cy);
+    std::shared_ptr<Node> pn(new Node(pl->cx, pl->cy));
     Nodes->append(pn);
 
     pn->Label = pl;
     pl->Type  = isNodeLabel;
-    pl->pOwner = pn;
+    pl->setOwner(pn);
 }
 
 // ---------------------------------------------------
