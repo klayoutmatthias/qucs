@@ -444,7 +444,7 @@ void MouseActions::MMoveMoving(Schematic *Doc, QMouseEvent *Event)
 
   movingElements.clear();
   Doc->copySelectedElements(movingElements);
-  Doc->viewport()->repaint();
+  Doc->viewport()->update();
 
   // Changes the position of all moving elements by dx/dy
   for(auto i = movingElements.begin(); i != movingElements.end(); ++i) {

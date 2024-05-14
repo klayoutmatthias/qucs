@@ -33,6 +33,7 @@ public:
  ~Wire();
 
   void paint(ViewPainter*);
+  void paintScheme(Schematic *s);
   void paintScheme(QPainter*);
   void setCenter(int, int, bool relative=false);
   void getCenter(int&, int&);

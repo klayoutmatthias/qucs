@@ -15,6 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 #include "wire.h"
+#include "schematic.h"
 
 #include <QPainter>
 
@@ -92,6 +93,12 @@ bool Wire::getSelected(int x_, int y_)
     return true;
 
   return false;
+}
+
+// ----------------------------------------------------------------
+void Wire::paintScheme(Schematic *p)
+{
+  p->PostPaintEvent(_Line, x1, y1, x2, y2);
 }
 
 // ----------------------------------------------------------------
