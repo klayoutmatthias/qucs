@@ -1143,7 +1143,8 @@ void QucsApp::slotApplyCompText()
   }
 
   // avoid seeing the property text behind the line edit
-  s = pp->Value;
+  if(pp)  // Is it first property or component name ?
+    s = pp->Value;
   editText->setMinimumWidth(editText->fontMetrics().horizontalAdvance(s)+4);
 
 

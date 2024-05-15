@@ -257,6 +257,9 @@ ComponentDialog::ComponentDialog(const std::shared_ptr<Component> &c, Schematic 
     t->addTab(tabProperties, tr("Properties"));
     //gp1 = new QGridLayout(tabProperties, 9,2,5,5);
     gp1 = new QGridLayout(tabProperties);
+
+    //  next property to show in table
+    ++pp;
   }
   else {   // no simulation component
     //gp1 = new QGridLayout(0, 9,2,5,5);
@@ -430,7 +433,7 @@ ComponentDialog::ComponentDialog(const std::shared_ptr<Component> &c, Schematic 
 
   /*! Insert all \a Comp properties into the dialog \a prop list */
   int row=0; // row counter
-  for(auto p = ++pp; p != Comp->Props.end(); ++p) {
+  for(auto p = pp; p != Comp->Props.end(); ++p) {
 
       // do not insert if already on first tab
       // this is the reason it was originally from back to front...

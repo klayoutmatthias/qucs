@@ -2457,7 +2457,7 @@ void Schematic::setComponentNumber(const std::shared_ptr<Component> &c)
     QString cSign = c->obsolete_model_hack();
     auto pc = Components->begin();
     // First look, if the port number already exists.
-    for( ; pc != Components->end(); )
+    for( ; pc != Components->end(); ++pc)
         if(pc->obsolete_model_hack() == cSign)
             if(pc->Props.front().Value == s) break;
     if (pc == Components->end()) return;   // was port number not yet in use ?
