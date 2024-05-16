@@ -23,17 +23,17 @@ RLCG::RLCG()
 {
   Description = QObject::tr("RLCG transmission line");
 
-  Lines.append(Line(-30,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-28,  7, 28,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-28,  7, 28,  7,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-28, 14,-21,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-21, 14,-14,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, 14, -7,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7, 14,  0,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 14,  7,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  7, 14, 14,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 14, 14, 21,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 21, 14, 28,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-28, 14,-21,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-21, 14,-14,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, 14, -7,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7, 14,  0,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 14,  7,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  7, 14, 14,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 14, 14, 21,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 21, 14, 28,  7,QPen(Qt::darkBlue,2)));
 
   QFont Font(QucsSettings.font); // default application font
   // symbol text is smaller (10 pt default)
@@ -43,10 +43,10 @@ RLCG::RLCG()
   int fHeight = smallmetrics.lineSpacing();
   QString tmp = QObject::tr("RLCG");
   int w = smallmetrics.horizontalAdvance(tmp);
-  Texts.append(Text(w/-2, -fHeight, tmp));
+  Texts.push_back(Text(w/-2, -fHeight, tmp));
 
-  Ports.append(Port(-30, 0));
-  Ports.append(Port( 30, 0));
+  Ports.push_back(Port(-30, 0));
+  Ports.push_back(Port( 30, 0));
 
   x1 = -30; y1 = -fHeight;
   x2 =  30; y2 = 16;
@@ -56,17 +56,17 @@ RLCG::RLCG()
   Model = "RLCG";
   Name  = "Line";
 
-  Props.append(Property("R", "0.0", false,
+  Props.push_back(Property("R", "0.0", false,
 		QObject::tr("resistive load")+" ("+QObject::tr ("Ohm/m")+")"));
-  Props.append(Property("L", "0.6e-6", true,
+  Props.push_back(Property("L", "0.6e-6", true,
 		QObject::tr("inductive load")+" ("+QObject::tr ("H/m")+")"));
-  Props.append(Property("C", "240e-12", true,
+  Props.push_back(Property("C", "240e-12", true,
 		QObject::tr("capacitive load")+" ("+QObject::tr ("F/m")+")"));
-  Props.append(Property("G", "0.0", false,
+  Props.push_back(Property("G", "0.0", false,
 		QObject::tr("conductive load")+" ("+QObject::tr ("S/m")+")"));
-  Props.append(Property("Length", "1 mm", true,
+  Props.push_back(Property("Length", "1 mm", true,
 		QObject::tr("electrical length of the line")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 }
 

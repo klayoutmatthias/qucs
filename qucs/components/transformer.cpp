@@ -22,32 +22,32 @@ Transformer::Transformer()
 {
   Description = QObject::tr("ideal transformer");
 
-  Arcs.append(Arc(-16,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-18,-10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-30,-30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 18,-10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 30,-30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -1,-20, -1, 20,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(  1,-20,  1, 20,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(-16,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-18,-10,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-30,-30,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 18,-10, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 30,-30, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -1,-20, -1, 20,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(  1,-20,  1, 20,QPen(Qt::darkBlue,1)));
 
-  Texts.append(Text(-21, -18,"T"));
-  Arcs.append(Arc(-21,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( 15,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Texts.push_back(Text(-21, -18,"T"));
+  Arcs.push_back(Arc(-21,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( 15,-24,  5,  5,  0, 16*360,QPen(Qt::darkBlue,2)));
 
 
-  Ports.append(Port(-30,-30));
-  Ports.append(Port( 30,-30));
-  Ports.append(Port( 30, 30));
-  Ports.append(Port(-30, 30));
+  Ports.push_back(Port(-30,-30));
+  Ports.push_back(Port( 30,-30));
+  Ports.push_back(Port( 30, 30));
+  Ports.push_back(Port(-30, 30));
 
   x1 = -33; y1 = -34;
   x2 =  33; y2 =  34;
@@ -57,7 +57,7 @@ Transformer::Transformer()
   Model = "Tr";
   Name  = "Tr";
 
-  Props.append(Property("T", "1", true,
+  Props.push_back(Property("T", "1", true,
 		QObject::tr("voltage transformation ratio")));
 }
 

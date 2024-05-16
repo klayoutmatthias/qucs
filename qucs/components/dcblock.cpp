@@ -21,18 +21,18 @@ dcBlock::dcBlock()
 {
   Description = QObject::tr("dc block");
 
-  Lines.append(Line(- 4,-11, -4, 11,QPen(Qt::darkBlue,4)));
-  Lines.append(Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
-  Lines.append(Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(- 4,-11, -4, 11,QPen(Qt::darkBlue,4)));
+  Lines.push_back(Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
+  Lines.push_back(Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-23,-14, 23,-14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-23, 14, 23, 14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-23,-14,-23, 14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 23,-14, 23, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23,-14, 23,-14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23, 14, 23, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23,-14,-23, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 23,-14, 23, 14,QPen(Qt::darkBlue,1)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -16;
   x2 =  30; y2 =  17;
@@ -42,7 +42,7 @@ dcBlock::dcBlock()
   Model = "DCBlock";
   Name  = "C";
 
-  Props.append(Property("C", "1 uF", false,
+  Props.push_back(Property("C", "1 uF", false,
 	QObject::tr("for transient simulation: capacitance in Farad")));
 }
 

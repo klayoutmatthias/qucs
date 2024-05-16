@@ -22,17 +22,17 @@ Volt_noise::Volt_noise()
 {
   Description = QObject::tr("noise voltage source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-12,  1,  1,-12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,  6,  6,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7, 10, 10, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -2, 12, 12, -2,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,  1,  1,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,  6,  6,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7, 10, 10, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -2, 12, 12, -2,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -15;
   x2 =  30; y2 =  15;
@@ -42,13 +42,13 @@ Volt_noise::Volt_noise()
   Model = "Vnoise";
   Name  = "V";
 
-  Props.append(Property("u", "1e-6", true,
+  Props.push_back(Property("u", "1e-6", true,
 		QObject::tr("voltage power spectral density in V^2/Hz")));
-  Props.append(Property("e", "0", false,
+  Props.push_back(Property("e", "0", false,
 		QObject::tr("frequency exponent")));
-  Props.append(Property("c", "1", false,
+  Props.push_back(Property("c", "1", false,
 		QObject::tr("frequency coefficient")));
-  Props.append(Property("a", "0", false,
+  Props.push_back(Property("a", "0", false,
 		QObject::tr("additive frequency term")));
 
   rotate();  // fix historical flaw

@@ -22,22 +22,22 @@ Triac::Triac()
 {
   Description = QObject::tr("triac (bidirectional thyristor)");
 
-  Lines.append(Line(  0,-30,  0, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 30,  0,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-30,  0, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 30,  0,  6,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-18,  6, 18,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-18, -6, 18, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -9,  6,-18, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -9,  6,  0, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  9, -6,  0,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  9, -6, 18,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-18,  6, 18,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-18, -6, 18, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -9,  6,-18, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -9,  6,  0, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  9, -6,  0,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  9, -6, 18,  6,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-13, 10, -9,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 10,-13, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-13, 10, -9,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 10,-13, 10,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(  0,-30));
-  Ports.append(Port(  0, 30));
-  Ports.append(Port(-30, 10));
+  Ports.push_back(Port(  0,-30));
+  Ports.push_back(Port(  0, 30));
+  Ports.push_back(Port(-30, 10));
 
   x1 = -30; y1 = -30;
   x2 =  20; y2 =  30;
@@ -47,21 +47,21 @@ Triac::Triac()
   Model = "Triac";
   Name  = "D";
 
-  Props.append(Property("Vbo", "400 V", false,
+  Props.push_back(Property("Vbo", "400 V", false,
 	QObject::tr("(bidirectional) breakover voltage")));
-  Props.append(Property("Igt", "50 uA", true,
+  Props.push_back(Property("Igt", "50 uA", true,
 	QObject::tr("(bidirectional) gate trigger current")));
-  Props.append(Property("Cj0", "10 pF", false,
+  Props.push_back(Property("Cj0", "10 pF", false,
 	QObject::tr("parasitic capacitance")));
-  Props.append(Property("Is", "1e-10 A", false,
+  Props.push_back(Property("Is", "1e-10 A", false,
 	QObject::tr("saturation current")));
-  Props.append(Property("N", "2", false,
+  Props.push_back(Property("N", "2", false,
 	QObject::tr("emission coefficient")));
-  Props.append(Property("Ri", "10 Ohm", false,
+  Props.push_back(Property("Ri", "10 Ohm", false,
 	QObject::tr("intrinsic junction resistance")));
-  Props.append(Property("Rg", "5 Ohm", false,
+  Props.push_back(Property("Rg", "5 Ohm", false,
 	QObject::tr("gate resistance")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature")));
 }
 

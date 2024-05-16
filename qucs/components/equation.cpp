@@ -33,9 +33,9 @@ Equation::Equation()
   int xb = r.width()  >> 1;
   int yb = r.height() >> 1;
 
-  Lines.append(Line(-xb, -yb, -xb,  yb,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-xb,  yb,  xb+3,yb,QPen(Qt::darkBlue,2)));
-  Texts.append(Text(-xb+4,  -yb-3, QObject::tr("Equation"),
+  Lines.push_back(Line(-xb, -yb, -xb,  yb,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-xb,  yb,  xb+3,yb,QPen(Qt::darkBlue,2)));
+  Texts.push_back(Text(-xb+4,  -yb-3, QObject::tr("Equation"),
 			QColor(0,0,0), 12.0));
 
   x1 = -xb-3;  y1 = -yb-5;
@@ -46,8 +46,8 @@ Equation::Equation()
   Model = "Eqn"; // BUG: don't use
   Name  = "Eqn"; // BUG: don't use
 
-  Props.append(Property("y", "1", true));
-  Props.append(Property("Export", "yes", false,
+  Props.push_back(Property("y", "1", true));
+  Props.push_back(Property("Export", "yes", false,
   		QObject::tr("put result into dataset")+" [yes, no]"));
 }
 

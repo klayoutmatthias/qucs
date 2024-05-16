@@ -255,12 +255,12 @@ void createIcons() {
 
         Component *c = (Component* ) e;
 
-        QList<Line> Lines      = c->Lines;
-        QList<Arc> Arcs        = c-> Arcs;
-        QList<Area> Rects      = c-> Rects;
-        QList<Area> Ellips     = c-> Ellips;
-        QList<Port> Ports      = c->Ports;
-        QList<Text> Texts      = c->Texts;
+        std::list<Line> Lines      = c->Lines;
+        std::list<Arc> Arcs        = c-> Arcs;
+        std::list<Area> Rects      = c-> Rects;
+        std::list<Area> Ellips     = c-> Ellips;
+        std::list<Port> Ports      = c->Ports;
+        std::list<Text> Texts      = c->Texts;
 
         QGraphicsScene *scene = new QGraphicsScene();
 
@@ -409,7 +409,7 @@ void createDocData() {
         compData << "Default name; ``"    + c->name()  + "``";
         compData << "Type; "              + typeMap.value(c->Type);
         compData << "Bitmap file; "       + QString(File);
-        compData << "Properties; "        + QString::number(c->Props.count());
+        compData << "Properties; "        + QString::number(c->Props.size());
         compData << "Category; "          + category;
 
         // 001_data.csv - CSV file with component data

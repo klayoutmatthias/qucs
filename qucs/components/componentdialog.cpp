@@ -524,7 +524,10 @@ void ComponentDialog::updateCompPropsList()
 
     QString s;
     int row=0; // row counter
-    for(auto p = Comp->Props.begin() + last_prop; p != Comp->Props.end(); ++p) {
+    auto p = Comp->Props.begin();
+    for(int i = 0; i < last_prop && p != Comp->Props.end(); ++i)
+      ++p;
+    for( ; p != Comp->Props.end(); ++p) {
 
       // do not insert if already on first tab
       // this is the reason it was originally from back to front...
@@ -995,7 +998,7 @@ void ComponentDialog::slotApplyInput()
       QString desc = prop->item(row, 3)->text();
 
       qDebug() << "====>" <<name << value
-               << Comp->Props.count()
+               << Comp->Props.size()
                << prop->rowCount() +1
                << pp.operator->();
 
@@ -1021,9 +1024,9 @@ void ComponentDialog::slotApplyInput()
         // if properties where added in the dialog
         // -> create new on the Comp
         Q_ASSERT(prop->rowCount() >= 0);
-        if ( (int) Comp->Props.count() < prop->rowCount() +1) {
+        if ( (int) Comp->Props.size() < prop->rowCount() +1) {
             qDebug() << "adding to Comp ";
-            Comp->Props.append(Property(name, value, display, desc));
+            Comp->Props.push_back(Property(name, value, display, desc));
             changed = true;
         }
       }
@@ -1053,7 +1056,7 @@ void ComponentDialog::slotApplyInput()
 
     Doc->recreateComponent(Comp);
     Doc->viewport()->repaint();
-    if ( (int) Comp->Props.count() != prop->rowCount()) { // If props count was changed after recreation
+    if ( (int) Comp->Props.size() != prop->rowCount()) { // If props count was changed after recreation
       Q_ASSERT(prop->rowCount() >= 0);
       updateCompPropsList(); // of component we need to update properties
     }

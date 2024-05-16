@@ -2533,7 +2533,7 @@ void Schematic::insertRawComponent(const ComponentList::holder &c, bool noOptimi
     // a ground symbol erases an existing label on the wire line
     if(c->obsolete_model_hack() == "GND") { // BUG.
         c->gnd_obsolete_model_override_hack("x");
-        auto pe = getWireLabel(c->Ports.first().getConnection().get());
+        auto pe = getWireLabel(c->Ports.front().getConnection().get());
         if(pe) if((pe->Type & isComponent) == 0)
             {
                 std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
@@ -2546,7 +2546,7 @@ void Schematic::insertRawComponent(const ComponentList::holder &c, bool noOptimi
 void Schematic::recreateComponent(const std::shared_ptr<Component> &Comp)
 {
     std::list<std::shared_ptr<WireLabel> > plMem;
-    int PortCount = Comp->Ports.count();
+    int PortCount = Comp->Ports.size();
 
     if(PortCount > 0)
     {
@@ -2613,7 +2613,7 @@ void Schematic::insertComponent(const std::shared_ptr<Component> &c)
         // a ground symbol erases an existing label on the wire line
         if(c->obsolete_model_hack() == "GND") { // BUG
             c->gnd_obsolete_model_override_hack("x");
-            auto pe = getWireLabel(c->Ports.first().getConnection().get());
+            auto pe = getWireLabel(c->Ports.front().getConnection().get());
             if(pe && (pe->Type & isComponent) == 0)
                 std::dynamic_pointer_cast<Conductor>(pe)->Label = 0;
             c->gnd_obsolete_model_override_hack("GND");
@@ -2661,7 +2661,7 @@ void Schematic::activateCompsWithinRect(int x1, int y1, int x2, int y2)
                     {
                         a = pc->isActive - 1;
 
-                        if(pc->Ports.count() > 1)
+                        if(pc->Ports.size() > 1)
                         {
                             if(a < 0)  a = 2;
                             pc->isActive = a;    // change "active status"
@@ -2673,7 +2673,7 @@ void Schematic::activateCompsWithinRect(int x1, int y1, int x2, int y2)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
                                     // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().getConnection().get());
+                                    oneLabel(pc->Ports.front().getConnection().get());
 				}
                         }
                         changed = true;
@@ -2694,7 +2694,7 @@ bool Schematic::activateSpecifiedComponent(int x, int y)
                     {
                         a = pc->isActive - 1;
 
-                        if(pc->Ports.count() > 1)
+                        if(pc->Ports.size() > 1)
                         {
                             if(a < 0)  a = 2;
                             pc->isActive = a;    // change "active status"
@@ -2706,7 +2706,7 @@ bool Schematic::activateSpecifiedComponent(int x, int y)
                             if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                                 if(pc->obsolete_model_hack() == "GND"){
 				  // if existing, delete label on wire line
-                                    oneLabel(pc->Ports.first().getConnection().get());
+                                    oneLabel(pc->Ports.front().getConnection().get());
 				}
                         }
                         setChanged(true, true);
@@ -2726,7 +2726,7 @@ bool Schematic::activateSelectedComponents()
         {
             a = pc->isActive - 1;
 
-            if(pc->Ports.count() > 1)
+            if(pc->Ports.size() > 1)
             {
                 if(a < 0)  a = 2;
                 pc->isActive = a;    // change "active status"
@@ -2738,7 +2738,7 @@ bool Schematic::activateSelectedComponents()
                 if(a == COMP_IS_ACTIVE)  // only for active (not shorten)
                     if(pc->obsolete_model_hack() == "GND"){
 		      // if existing, delete label on wire line
-                        oneLabel(pc->Ports.first().getConnection().get());
+                        oneLabel(pc->Ports.front().getConnection().get());
 		    }
             }
             sel = true;

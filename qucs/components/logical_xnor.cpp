@@ -34,8 +34,8 @@ Logical_XNOR::~Logical_XNOR()
 Component* Logical_XNOR::newOne()
 {
   Logical_XNOR* p = new Logical_XNOR();
-  p->Props.first().Value = Props.first().Value;
-  p->Props.last().Value = Props.last().Value;
+  p->Props.front().Value = Props.front().Value;
+  p->Props.back().Value = Props.back().Value;
   p->recreate(0);
   return p;
 }

@@ -31,9 +31,9 @@ AC_Sim::AC_Sim()
   if (a < 8 || s.length() - b < 8) b = -1;
   if (b != -1) s[b] = '\n';
 
-  Texts.append(Text(0, 0, s.left(b), Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, s.left(b), Qt::darkBlue, QucsSettings.largeFontSize));
   if (b != -1)
-    Texts.append(Text(0, 0, s.mid(b+1), Qt::darkBlue, QucsSettings.largeFontSize));
+    Texts.push_back(Text(0, 0, s.mid(b+1), Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+128; y2 = y1+41;
@@ -44,15 +44,15 @@ AC_Sim::AC_Sim()
   Name  = "AC";
 
   // The index of the first 4 properties must not changed. Used in recreate().
-  Props.append(Property("Type", "lin", true,
+  Props.push_back(Property("Type", "lin", true,
 			QObject::tr("sweep type")+" [lin, log, list, const]"));
-  Props.append(Property("Start", "1 GHz", true,
+  Props.push_back(Property("Start", "1 GHz", true,
 			QObject::tr("start frequency in Hertz")));
-  Props.append(Property("Stop", "10 GHz", true,
+  Props.push_back(Property("Stop", "10 GHz", true,
 			QObject::tr("stop frequency in Hertz")));
-  Props.append(Property("Points", "19", true,
+  Props.push_back(Property("Points", "19", true,
 			QObject::tr("number of simulation steps")));
-  Props.append(Property("Noise", "no", false,
+  Props.push_back(Property("Noise", "no", false,
 			QObject::tr("calculate noise voltages")+
 			" [yes, no]"));
 }
@@ -77,18 +77,18 @@ Element* AC_Sim::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
 void AC_Sim::recreate(Schematic*)
 {
-  Property &pp = Props.first();
+  Property &pp = Props.front();
   if((pp.Value == "list") || (pp.Value == "const")) {
     // Call them "Symbol" to omit them in the netlist.
-    Props[1].Name = "Symbol";
-    Props[1].display = false;
-    Props[2].Name = "Symbol";
-    Props[2].display = false;
-    Props[3].Name = "Values";
+    prop(1).Name = "Symbol";
+    prop(1).display = false;
+    prop(2).Name = "Symbol";
+    prop(2).display = false;
+    prop(3).Name = "Values";
   }
   else {
-    Props[1].Name = "Start";
-    Props[2].Name = "Stop";
-    Props[3].Name = "Points";
+    prop(1).Name = "Start";
+    prop(2).Name = "Stop";
+    prop(3).Name = "Points";
   }
 }

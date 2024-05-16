@@ -22,22 +22,22 @@ Ampere_noise::Ampere_noise()
 {
   Description = QObject::tr("noise current source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
 
-  Lines.append(Line(-12,  1,  1,-12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,  6, -7,  3,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  3, -7,  6,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7, 10, -2,  5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  7, -4, 10, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -1, 12, 12, -1,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,  1,  1,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,  6, -7,  3,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  3, -7,  6,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7, 10, -2,  5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  7, -4, 10, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -1, 12, 12, -1,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -15;
   x2 =  30; y2 =  15;
@@ -47,13 +47,13 @@ Ampere_noise::Ampere_noise()
   Model = "Inoise";
   Name  = "I";
 
-  Props.append(Property("i", "1e-6", true,
+  Props.push_back(Property("i", "1e-6", true,
 		QObject::tr("current power spectral density in A^2/Hz")));
-  Props.append(Property("e", "0", false,
+  Props.push_back(Property("e", "0", false,
 		QObject::tr("frequency exponent")));
-  Props.append(Property("c", "1", false,
+  Props.push_back(Property("c", "1", false,
 		QObject::tr("frequency coefficient")));
-  Props.append(Property("a", "0", false,
+  Props.push_back(Property("a", "0", false,
 		QObject::tr("additive frequency term")));
 
   rotate();  // fix historical flaw

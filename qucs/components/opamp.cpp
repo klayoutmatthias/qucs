@@ -22,21 +22,21 @@ OpAmp::OpAmp()
 {
   Description = QObject::tr("operational amplifier");
 
-  Lines.append(Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 40,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 40,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-20,-35,-20, 35,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,-35, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20, 35, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-35,-20, 35,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-35, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20, 35, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-16, 19, -9, 19,QPen(Qt::black,1)));
-  Lines.append(Line(-16,-19, -9,-19,QPen(Qt::red,1)));
-  Lines.append(Line(-13,-22,-13,-15,QPen(Qt::red,1)));
+  Lines.push_back(Line(-16, 19, -9, 19,QPen(Qt::black,1)));
+  Lines.push_back(Line(-16,-19, -9,-19,QPen(Qt::red,1)));
+  Lines.push_back(Line(-13,-22,-13,-15,QPen(Qt::red,1)));
 
-  Ports.append(Port(-30, 20));
-  Ports.append(Port(-30,-20));
-  Ports.append(Port( 40,  0));
+  Ports.push_back(Port(-30, 20));
+  Ports.push_back(Port(-30,-20));
+  Ports.push_back(Port( 40,  0));
 
   x1 = -30; y1 = -38;
   x2 =  30; y2 =  38;
@@ -46,9 +46,9 @@ OpAmp::OpAmp()
   Model = "OpAmp";
   Name  = "OP";
 
-  Props.append(Property("G", "1e6", true,
+  Props.push_back(Property("G", "1e6", true,
 		QObject::tr("voltage gain")));
-  Props.append(Property("Umax", "15 V", false,
+  Props.push_back(Property("Umax", "15 V", false,
 	QObject::tr("absolute value of maximum and minimum output voltage")));
 }
 

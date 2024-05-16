@@ -23,27 +23,27 @@ vExp::vExp()
   Description = QObject::tr("exponential voltage source");
 
   // normal voltage source symbol
-  Arcs.append(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
-  Lines.append(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
-  Lines.append(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
+  Lines.push_back(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
+  Lines.push_back(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
 
   // write 'Exp' inside voltage source symbol
-  Lines.append(Line( -3,  -7, -3, -4,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -3,  -7, 5, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 1,  -7, 1, -4,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 5,  -7, 5, -4,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -3,  -1, 1, 3,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 1,  -1, -3, 3,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 1,  6, -5, 6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 1,  6, 1, 9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -3,  6, -3, 9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 1,  9, -3, 9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,  -7, -3, -4,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,  -7, 5, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 1,  -7, 1, -4,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 5,  -7, 5, -4,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,  -1, 1, 3,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 1,  -1, -3, 3,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 1,  6, -5, 6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 1,  6, 1, 9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,  6, -3, 9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 1,  9, -3, 9,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  14;
@@ -53,17 +53,17 @@ vExp::vExp()
   Model = "Vexp";
   Name  = "V";
 
-  Props.append(Property("U1", "0 V", true,
+  Props.push_back(Property("U1", "0 V", true,
 		QObject::tr("voltage before rising edge")));
-  Props.append(Property("U2", "1 V", true,
+  Props.push_back(Property("U2", "1 V", true,
 		QObject::tr("maximum voltage of the pulse")));
-  Props.append(Property("T1", "0", true,
+  Props.push_back(Property("T1", "0", true,
 		QObject::tr("start time of the exponentially rising edge")));
-  Props.append(Property("T2", "1 ms", true,
+  Props.push_back(Property("T2", "1 ms", true,
 		QObject::tr("start of exponential decay")));
-  Props.append(Property("Tr", "1 ns", false,
+  Props.push_back(Property("Tr", "1 ns", false,
 		QObject::tr("rise time of the rising edge")));
-  Props.append(Property("Tf", "1 ns", false,
+  Props.push_back(Property("Tf", "1 ns", false,
 		QObject::tr("fall time of the falling edge")));
 
   rotate();  // fix historical flaw

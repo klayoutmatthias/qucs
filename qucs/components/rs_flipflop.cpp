@@ -23,28 +23,28 @@ RS_FlipFlop::RS_FlipFlop()
   Type = isDigitalComponent;
   Description = QObject::tr("RS flip flop");
 
-  Props.append(Property("t", "0", false, QObject::tr("delay time")));
+  Props.push_back(Property("t", "0", false, QObject::tr("delay time")));
 
-  Lines.append(Line(-20,-20, 20,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20, 20, 20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,-20,-20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 20,-20, 20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-20, 20,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20, 20, 20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-20,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 20,-20, 20, 20,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-30,-10,-20,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 10,-20, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,-10, 20,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, 10, 20, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,-10,-20,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 10,-20, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,-10, 20,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, 10, 20, 10,QPen(Qt::darkBlue,2)));
 
-  Texts.append(Text(-18,-21, "R", Qt::darkBlue, 12.0));
-  Texts.append(Text(-18, -1, "S", Qt::darkBlue, 12.0));
-  Texts.append(Text(  6,-21, "Q", Qt::darkBlue, 12.0));
-  Texts.append(Text(  6, -1, "Q", Qt::darkBlue, 12.0));
-  Texts.last().over=true;
+  Texts.push_back(Text(-18,-21, "R", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-18, -1, "S", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(  6,-21, "Q", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(  6, -1, "Q", Qt::darkBlue, 12.0));
+  Texts.back().over=true;
 
-  Ports.append(Port(-30,-10));  // R
-  Ports.append(Port(-30, 10));  // S
-  Ports.append(Port( 30,-10));  // Q
-  Ports.append(Port( 30, 10));  // nQ
+  Ports.push_back(Port(-30,-10));  // R
+  Ports.push_back(Port(-30, 10));  // S
+  Ports.push_back(Port( 30,-10));  // Q
+  Ports.push_back(Port( 30, 10));  // nQ
 
   x1 = -30; y1 = -24;
   x2 =  30; y2 =  24;
@@ -59,19 +59,19 @@ QString RS_FlipFlop::vhdlCode(int NumPorts)
 {
   QString s = "";
   if(NumPorts <= 0) { // no truth table simulation ?
-    QString td = Props.at(0).Value;     // delay time
+    QString td = prop(0).Value;     // delay time
     if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
     s = td;
   }
   s += ";\n";
 
   s = "  " +
-    Ports.at(2).getConnection()->Name + " <= " +
-    Ports.at(0).getConnection()->Name + " nor " +
-    Ports.at(3).getConnection()->Name + s + "  " +
-    Ports.at(3).getConnection()->Name + " <= " +
-    Ports.at(1).getConnection()->Name + " nor " +
-    Ports.at(2).getConnection()->Name + s + '\n';
+    port(2).getConnection()->Name + " <= " +
+    port(0).getConnection()->Name + " nor " +
+    port(3).getConnection()->Name + s + "  " +
+    port(3).getConnection()->Name + " <= " +
+    port(1).getConnection()->Name + " nor " +
+    port(2).getConnection()->Name + s + '\n';
   return s;
 }
 
@@ -80,7 +80,7 @@ QString RS_FlipFlop::verilogCode(int NumPorts)
 {
   QString t = "";
   if(NumPorts <= 0) { // no truth table simulation ?
-    QString td = Props.at(0).Value;        // delay time
+    QString td = prop(0).Value;        // delay time
     if(!misc::Verilog_Delay(td, Name)) return td; // time has not VHDL format
     t = td;
   }
@@ -88,10 +88,10 @@ QString RS_FlipFlop::verilogCode(int NumPorts)
   
   QString l = "";
 
-  QString s = Ports.at(1).getConnection()->Name;
-  QString r = Ports.at(0).getConnection()->Name;
-  QString q = Ports.at(2).getConnection()->Name;
-  QString b = Ports.at(3).getConnection()->Name;
+  QString s = port(1).getConnection()->Name;
+  QString r = port(0).getConnection()->Name;
+  QString q = port(2).getConnection()->Name;
+  QString b = port(3).getConnection()->Name;
   
   l = "\n  // " + Name + " RS-flipflop\n" +
     "  assign" + t + q + " = ~(" + r + " | " + b + ");\n" +

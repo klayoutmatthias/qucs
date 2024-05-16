@@ -234,9 +234,9 @@ Graph* SweepDialog::setBiasPoints()
   // create DC current through each probe
   for(auto pc = Doc->Components->begin(); pc != Doc->Components->end(); ++pc)
     if(pc->obsolete_model_hack() == "IProbe") { // BUG.
-      auto pn = pc->Ports.first().getConnection();
+      auto pn = pc->Ports.front().getConnection();
       if(!pn->Name.isEmpty())   // preserve node voltage ?
-        pn = pc->Ports.at(1).getConnection();
+        pn = pc->port(1).getConnection();
 
       pn->x1 = 0x10;   // mark current
       pg->Var = pc->name() + ".I";

@@ -31,11 +31,11 @@ MutualX::MutualX()
 
   const int init_coils=2; // initial number of coils
   // must be the first property!
-  Props.append(Property("coils", QString::number(init_coils), false,
+  Props.push_back(Property("coils", QString::number(init_coils), false,
                 QObject::tr("number of mutual inductances")));
 
   for (int i=1;i<=init_coils; i++) {
-      Props.append(Property("L"+QString::number(i), "1 mH", false,
+      Props.push_back(Property("L"+QString::number(i), "1 mH", false,
                                 QObject::tr("inductance of coil") + " " + QString::number(i)));
   }
 
@@ -43,7 +43,7 @@ MutualX::MutualX()
     for(int j = i+1; j <= init_coils; j++) {
        QString nam = "k" + QString::number(i) + QString::number(j);
        QString desc = QObject::tr("coupling factor between coil %1 and coil %2").arg(i).arg(j);
-       Props.append(Property(nam,"0.9",false,desc));
+       Props.push_back(Property(nam,"0.9",false,desc));
     }
 
   createSymbol();
@@ -57,7 +57,7 @@ Element* MutualX::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
       MutualX* p =  new MutualX();
-      p->Props[0].Value = "2";
+      p->prop(0).Value = "2";
       p->recreate(0);
       return p;
   }
@@ -67,7 +67,7 @@ Element* MutualX::info(QString& Name, char* &BitmapFile, bool getNewOne)
 Component* MutualX::newOne()
 {
     MutualX *p  = new MutualX();
-    p->Props[0].Value=Props[0].Value;
+    p->prop(0).Value=prop(0).Value;
     p->recreate(0);
     return p;
 }
@@ -81,11 +81,11 @@ QString MutualX::netlist()
       s += " "+p1->getConnection()->Name;   // node names
     }
 
-    int coils = Props.at(0).Value.toInt();
+    int coils = prop(0).Value.toInt();
 
     QString L="";
     for (int i=0;i<coils;i++) {
-        L += Props.at(i+1).Value + ";";
+        L += prop(i+1).Value + ";";
     }
     L.chop(1);
 
@@ -103,7 +103,7 @@ QString MutualX::netlist()
                 k_matrix[i][j] = "1.0"; // for self-inductance
                 state--;
             } else {
-                k_matrix[i][j] = Props.at(coils+state).Value; // for mutual inductances
+                k_matrix[i][j] = prop(coils+state).Value; // for mutual inductances
             }
 
         }
@@ -134,15 +134,15 @@ QString MutualX::netlist()
 void MutualX::createSymbol()
 {
   // adjust port number
-  int Num = Props.first().Value.toInt();
+  int Num = Props.front().Value.toInt();
   if(Num < 2)
     Num = 2;
   else if(Num > 8)
     Num = 8;
-  Props.first().Value = QString::number(Num);
+  Props.front().Value = QString::number(Num);
 
   int NumProps,oldNumProps;
-  oldNumProps = Props.count();
+  oldNumProps = Props.size();
   NumProps = Num + Num * (Num - 1) / 2 + 1;
   if (oldNumProps!=NumProps) { // Coils count was changed
     int oldCoils = rint(0.5*(sqrt(8*oldNumProps-7)-1.0)); // calculate old number of coils
@@ -150,21 +150,37 @@ void MutualX::createSymbol()
     int dCoils = abs(oldCoils - Num);          // how many coils were added/removed?
 
     if (oldCoils>Num) { // reduce coils number
-      for(int i = 0; i < dCoils; i++)
-        Props.erase(Props.begin() + (Num+1)); // remove excess coils
+      for(int i = 0; i < dCoils; i++) {
+        auto p = Props.begin();
+        for (int j = 0; j < Num+1; ++j) {
+          assert(p != Props.end());
+          ++p;
+        }
+        Props.erase(p); // remove excess coils
+      }
       // remove only the no longer valid coupling coefficients, leave the
       //   ones related to existing coils untouched
       for(int i = 1,state=1; i < oldCoils; i++)
         for(int j = i+1; j <= oldCoils; j++,state++) {
             if ((i>Num)||(j>Num)) {
-                Props.erase(Props.begin() + (Num + state));
+                auto p = Props.begin();
+                for (int k = 0; k < Num+state; ++k) {
+                  assert(p != Props.end());
+                  ++p;
+                }
+                Props.erase(p);
                 state--;
             }
         }
 
     } else { // add new coils
       for(int i = 0; i < dCoils; i++) { // add new properties for coils
-        Props.insert(oldCoils+1, Property("L"+QString::number(Num-i), 
+        auto p = Props.begin();
+        for (int j = 0; j < oldCoils+1; ++j) {
+          assert(p != Props.end());
+          ++p;
+        }
+        Props.insert(p, Property("L"+QString::number(Num-i),
 					      "1 mH", 
 					      false, 
 					      QObject::tr("inductance of coil") + " " + QString::number(Num-i)));
@@ -173,7 +189,12 @@ void MutualX::createSymbol()
       for(int i = 1,state=1; i < Num; i++)
         for(int j = i+1; j <= Num; j++,state++) {
             if ((i>oldCoils)||(j>oldCoils)) {
-                Props.insert(Num + state, Property("k", "0.9", false, " "));
+                auto p = Props.begin();
+                for (int k = 0; k < Num+state; ++k) {
+                  assert(p != Props.end());
+                  ++p;
+                }
+                Props.insert(p, Property("k", "0.9", false, " "));
             }
         }
 
@@ -183,7 +204,8 @@ void MutualX::createSymbol()
   // in any case rewrite properties Name and Description
   // (when loading a component, added properties have a default name)
   // adjust coils names
-  auto p1 = Props.begin() + 1;
+  auto p1 = Props.begin();
+  ++p1;
   for(int i = 1; i <= Num; i++) {
     p1->Name = "L"+QString::number(i);
     p1->Description = QObject::tr("inductance of coil") + " " + QString::number(i);
@@ -192,14 +214,14 @@ void MutualX::createSymbol()
   // adjust coupling coeffs names
   for(int i = 1,state=1; i < Num; i++) 
     for(int j = i+1; j <= Num; j++,state++) {
-      Props[Num+state].Name = "k" + QString::number(i) + QString::number(j);
-      Props[Num+state].Description =
+      prop(Num+state).Name = "k" + QString::number(i) + QString::number(j);
+      prop(Num+state).Description =
         QObject::tr("coupling factor between coil %1 and coil %2").arg(i).arg(j);
     }
 
   // draw symbol
   int x = -10 * (Num-1);
-  Texts.append(Text(x-9,-22,"1"));
+  Texts.push_back(Text(x-9,-22,"1"));
 
   x1 = x-6;  y1 = -30;
   x2 = 10-x; y2 =  30;
@@ -209,16 +231,16 @@ void MutualX::createSymbol()
 
   x -= 6;
   for(int i=0; i<Num; i++) {
-    Arcs.append(Arc(x,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(x, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(x,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(x,-18,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(x, -6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(x,  6,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
 
     x += 6;
-    Lines.append(Line(x,-18,x,-30,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(x, 18,x, 30,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(x,-18,x,-30,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(x, 18,x, 30,QPen(Qt::darkBlue,2)));
 
-    Ports.append(Port(x,-30));
-    Ports.append(Port(x, 30));
+    Ports.push_back(Port(x,-30));
+    Ports.push_back(Port(x, 30));
     x += 14;
   }
 }

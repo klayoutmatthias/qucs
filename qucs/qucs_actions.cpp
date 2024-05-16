@@ -1002,7 +1002,7 @@ void QucsApp::slotCursorUp(bool up)
   }else if(up){
     if(view->MAx3 == 0) return;  // edit component namen ?
     auto pc = std::dynamic_pointer_cast<Component>(view->focusElement);
-    const Property &pp = pc->Props.at(view->MAx3-1);  // current property
+    const Property &pp = pc->prop(view->MAx3-1);  // current property
     int Begin = pp.Description.indexOf('[');
     if(Begin < 0) return;  // no selection list ?
     int End = pp.Description.indexOf(editText->text(), Begin); // current
@@ -1020,7 +1020,7 @@ void QucsApp::slotCursorUp(bool up)
   }else{ // down
     if(view->MAx3 == 0) return;  // edit component namen ?
     auto pc = std::dynamic_pointer_cast<Component>(view->focusElement);
-    const Property &pp = pc->Props.at(view->MAx3-1);  // current property
+    const Property &pp = pc->prop(view->MAx3-1);  // current property
     int Pos = pp.Description.indexOf('[');
     if(Pos < 0) return;  // no selection list ?
     Pos = pp.Description.indexOf(editText->text(), Pos); // current list item
@@ -1093,7 +1093,7 @@ void QucsApp::slotApplyCompText()
   }
 
   Property *pp = 0;
-  if(view->MAx3 > 0)  pp = &pc->Props[view->MAx3-1]; // current property
+  if(view->MAx3 > 0)  pp = &pc->prop(view->MAx3-1); // current property
   else s = pc->name();
 
   if(!editText->isHidden()) {   // is called the first time ?
@@ -1121,7 +1121,7 @@ void QucsApp::slotApplyCompText()
 
     n++;     // next row on screen
     (view->MAx3)++;  // next property
-    pp = view->MAx3 > pc->Props.count() ? 0 : &pc->Props[view->MAx3-1];
+    pp = view->MAx3 > int(pc->Props.size()) ? 0 : &pc->prop(view->MAx3-1);
 
     Doc->viewport()->update();
     view->drawn = false;
@@ -1134,7 +1134,7 @@ void QucsApp::slotApplyCompText()
 
     while(!pp->display) {  // search for next visible property
       (view->MAx3)++;  // next property
-      pp = view->MAx3 > pc->Props.count() ? 0 : &pc->Props[view->MAx3-1];
+      pp = view->MAx3 > int(pc->Props.size()) ? 0 : &pc->prop(view->MAx3-1);
       if(!pp) {     // was already last property ?
         slotHideEdit();
         return;

@@ -76,6 +76,44 @@ void Component::Bounding(int& _x1, int& _y1, int& _x2, int& _y2)
 }
 
 // -------------------------------------------------------
+
+Property &Component::prop(int n)
+{
+  auto p = Props.begin();
+  while (n-- > 0 && p != Props.end())
+    ++p;
+  assert(p != Props.end());
+  return *p;
+}
+
+const Property &Component::prop(int n) const
+{
+  auto p = Props.begin();
+  while (n-- > 0 && p != Props.end())
+    ++p;
+  assert(p != Props.end());
+  return *p;
+}
+
+Port &Component::port(int n)
+{
+  auto p = Ports.begin();
+  while (n-- > 0 && p != Ports.end())
+    ++p;
+  assert(p != Ports.end());
+  return *p;
+}
+
+const Port &Component::port(int n) const
+{
+  auto p = Ports.begin();
+  while (n-- > 0 && p != Ports.end())
+    ++p;
+  assert(p != Ports.end());
+  return *p;
+}
+
+// -------------------------------------------------------
 // Size of component text.
 int Component::textSize(int& _dx, int& _dy)
 {
@@ -188,7 +226,7 @@ void Component::paint(ViewPainter *p)
   QFont f = p->Painter->font();   // save current font
   QFont newFont = f;
   if(Model.at(0) == '.') {   // is simulation component (dc, ac, ...)
-    newFont.setPointSizeF(p->Scale * Texts.first().Size);
+    newFont.setPointSizeF(p->Scale * Texts.front().Size);
     newFont.setWeight(QFont::DemiBold);
     p->Painter->setFont(newFont);
     p->map(cx, cy, x, y);
@@ -387,7 +425,7 @@ void Component::rotate()
 {
   // Port count only available after recreate, createSymbol
   if ((Model != "Sub") && (Model !="VHDL") && (Model != "Verilog")) // skip port count
-    if(Ports.count() < 1) return;  // do not rotate components without ports
+    if(Ports.size() < 1) return;  // do not rotate components without ports
   int tmp, dx, dy;
 
   // rotate all lines
@@ -487,7 +525,7 @@ void Component::mirrorX()
 {
   // Port count only available after recreate, createSymbol
   if ((Model != "Sub") && (Model !="VHDL") && (Model != "Verilog")) // skip port count
-    if(Ports.count() < 1) return;  // do not rotate components without ports
+    if(Ports.size() < 1) return;  // do not rotate components without ports
 
   // mirror all lines
   for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
@@ -549,7 +587,7 @@ void Component::mirrorY()
 {
   // Port count only available after recreate, createSymbol
   if ((Model != "Sub") && (Model !="VHDL") && (Model != "Verilog")) // skip port count
-    if(Ports.count() < 1) return;  // do not rotate components without ports
+    if(Ports.size() < 1) return;  // do not rotate components without ports
 
   // mirror all lines
   for (auto p1 = Lines.begin(); p1 != Lines.end(); ++p1) {
@@ -707,8 +745,8 @@ QString Component::get_VHDL_Code(int NumPorts)
   // This is logically correct for the inverter only, but makes
   // some sense for the gates (OR, AND etc.).
   // Has anyone a better idea?
-  QString Node1 = Ports.at(0).getConnection()->Name;
-  return "  " + Node1 + " <= " + Ports.at(1).getConnection()->Name + ";\n";
+  QString Node1 = port(0).getConnection()->Name;
+  return "  " + Node1 + " <= " + port(1).getConnection()->Name + ";\n";
 }
 
 // -------------------------------------------------------
@@ -731,7 +769,7 @@ void Schematic::saveComponent(QTextStream& s, Component /*const*/ * c) const
   el.setAttribute ("mirror", mirroredX);
   el.setAttribute ("rotate", rotated);
 
-  for (Property *pr = Props.first(); pr != 0; pr = Props.next()) {
+  for (Property *pr = Props.front(); pr != 0; pr = Props.next()) {
     el.setAttribute (pr->Name, (pr->display ? "1@" : "0@") + pr.Value);
   }
   qDebug (doc.toString());
@@ -870,7 +908,7 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
 
   /// BUG FIXME. dont use Component parameter dictionary.
   for(; tmp<=(int)counts/2; tmp++)
-    c->Props.append(Property("p", "", true, " "));
+    c->Props.push_back(Property("p", "", true, " "));
 
   // BUG this is weird ...
 
@@ -892,7 +930,9 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
       if(Model == "Diode") { // BUG: don't use names
 	if(counts < 56) {  // backward compatible
           counts >>= 1;
-          p1 = c->Props.begin() + (counts-1);
+          p1 = c->Props.begin();
+          for(int i = 0; i < int(counts)-1 && p1 != c->Props.end(); ++i)
+            ++p1;
           for(; p1 != c->Props.begin(); ) {
             if(counts-- < 19){
               break;
@@ -903,7 +943,7 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
             --p1;
           }
 
-          c->Props[17].Value = c->Props[11].Value;
+          c->prop(17).Value = c->prop(11).Value;
           p1->Value = "0";
         }
       }
@@ -911,7 +951,9 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
 	      Model == "OR" ||  Model == "XNOR"|| Model == "XOR") {
 	if(counts < 10) {   // backward compatible
           counts >>= 1;
-          p1 = c->Props.begin() + counts;
+          p1 = c->Props.begin();
+          for(int i = 0; i < int(counts) && p1 != c->Props.end(); ++i)
+            ++p1;
           for(; p1 != c->Props.begin(); ) {
             if(counts-- < 4)
               break;
@@ -926,7 +968,9 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
       else if(Model == "Buf" || Model == "Inv") {
 	if(counts < 8) {   // backward compatible
           counts >>= 1;
-          p1 = c->Props.begin() + counts;
+          p1 = c->Props.begin();
+          for(int i = 0; i < int(counts) && p1 != c->Props.end(); ++i)
+            ++p1;
           for(; p1 != c->Props.begin(); ) {
             if(counts-- < 3)
               break;
@@ -948,14 +992,14 @@ bool Schematic::loadComponent(const QString& _s, const std::shared_ptr<Component
         p1->Name = n.section('=',0,0);
         n = n.section('=',1);
         // allocate memory for a new property (e.g. for equations)
-        if((unsigned int)c->Props.count() < (counts>>1)) {
+        if((unsigned int)c->Props.size() < (counts>>1)) {
           auto p1next = p1;
           ++p1next;
           c->Props.insert(p1next, Property("y", "1", true));
         }
       }
     if(Model == "R" && z == 6 && counts == 6) {    // backward compatible
-      c->Props.last().Value = n;
+      c->Props.back().Value = n;
       return true;
     }
     p1->Value = n;
@@ -985,10 +1029,12 @@ int Component::analyseLine(const QString& Row, int numProps)
   if((s == "PortSym") || (s == ".PortSym")) {  // backward compatible
     if(!getIntegers(Row, &i1, &i2, &i3))
       return -1;
-    for(i6 = Ports.count(); i6<i3; i6++)  // if ports not in numerical order
-      Ports.append(Port(0, 0, false));
+    for(i6 = Ports.size(); i6<i3; i6++)  // if ports not in numerical order
+      Ports.push_back(Port(0, 0, false));
 
-    auto po = Ports.begin() + (i3-1);
+    auto po = Ports.begin();
+    for(int i = 0; i < (i3-1) && po != Ports.end(); ++i)
+      ++po;
     po->x  = i1;
     po->y = i2;
     po->avail = true;
@@ -1004,7 +1050,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(!getPen(Row, Pen, 5))  return -1;
     i3 += i1;
     i4 += i2;
-    Lines.append(Line(i1, i2, i3, i4, Pen));
+    Lines.push_back(Line(i1, i2, i3, i4, Pen));
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i1 > x2)  x2 = i1;
@@ -1020,7 +1066,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(!getIntegers(Row, &i1, &i2, &i3, &i4, &i5, &i6))
       return -1;
     if(!getPen(Row, Pen, 7))  return -1;
-    Arcs.append(Arc(i1, i2, i3, i4, i5, i6, Pen));
+    Arcs.push_back(Arc(i1, i2, i3, i4, i5, i6, Pen));
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i1+i3 > x2)  x2 = i1+i3;
@@ -1036,14 +1082,16 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(Name.isEmpty())  Name = "SUB";
 
     i1 = 1;
-    auto pp = Props.begin() + (numProps-1);
+    auto pp = Props.begin();
+    for(int i = 0; i < (numProps-1) && pp != Props.end(); ++i)
+      ++pp;
     for(;;) {
       s = Row.section('"', i1,i1);
       if(s.isEmpty())  break;
 
       ++pp;
       if(pp == Props.end()) {
-        Props.append(Property());
+        Props.push_back(Property());
         pp = --Props.end();
         pp->display = (s.at(0) == '1');
         pp->Value = s.section('=', 2,2);
@@ -1079,12 +1127,12 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(i4 < y1)  y1 = i4;
     if(i4 > y2)  y2 = i4;
 
-    Lines.append(Line(i1, i2, i3, i4, Pen));   // base line
+    Lines.push_back(Line(i1, i2, i3, i4, Pen));   // base line
 
     double w = beta+phi;
     i5 = i3-int(Length*cos(w));
     i6 = i4-int(Length*sin(w));
-    Lines.append(Line(i3, i4, i5, i6, Pen)); // arrow head
+    Lines.push_back(Line(i3, i4, i5, i6, Pen)); // arrow head
     if(i5 < x1)  x1 = i5;  // keep track of component boundings
     if(i5 > x2)  x2 = i5;
     if(i6 < y1)  y1 = i6;
@@ -1093,7 +1141,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     w = phi-beta;
     i5 = i3-int(Length*cos(w));
     i6 = i4-int(Length*sin(w));
-    Lines.append(Line(i3, i4, i5, i6, Pen));
+    Lines.push_back(Line(i3, i4, i5, i6, Pen));
     if(i5 < x1)  x1 = i5;  // keep track of component boundings
     if(i5 > x2)  x2 = i5;
     if(i6 < y1)  y1 = i6;
@@ -1105,7 +1153,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(!getIntegers(Row, &i1, &i2, &i3, &i4))  return -1;
     if(!getPen(Row, Pen, 5))  return -1;
     if(!getBrush(Row, Brush, 8))  return -1;
-    Ellips.append(Area(i1, i2, i3, i4, Pen, Brush));
+    Ellips.push_back(Area(i1, i2, i3, i4, Pen, Brush));
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i1 > x2)  x2 = i1;
@@ -1121,7 +1169,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(!getIntegers(Row, &i1, &i2, &i3, &i4))  return -1;
     if(!getPen(Row, Pen, 5))  return -1;
     if(!getBrush(Row, Brush, 8))  return -1;
-    Rects.append(Area(i1, i2, i3, i4, Pen, Brush));
+    Rects.push_back(Area(i1, i2, i3, i4, Pen, Brush));
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i1 > x2)  x2 = i1;
@@ -1143,7 +1191,7 @@ int Component::analyseLine(const QString& Row, int numProps)
     if(s.isEmpty()) return -1;
     misc::convert2Unicode(s);
 
-    Texts.append(Text(i1, i2, s, Color, float(i3),
+    Texts.push_back(Text(i1, i2, s, Color, float(i3),
                           float(cos(float(i4)*pi/180.0)),
                           float(sin(float(i4)*pi/180.0))));
 
@@ -1151,10 +1199,10 @@ int Component::analyseLine(const QString& Row, int numProps)
     Font.setPointSizeF(float(i3));
     QFontMetrics  metrics(Font, 0); // use the screen-compatible metric
     QSize r = metrics.size(0, s);    // get size of text
-    i3 = i1 + int(float(r.width())  * Texts.last().mCos)
-            + int(float(r.height()) * Texts.last().mSin);
-    i4 = i2 + int(float(r.width())  * -Texts.last().mSin)
-            + int(float(r.height()) * Texts.last().mCos);
+    i3 = i1 + int(float(r.width())  * Texts.back().mCos)
+            + int(float(r.height()) * Texts.back().mSin);
+    i4 = i2 + int(float(r.width())  * -Texts.back().mSin)
+            + int(float(r.height()) * Texts.back().mCos);
 
     if(i1 < x1)  x1 = i1;  // keep track of component boundings
     if(i2 < y1)  y1 = i2;
@@ -1358,17 +1406,17 @@ GateComponent::GateComponent()
   Name  = "Y";
 
   // the list order must be preserved !!!
-  Props.append(Property("in", "2", false,
+  Props.push_back(Property("in", "2", false,
 		QObject::tr("number of input ports")));
-  Props.append(Property("V", "1 V", false,
+  Props.push_back(Property("V", "1 V", false,
 		QObject::tr("voltage of high level")));
-  Props.append(Property("t", "0", false,
+  Props.push_back(Property("t", "0", false,
 		QObject::tr("delay time")));
-  Props.append(Property("TR", "10", false,
+  Props.push_back(Property("TR", "10", false,
 		QObject::tr("transfer function scaling factor")));
 
   // this must be the last property in the list !!!
-  Props.append(Property("Symbol", "old", false,
+  Props.push_back(Property("Symbol", "old", false,
 		QObject::tr("schematic symbol")+" [old, DIN40900]"));
 }
 
@@ -1382,9 +1430,9 @@ QString GateComponent::netlist()
     s += " "+pp->getConnection()->Name;   // node names
 
   // output all properties
-  s += " " + Props[0].Name + "=\"" + Props[0].Value + "\"";
-  s += " " + Props[1].Name + "=\"" + Props[1].Value + "\"";
-  s += " " + Props[2].Name + "=\"" + Props[2].Value + "\"\n";
+  s += " " + prop(0).Name + "=\"" + prop(0).Value + "\"";
+  s += " " + prop(1).Name + "=\"" + prop(1).Value + "\"";
+  s += " " + prop(2).Name + "=\"" + prop(2).Value + "\"\n";
   return s;
 }
 
@@ -1428,7 +1476,7 @@ QString GateComponent::vhdlCode(int NumPorts)
   }
 
   if(NumPorts <= 0) { // no truth table simulation ?
-    QString td = Props.at(2).Value;        // delay time
+    QString td = prop(2).Value;        // delay time
     if(!misc::VHDL_Delay(td, Name)) return td;
     s += td;
   }
@@ -1459,7 +1507,7 @@ QString GateComponent::verilogCode(int NumPorts)
     s = "  assign";
 
     if(NumPorts <= 0) { // no truth table simulation ?
-      QString td = Props.at(2).Value;        // delay time
+      QString td = prop(2).Value;        // delay time
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
@@ -1481,7 +1529,7 @@ QString GateComponent::verilogCode(int NumPorts)
     s = "  " + Model.toLower();
 
     if(NumPorts <= 0) { // no truth table simulation ?
-      QString td = Props.at(2).Value;        // delay time
+      QString td = prop(2).Value;        // delay time
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
@@ -1503,10 +1551,10 @@ QString GateComponent::verilogCode(int NumPorts)
 // -------------------------------------------------------
 void GateComponent::createSymbol()
 {
-  int Num = Props.first().Value.toInt();
+  int Num = Props.front().Value.toInt();
   if(Num < 2) Num = 2;
   else if(Num > 8) Num = 8;
-  Props.first().Value = QString::number(Num);
+  Props.front().Value = QString::number(Num);
 
   int xl, xr, y = 10*Num, z;
   x1 = -30; y1 = -y-3;
@@ -1518,32 +1566,32 @@ void GateComponent::createSymbol()
   z = 0;
   if(Model.at(0) == 'N')  z = 1;
 
-  if(Props.last().Value.at(0) == 'D') {  // DIN symbol
+  if(Props.back().Value.at(0) == 'D') {  // DIN symbol
     xl = -15;
     xr =  15;
-    Lines.append(Line( 15,-y, 15, y,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15,-y, 15,-y,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15, y, 15, y,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15,-y,-15, y,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( 15, 0, 30, 0,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 15,-y, 15, y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15,-y, 15,-y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15, y, 15, y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15,-y,-15, y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 15, 0, 30, 0,QPen(Qt::darkBlue,2)));
 
     if(Model.at(z) == 'O') {
-      Lines.append(Line(-11, 6-y,-6, 9-y,QPen(Qt::darkBlue,0)));
-      Lines.append(Line(-11,12-y,-6, 9-y,QPen(Qt::darkBlue,0)));
-      Lines.append(Line(-11,14-y,-6,14-y,QPen(Qt::darkBlue,0)));
-      Lines.append(Line(-11,16-y,-6,16-y,QPen(Qt::darkBlue,0)));
-      Texts.append(Text( -4, 3-y, "1", Qt::darkBlue, 15.0));
+      Lines.push_back(Line(-11, 6-y,-6, 9-y,QPen(Qt::darkBlue,0)));
+      Lines.push_back(Line(-11,12-y,-6, 9-y,QPen(Qt::darkBlue,0)));
+      Lines.push_back(Line(-11,14-y,-6,14-y,QPen(Qt::darkBlue,0)));
+      Lines.push_back(Line(-11,16-y,-6,16-y,QPen(Qt::darkBlue,0)));
+      Texts.push_back(Text( -4, 3-y, "1", Qt::darkBlue, 15.0));
     }
     else if(Model.at(z) == 'A')
-      Texts.append(Text( -10, 3-y, "&", Qt::darkBlue, 15.0));
+      Texts.push_back(Text( -10, 3-y, "&", Qt::darkBlue, 15.0));
     else if(Model.at(0) == 'X') {
       if(Model.at(1) == 'N') {
-	Ellips.append(Area(xr,-4, 8, 8,
+	Ellips.push_back(Area(xr,-4, 8, 8,
                   QPen(Qt::darkBlue,0), QBrush(Qt::darkBlue)));
-        Texts.append(Text( -11, 3-y, "=1", Qt::darkBlue, 15.0));
+        Texts.push_back(Text( -11, 3-y, "=1", Qt::darkBlue, 15.0));
       }
       else
-        Texts.append(Text( -11, 3-y, "=1", Qt::darkBlue, 15.0));
+        Texts.push_back(Text( -11, 3-y, "=1", Qt::darkBlue, 15.0));
     }
   }
   else {   // old symbol
@@ -1551,39 +1599,39 @@ void GateComponent::createSymbol()
     if(Model.at(z) == 'O')  xl = 10;
     else  xl = -10;
     xr = 10;
-    Lines.append(Line(-10,-y,-10, y,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( 10, 0, 30, 0,QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(-30,-y, 40, 30, 0, 16*90,QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(-30,y-30, 40, 30, 0,-16*90,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( 10,15-y, 10, y-15,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-10,-y,-10, y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 10, 0, 30, 0,QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(-30,-y, 40, 30, 0, 16*90,QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(-30,y-30, 40, 30, 0,-16*90,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 10,15-y, 10, y-15,QPen(Qt::darkBlue,2)));
 
     if(Model.at(0) == 'X') {
-      Lines.append(Line(-5, 0, 5, 0,QPen(Qt::darkBlue,1)));
+      Lines.push_back(Line(-5, 0, 5, 0,QPen(Qt::darkBlue,1)));
       if(Model.at(1) == 'N') {
-        Lines.append(Line(-5,-3, 5,-3,QPen(Qt::darkBlue,1)));
-        Lines.append(Line(-5, 3, 5, 3,QPen(Qt::darkBlue,1)));
+        Lines.push_back(Line(-5,-3, 5,-3,QPen(Qt::darkBlue,1)));
+        Lines.push_back(Line(-5, 3, 5, 3,QPen(Qt::darkBlue,1)));
       }
       else {
-        Arcs.append(Arc(-5,-5, 10, 10, 0, 16*360,QPen(Qt::darkBlue,1)));
-        Lines.append(Line( 0,-5, 0, 5,QPen(Qt::darkBlue,1)));
+        Arcs.push_back(Arc(-5,-5, 10, 10, 0, 16*360,QPen(Qt::darkBlue,1)));
+        Lines.push_back(Line( 0,-5, 0, 5,QPen(Qt::darkBlue,1)));
       }
     }
   }
 
   if(Model.at(0) == 'N')
-    Ellips.append(Area(xr,-4, 8, 8,
+    Ellips.push_back(Area(xr,-4, 8, 8,
                   QPen(Qt::darkBlue,0), QBrush(Qt::darkBlue)));
 
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port( 30,  0));
   y += 10;
   for(z=0; z<Num; z++) {
     y -= 20;
-    Ports.append(Port(-30, y));
+    Ports.push_back(Port(-30, y));
     if(xl == 10) if((z == 0) || (z == Num-1)) {
-      Lines.append(Line(-30, y, 9, y,QPen(Qt::darkBlue,2)));
+      Lines.push_back(Line(-30, y, 9, y,QPen(Qt::darkBlue,2)));
       continue;
     }
-    Lines.append(Line(-30, y, xl, y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-30, y, xl, y,QPen(Qt::darkBlue,2)));
   }
 }
 
@@ -1619,7 +1667,7 @@ std::shared_ptr<Component> getComponentFromName(QString& Line, Schematic* p)
   else if (cstr.left (6) == "SPfile" && cstr != "SPfile") {
     // backward compatible
     c.reset(new SPEmbed ());
-    c->Props.last().Value = cstr.mid (6);
+    c->Props.back().Value = cstr.mid (6);
   }else{
 	  // FIXME: fetch proto from dictionary.
     c = Module::getComponent(cstr);

@@ -25,10 +25,10 @@ SubCirPort::SubCirPort()
   Description = QObject::tr("port of a subcircuit");
 
   // This property must be the first one !
-  Props.append(Property("Num", "1", true,
+  Props.push_back(Property("Num", "1", true,
 		QObject::tr("number of the port within the subcircuit")));
   // This property must be the second one !
-  Props.append(Property("Type", "analog", false,
+  Props.push_back(Property("Type", "analog", false,
 		QObject::tr("type of the port (for digital simulation only)")
 		+" [analog, in, out, inout]"));
 
@@ -45,40 +45,40 @@ void SubCirPort::createSymbol()
   x1 = -27; y1 = -8;
   x2 =   0; y2 =  8;
 
-  if(Props.at(1).Value.at(0) == 'a') {
-    Arcs.append(Arc(-25, -6, 12, 12,  0, 16*360,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-13,  0,  0,  0,QPen(Qt::darkBlue,2)));
+  if(prop(1).Value.at(0) == 'a') {
+    Arcs.push_back(Arc(-25, -6, 12, 12,  0, 16*360,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-13,  0,  0,  0,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(Line( -9,  0,  0,  0,QPen(Qt::darkBlue,2)));
-    if(Props.at(1).Value == "out") {
-      Lines.append(Line(-20, -5,-25,  0,QPen(Qt::red,2)));
-      Lines.append(Line(-20,  5,-25,  0,QPen(Qt::red,2)));
-      Lines.append(Line(-20, -5, -9, -5,QPen(Qt::red,2)));
-      Lines.append(Line(-20,  5, -9,  5,QPen(Qt::red,2)));
-      Lines.append(Line( -9, -5, -9,  5,QPen(Qt::red,2)));
+    Lines.push_back(Line( -9,  0,  0,  0,QPen(Qt::darkBlue,2)));
+    if(prop(1).Value == "out") {
+      Lines.push_back(Line(-20, -5,-25,  0,QPen(Qt::red,2)));
+      Lines.push_back(Line(-20,  5,-25,  0,QPen(Qt::red,2)));
+      Lines.push_back(Line(-20, -5, -9, -5,QPen(Qt::red,2)));
+      Lines.push_back(Line(-20,  5, -9,  5,QPen(Qt::red,2)));
+      Lines.push_back(Line( -9, -5, -9,  5,QPen(Qt::red,2)));
     }
     else {
-      Lines.append(Line(-14, -5, -9,  0,QPen(Qt::darkGreen,2)));
-      Lines.append(Line(-14,  5, -9,  0,QPen(Qt::darkGreen,2)));
-      if(Props.at(1).Value == "in") {
-        Lines.append(Line(-25, -5,-14, -5,QPen(Qt::darkGreen,2)));
-        Lines.append(Line(-25,  5,-14,  5,QPen(Qt::darkGreen,2)));
-        Lines.append(Line(-25, -5,-25,  5,QPen(Qt::darkGreen,2)));
+      Lines.push_back(Line(-14, -5, -9,  0,QPen(Qt::darkGreen,2)));
+      Lines.push_back(Line(-14,  5, -9,  0,QPen(Qt::darkGreen,2)));
+      if(prop(1).Value == "in") {
+        Lines.push_back(Line(-25, -5,-14, -5,QPen(Qt::darkGreen,2)));
+        Lines.push_back(Line(-25,  5,-14,  5,QPen(Qt::darkGreen,2)));
+        Lines.push_back(Line(-25, -5,-25,  5,QPen(Qt::darkGreen,2)));
       }
       else {
         x1 = -30;
-        Lines.append(Line(-18, -5,-14, -5,QPen(Qt::darkGreen,2)));
-        Lines.append(Line(-18,  5,-14,  5,QPen(Qt::darkGreen,2)));
-        Lines.append(Line(-23, -5,-28,  0,QPen(Qt::red,2)));
-        Lines.append(Line(-23,  5,-28,  0,QPen(Qt::red,2)));
-        Lines.append(Line(-23, -5,-18, -5,QPen(Qt::red,2)));
-        Lines.append(Line(-23,  5,-18,  5,QPen(Qt::red,2)));
+        Lines.push_back(Line(-18, -5,-14, -5,QPen(Qt::darkGreen,2)));
+        Lines.push_back(Line(-18,  5,-14,  5,QPen(Qt::darkGreen,2)));
+        Lines.push_back(Line(-23, -5,-28,  0,QPen(Qt::red,2)));
+        Lines.push_back(Line(-23,  5,-28,  0,QPen(Qt::red,2)));
+        Lines.push_back(Line(-23, -5,-18, -5,QPen(Qt::red,2)));
+        Lines.push_back(Line(-23,  5,-18,  5,QPen(Qt::red,2)));
       }
     }
   }
 
-  Ports.append(Port(  0,  0));
+  Ports.push_back(Port(  0,  0));
 }
 
 // -------------------------------------------------------
@@ -106,12 +106,12 @@ QString SubCirPort::netlist()
 // -------------------------------------------------------
 QString SubCirPort::vhdlCode(int)
 {
-  if(Props.at(1).Value != "out")
+  if(prop(1).Value != "out")
     return QString("");
 
   // Insert dummy buffer to avoid reading from an output port.
   QString s = "  net_out";
-  auto pn = Ports.first().getConnection();
+  auto pn = Ports.front().getConnection();
   s += pn->Name + " <= ";
   s += pn->Name + ";\n";
   return s;

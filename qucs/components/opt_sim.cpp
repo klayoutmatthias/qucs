@@ -29,7 +29,7 @@ Optimize_Sim::Optimize_Sim()
 {
   Description = QObject::tr("Optimization");
 
-  Texts.append(Text(0, 0, Description, Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, Description, Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+128; y2 = y1+41;
@@ -39,8 +39,8 @@ Optimize_Sim::Optimize_Sim()
   Model = ".Opt";
   Name  = "Opt";
 
-  Props.append(Property("Sim", "", false, ""));
-  Props.append(Property("DE", "3|50|2|20|0.85|1|3|1e-6|10|100", false, ""));
+  Props.push_back(Property("Sim", "", false, ""));
+  Props.push_back(Property("DE", "3|50|2|20|0.85|1|3|1e-6|10|100", false, ""));
 }
 
 Optimize_Sim::~Optimize_Sim()
@@ -93,7 +93,8 @@ bool Optimize_Sim::createASCOFiles()
     stream << "#\n\n";
 
     stream << "#DE#\n";
-    auto pp = Props.begin() + 1;
+    auto pp = Props.begin();
+    ++pp;
     QString val;
     val = pp->Value.section('|',0,0);
     stream << "choice of method:" << val << "\n";
@@ -119,7 +120,10 @@ bool Optimize_Sim::createASCOFiles()
 
     stream << "# Parameters #\n";
     int i=1;
-    for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp, i++) {
+    pp = Props.begin();
+    ++pp;
+    ++pp;
+    for( ; pp != Props.end(); ++pp, i++) {
       if(pp->Name == "Var") {
 	stream << "Parameter " << i << ":";
         val = pp->Value.section('|',0,0);
@@ -139,7 +143,10 @@ bool Optimize_Sim::createASCOFiles()
     stream << "#\n\n";
 
     stream << "# Measurements #\n";
-    for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp, i++) {
+    pp = Props.begin();
+    ++pp;
+    ++pp;
+    for( ; pp != Props.end(); ++pp, i++) {
       if(pp->Name == "Goal") {
         val = pp->Value.section('|',1,1);
 	QString Type, Value;
@@ -170,7 +177,10 @@ bool Optimize_Sim::createASCOFiles()
       return false;
   }      
 
-  for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp) {
+  auto pp = Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Props.end(); ++pp) {
     if(pp->Name == "Goal") {
       QString VarName = pp->Value.section('|',0,0);
       QFile efile(ExtractDir.filePath(VarName));
@@ -201,7 +211,10 @@ bool Optimize_Sim::createASCOFiles()
 bool Optimize_Sim::createASCOnetlist()
 {
   QStringList vars;
-  for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp) {
+  auto pp = Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Props.end(); ++pp) {
     if(pp->Name == "Var") {
       vars += pp->Value.section('|',0,0);
     }
@@ -250,7 +263,10 @@ bool Optimize_Sim::loadASCOout()
 {
   bool changed = false;
   QStringList vars;
-  for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp) {
+  auto pp = Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Props.end(); ++pp) {
     if(pp->Name == "Var") {
       vars += pp->Value.section('|',0,0);
     }
@@ -270,7 +286,10 @@ bool Optimize_Sim::loadASCOout()
     QString Name = *it;
     Name = Name.trimmed();
     if(vars.contains(Name)) {
-      for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp) {
+      pp = Props.begin();
+      ++pp;
+      ++pp;
+      for( ; pp != Props.end(); ++pp) {
 	if(pp->Name == "Var") {
 	  QString val[6];
           val[0] = pp->Value.section('|',0,0); // variable name

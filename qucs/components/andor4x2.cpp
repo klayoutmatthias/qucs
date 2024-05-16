@@ -24,9 +24,9 @@ andor4x2::andor4x2()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("4x2 andor verilog device");
 
-  Props.append (Property ("TR", "6", false,
+  Props.push_back (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (Property ("Delay", "1 ns", false,
+  Props.push_back (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -40,7 +40,7 @@ andor4x2::andor4x2()
 Component * andor4x2::newOne()
 {
   andor4x2 * p = new andor4x2();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,48 +56,48 @@ Element * andor4x2::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void andor4x2::createSymbol()
 {
-  Lines.append(Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, -60, 30, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  60,-30, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  60,-30,-60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, -60, 30,-60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, -60, 30, 60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  60,-30, 60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  60,-30,-60,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-30, -30,  0,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,   0,  0,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  30,  0, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, -60,  0, 60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, -30,  0,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,   0,  0,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  30,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, -60,  0, 60,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-50,-50,-30,-50,QPen(Qt::darkBlue,2)));   //A11
-  Lines.append(Line(-50,-40,-30,-40,QPen(Qt::darkBlue,2)));   //A12
-  Lines.append(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2)));   //A21
-  Lines.append(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));   //A22
+  Lines.push_back(Line(-50,-50,-30,-50,QPen(Qt::darkBlue,2)));   //A11
+  Lines.push_back(Line(-50,-40,-30,-40,QPen(Qt::darkBlue,2)));   //A12
+  Lines.push_back(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2)));   //A21
+  Lines.push_back(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));   //A22
 
-  Lines.append(Line(-50, 10, -30, 10,QPen(Qt::darkBlue,2)));  //A31
-  Lines.append(Line(-50, 20, -30, 20,QPen(Qt::darkBlue,2)));  //A32
-  Lines.append(Line(-50, 40, -30, 40,QPen(Qt::darkBlue,2)));  //A41
-  Lines.append(Line(-50, 50, -30, 50,QPen(Qt::darkBlue,2)));  //A42
-  Lines.append(Line( 30,  0,  50,  0,QPen(Qt::darkBlue,2)));  //Y
+  Lines.push_back(Line(-50, 10, -30, 10,QPen(Qt::darkBlue,2)));  //A31
+  Lines.push_back(Line(-50, 20, -30, 20,QPen(Qt::darkBlue,2)));  //A32
+  Lines.push_back(Line(-50, 40, -30, 40,QPen(Qt::darkBlue,2)));  //A41
+  Lines.push_back(Line(-50, 50, -30, 50,QPen(Qt::darkBlue,2)));  //A42
+  Lines.push_back(Line( 30,  0,  50,  0,QPen(Qt::darkBlue,2)));  //Y
 
-  Texts.append(Text( -20, -60, "&", Qt::darkBlue, 12.0));
-  Texts.append(Text( -20, -30, "&", Qt::darkBlue, 12.0));
-  Texts.append(Text( -20,   0, "&", Qt::darkBlue, 12.0));
-  Texts.append(Text( -20,  30, "&", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( -20, -60, "&", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( -20, -30, "&", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( -20,   0, "&", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( -20,  30, "&", Qt::darkBlue, 12.0));
  
-  Lines.append(Line(  7, -45, 17, -40,QPen(Qt::darkBlue,2))); 
-  Lines.append(Line(  7, -35, 17, -40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  7, -30, 17, -35,QPen(Qt::darkBlue,2))); 
-  Lines.append(Line( 22, -30, 22, -45,QPen(Qt::darkBlue,2)));  
+  Lines.push_back(Line(  7, -45, 17, -40,QPen(Qt::darkBlue,2))); 
+  Lines.push_back(Line(  7, -35, 17, -40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  7, -30, 17, -35,QPen(Qt::darkBlue,2))); 
+  Lines.push_back(Line( 22, -30, 22, -45,QPen(Qt::darkBlue,2)));  
 
 
-  Ports.append(Port(-50,-50));  // A11
-  Ports.append(Port(-50,-40));  // A12
-  Ports.append(Port(-50,-20));  // A21
-  Ports.append(Port(-50,-10));  // A22
-  Ports.append(Port(-50, 10));  // A31
-  Ports.append(Port(-50, 20));  // A32
-  Ports.append(Port(-50, 40));  // A41
-  Ports.append(Port(-50, 50));  // A42
+  Ports.push_back(Port(-50,-50));  // A11
+  Ports.push_back(Port(-50,-40));  // A12
+  Ports.push_back(Port(-50,-20));  // A21
+  Ports.push_back(Port(-50,-10));  // A22
+  Ports.push_back(Port(-50, 10));  // A31
+  Ports.push_back(Port(-50, 20));  // A32
+  Ports.push_back(Port(-50, 40));  // A41
+  Ports.push_back(Port(-50, 50));  // A42
 
-  Ports.append(Port( 50, 0 )); // Y
+  Ports.push_back(Port( 50, 0 )); // Y
 
   x1 = -50; y1 = -64;
   x2 =  50; y2 =  64;
@@ -107,19 +107,19 @@ QString andor4x2::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1).Value;     // delay time
+  QString td = prop(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString a11 = Ports.at(0).getConnection()->Name;
-  QString a12 = Ports.at(1).getConnection()->Name;
-  QString a21 = Ports.at(2).getConnection()->Name;
-  QString a22 = Ports.at(3).getConnection()->Name;
-  QString a31 = Ports.at(4).getConnection()->Name;
-  QString a32 = Ports.at(5).getConnection()->Name;
-  QString a41 = Ports.at(6).getConnection()->Name;
-  QString a42 = Ports.at(7).getConnection()->Name;
-  QString y   = Ports.at(8).getConnection()->Name;
+  QString a11 = port(0).getConnection()->Name;
+  QString a12 = port(1).getConnection()->Name;
+  QString a21 = port(2).getConnection()->Name;
+  QString a22 = port(3).getConnection()->Name;
+  QString a31 = port(4).getConnection()->Name;
+  QString a32 = port(5).getConnection()->Name;
+  QString a41 = port(6).getConnection()->Name;
+  QString a42 = port(7).getConnection()->Name;
+  QString y   = port(8).getConnection()->Name;
 
   s = "\n  " + Name +":process ("+a11+", "+a12+", "+a21+", "+ a22+", "+
                            a31+", "+a32+", "+a41+", "+a42 + ")\n"+
@@ -132,20 +132,20 @@ QString andor4x2::vhdlCode( int )
 
 QString andor4x2::verilogCode( int )
 {
-  QString td = Props.at(1).Value;        // delay time
+  QString td = prop(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
 
   QString l = "";
 
-  QString a11 = Ports.at(0).getConnection()->Name;
-  QString a12 = Ports.at(1).getConnection()->Name;
-  QString a21 = Ports.at(2).getConnection()->Name;
-  QString a22 = Ports.at(3).getConnection()->Name;
-  QString a31 = Ports.at(4).getConnection()->Name;
-  QString a32 = Ports.at(5).getConnection()->Name;
-  QString a41 = Ports.at(6).getConnection()->Name;
-  QString a42 = Ports.at(7).getConnection()->Name;
-  QString y   = Ports.at(8).getConnection()->Name;
+  QString a11 = port(0).getConnection()->Name;
+  QString a12 = port(1).getConnection()->Name;
+  QString a21 = port(2).getConnection()->Name;
+  QString a22 = port(3).getConnection()->Name;
+  QString a31 = port(4).getConnection()->Name;
+  QString a32 = port(5).getConnection()->Name;
+  QString a41 = port(6).getConnection()->Name;
+  QString a42 = port(7).getConnection()->Name;
+  QString y   = port(8).getConnection()->Name;
 
   QString v = "net_reg" + Name + y;
 

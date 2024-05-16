@@ -22,30 +22,30 @@ TwistedPair::TwistedPair()
 {
   Description = QObject::tr("twisted pair transmission line");
 
-  Arcs.append(Arc(-25,-36, 18, 38,16*230, 16*68,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc(-25, -2, 18, 38, 16*62, 16*68,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(-25,-36, 18, 38,16*230, 16*68,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(-25, -2, 18, 38, 16*62, 16*68,QPen(Qt::darkBlue,1)));
 
-  Arcs.append(Arc(-17,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc(-17, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(-17,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(-17, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
 
-  Arcs.append(Arc( -9,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc( -9, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -9,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -9, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
 
-  Arcs.append(Arc( -1,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc( -1, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -1,-36, 18, 38,16*242, 16*56,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -1, -2, 18, 38, 16*62, 16*56,QPen(Qt::darkBlue,1)));
 
-  Arcs.append(Arc(  7,-36, 18, 38,16*242, 16*68,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc(  7, -2, 18, 38, 16*50, 16*68,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(  7,-36, 18, 38,16*242, 16*68,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc(  7, -2, 18, 38, 16*50, 16*68,QPen(Qt::darkBlue,1)));
 
-  Arcs.append(Arc(-40,-10, 20, 33, 16*32, 16*58,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-40,-23, 20, 33,16*270, 16*58,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( 20,-10, 20, 33, 16*90, 16*58,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( 20,-23, 20, 33,16*212, 16*58,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-40,-10, 20, 33, 16*32, 16*58,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-40,-23, 20, 33,16*270, 16*58,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( 20,-10, 20, 33, 16*90, 16*58,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( 20,-23, 20, 33,16*212, 16*58,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,-10));
-  Ports.append(Port( 30,-10));
-  Ports.append(Port( 30, 10));
-  Ports.append(Port(-30, 10));
+  Ports.push_back(Port(-30,-10));
+  Ports.push_back(Port( 30,-10));
+  Ports.push_back(Port( 30, 10));
+  Ports.push_back(Port(-30, 10));
 
   x1 = -30; y1 =-12;
   x2 =  30; y2 = 12;
@@ -55,23 +55,23 @@ TwistedPair::TwistedPair()
   Model = "TWIST";
   Name  = "Line";
 
-  Props.append(Property("d", "0.5 mm", true,
+  Props.push_back(Property("d", "0.5 mm", true,
 		QObject::tr("diameter of conductor")));
-  Props.append(Property("D", "0.8 mm", true,
+  Props.push_back(Property("D", "0.8 mm", true,
 		QObject::tr("diameter of wire (conductor and insulator)")));
-  Props.append(Property("L", "1.5", true,
+  Props.push_back(Property("L", "1.5", true,
 		QObject::tr("physical length of the line")));
-  Props.append(Property("T", "100", false,
+  Props.push_back(Property("T", "100", false,
 		QObject::tr("twists per length in 1/m")));
-  Props.append(Property("er", "4", false,
+  Props.push_back(Property("er", "4", false,
 		QObject::tr("dielectric constant of insulator")));
-  Props.append(Property("mur", "1", false,
+  Props.push_back(Property("mur", "1", false,
 		QObject::tr("relative permeability of conductor")));
-  Props.append(Property("rho", "0.022e-6", false,
+  Props.push_back(Property("rho", "0.022e-6", false,
 		QObject::tr("specific resistance of conductor")));
-  Props.append(Property("tand", "4e-4", false,
+  Props.push_back(Property("tand", "4e-4", false,
 		QObject::tr("loss tangent")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 }
 

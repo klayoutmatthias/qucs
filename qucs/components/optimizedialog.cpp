@@ -377,7 +377,10 @@ OptimizeDialog::OptimizeDialog(const std::shared_ptr<Optimize_Sim> &c_, Schemati
   NameEdit->setText(Comp->name());
 
   QTableWidgetItem *item;
-  for(pp = Comp->Props.begin() + 2; pp != Comp->Props.end(); ++pp) {
+  pp = Comp->Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Comp->Props.end(); ++pp) {
     if(pp->Name == "Var") { // BUG
       QStringList ValueSplit = pp->Value.split("|");
       int row = VarTable->rowCount();
@@ -732,8 +735,8 @@ void OptimizeDialog::slotApply()
   }
 
   QString Prop;
-  if(SimEdit->currentText() != Comp->Props[0].Value) {
-    Comp->Props[0].Value = SimEdit->currentText();
+  if(SimEdit->currentText() != Comp->prop(0).Value) {
+    Comp->prop(0).Value = SimEdit->currentText();
     changed = true;
   }
   Prop = QString::number(MethodCombo->currentIndex()+1) + "|" +
@@ -746,12 +749,14 @@ void OptimizeDialog::slotApply()
     CostVarEdit->text() + "|" +
     CostObjEdit->text() + "|" +
     CostConEdit->text();
-  if(Prop != Comp->Props.at(1).Value) {
-    Comp->Props[1].Value = Prop;
+  if(Prop != Comp->prop(1).Value) {
+    Comp->prop(1).Value = Prop;
     changed = true;
   }
 
-  auto pp = Comp->Props.begin() + 2;
+  auto pp = Comp->Props.begin();
+  ++pp;
+  ++pp;
   int row;
   // apply all the new property values in the TableWidget
   for (row = 0; row < VarTable->rowCount(); ++row) {
@@ -798,7 +803,7 @@ void OptimizeDialog::slotApply()
       }
       ++pp;
     } else {
-      Comp->Props.append(Property("Var", Prop, false, ""));
+      Comp->Props.push_back(Property("Var", Prop, false, ""));
       changed = true;
     }
   }
@@ -834,7 +839,7 @@ void OptimizeDialog::slotApply()
       }
       ++pp;
     } else {
-      Comp->Props.append(Property("Goal", Prop, false, ""));
+      Comp->Props.push_back(Property("Goal", Prop, false, ""));
       changed = true;
     }
   }
@@ -865,12 +870,15 @@ void OptimizeDialog::slotCreateEqn()
               //<Model Name ShowName cx cy tx ty mirroredX rotate
               "<Eqn OptValues 1 0 0 -28 15 0 0 ";
 
- for(auto pp = Comp->Props.begin() + 2; pp != Comp->Props.end(); ++pp) {
-   if(pp->Name == "Var") { // property is an optimization variable
+  auto pp = Comp->Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Comp->Props.end(); ++pp) {
+    if(pp->Name == "Var") { // property is an optimization variable
       QStringList ValueSplit = pp->Value.split("|");
       // "Name" = "initial (current) value"
       s += "\"" + ValueSplit.at(0) + "=" + ValueSplit.at(2) + "\" 1 ";
-   }
+    }
  }
 
  s += QString("\"yes\" 0>\n" // Export yes, no display
@@ -909,7 +917,10 @@ void OptimizeDialog::slotSetPrecision(const QPoint& pos)
     // update the shown values according to the new precision
     int row = 0;
     QTableWidgetItem *item;
-    for(auto pp = Comp->Props.begin() + 2; pp != Comp->Props.end(); ++pp) {
+    auto pp = Comp->Props.begin();
+    ++pp;
+    ++pp;
+    for( ; pp != Comp->Props.end(); ++pp) {
       if(pp->Name == "Var") {
         QStringList ValueSplit = pp->Value.split("|");
 	// 'initial' column

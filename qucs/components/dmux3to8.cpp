@@ -25,9 +25,9 @@ dmux3to8::dmux3to8()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("3to8 demultiplexer verilog device");
 
-  Props.append (Property ("TR", "6", false,
+  Props.push_back (Property ("TR", "6", false,
     QObject::tr ("transfer function high scaling factor")));
-  Props.append (Property ("Delay", "1 ns", false,
+  Props.push_back (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -41,7 +41,7 @@ dmux3to8::dmux3to8()
 Component * dmux3to8::newOne()
 {
   dmux3to8 * p = new dmux3to8();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -57,61 +57,61 @@ Element * dmux3to8::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void dmux3to8::createSymbol()
 {
-  Lines.append(Line(-30, -90, 30,-90,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, -90, 30, 100,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  100,-30, 100,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  100,-30, -90,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, -90, 30,-90,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, -90, 30, 100,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  100,-30, 100,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  100,-30, -90,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-50,-50,-40,-50,QPen(Qt::darkBlue,2)));  // EN
-  Lines.append(Line(-50,-30,-30,-30,QPen(Qt::darkBlue,2)));  // A
-  Lines.append(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // B
-  Lines.append(Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // C
+  Lines.push_back(Line(-50,-50,-40,-50,QPen(Qt::darkBlue,2)));  // EN
+  Lines.push_back(Line(-50,-30,-30,-30,QPen(Qt::darkBlue,2)));  // A
+  Lines.push_back(Line(-50,-10,-30,-10,QPen(Qt::darkBlue,2)));  // B
+  Lines.push_back(Line(-50, 10,-30, 10,QPen(Qt::darkBlue,2)));  // C
 
-  Lines.append(Line( 30, 90, 50, 90,QPen(Qt::darkBlue,2)));  // Y7
-  Lines.append(Line( 30, 70, 50, 70,QPen(Qt::darkBlue,2)));  // Y6
-  Lines.append(Line( 30, 50, 50, 50,QPen(Qt::darkBlue,2)));  // Y5
-  Lines.append(Line( 30, 30, 50, 30,QPen(Qt::darkBlue,2)));  // Y4
-  Lines.append(Line( 30, 10, 50, 10,QPen(Qt::darkBlue,2)));  // Y3
-  Lines.append(Line( 30,-10, 50,-10,QPen(Qt::darkBlue,2)));  // Y2
-  Lines.append(Line( 30,-30, 50,-30,QPen(Qt::darkBlue,2)));  // Y1
-  Lines.append(Line( 30,-50, 50,-50,QPen(Qt::darkBlue,2)));  // Y0
+  Lines.push_back(Line( 30, 90, 50, 90,QPen(Qt::darkBlue,2)));  // Y7
+  Lines.push_back(Line( 30, 70, 50, 70,QPen(Qt::darkBlue,2)));  // Y6
+  Lines.push_back(Line( 30, 50, 50, 50,QPen(Qt::darkBlue,2)));  // Y5
+  Lines.push_back(Line( 30, 30, 50, 30,QPen(Qt::darkBlue,2)));  // Y4
+  Lines.push_back(Line( 30, 10, 50, 10,QPen(Qt::darkBlue,2)));  // Y3
+  Lines.push_back(Line( 30,-10, 50,-10,QPen(Qt::darkBlue,2)));  // Y2
+  Lines.push_back(Line( 30,-30, 50,-30,QPen(Qt::darkBlue,2)));  // Y1
+  Lines.push_back(Line( 30,-50, 50,-50,QPen(Qt::darkBlue,2)));  // Y0
 
-  Arcs.append(Arc( -40, -55, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -40, -55, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
  
-  Texts.append(Text(-25,-85, "DMUX", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25,-85, "DMUX", Qt::darkBlue, 12.0));
 
-  Texts.append(Text(-25,-63, "En", Qt::darkBlue, 12.0));
-  Texts.append(Text(-20,-25, "G", Qt::darkBlue, 12.0));
-  Texts.append(Text(-8, -30, "}", Qt::darkBlue, 16.0));
-  Texts.append(Text( 2, -32, "0", Qt::darkBlue, 12.0));
-  Texts.append(Text( 2, -13, "7", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25,-63, "En", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-20,-25, "G", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-8, -30, "}", Qt::darkBlue, 16.0));
+  Texts.push_back(Text( 2, -32, "0", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 2, -13, "7", Qt::darkBlue, 12.0));
 
-  Texts.append(Text(-25,-43, "0", Qt::darkBlue, 12.0));
-  Texts.append(Text(-25, -3, "2", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25,-43, "0", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25, -3, "2", Qt::darkBlue, 12.0));
 
-  Texts.append(Text( 15,-63, "0", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15,-43, "1", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15,-23, "2", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15, -3, "3", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15, 17, "4", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15, 37, "5", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15, 57, "6", Qt::darkBlue, 12.0));
-  Texts.append(Text( 15, 77, "7", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15,-63, "0", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15,-43, "1", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15,-23, "2", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15, -3, "3", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15, 17, "4", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15, 37, "5", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15, 57, "6", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 15, 77, "7", Qt::darkBlue, 12.0));
 
-  Lines.append(Line(0, -11, 12, -11, QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(0, -11, 12, -11, QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-50,-50));  // En
-  Ports.append(Port(-50,-30));  // A
-  Ports.append(Port(-50,-10));  // B
-  Ports.append(Port(-50, 10));  // C
-  Ports.append(Port( 50, 90));  // Y7
-  Ports.append(Port( 50, 70));  // Y6
-  Ports.append(Port( 50, 50));  // Y5
-  Ports.append(Port( 50, 30));  // Y4
-  Ports.append(Port( 50, 10));  // Y3
-  Ports.append(Port( 50,-10));  // Y2
-  Ports.append(Port( 50,-30));  // Y1
-  Ports.append(Port( 50,-50));  // Y0
+  Ports.push_back(Port(-50,-50));  // En
+  Ports.push_back(Port(-50,-30));  // A
+  Ports.push_back(Port(-50,-10));  // B
+  Ports.push_back(Port(-50, 10));  // C
+  Ports.push_back(Port( 50, 90));  // Y7
+  Ports.push_back(Port( 50, 70));  // Y6
+  Ports.push_back(Port( 50, 50));  // Y5
+  Ports.push_back(Port( 50, 30));  // Y4
+  Ports.push_back(Port( 50, 10));  // Y3
+  Ports.push_back(Port( 50,-10));  // Y2
+  Ports.push_back(Port( 50,-30));  // Y1
+  Ports.push_back(Port( 50,-50));  // Y0
 
   x1 = -50; y1 = -94;
   x2 =  50; y2 = 104;
@@ -121,22 +121,22 @@ QString dmux3to8::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(1).Value;     // delay time
+  QString td = prop(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString En = Ports.at(0).getConnection()->Name;
-  QString A  = Ports.at(1).getConnection()->Name;
-  QString B  = Ports.at(2).getConnection()->Name;
-  QString C  = Ports.at(3).getConnection()->Name;
-  QString Y7 = Ports.at(4).getConnection()->Name;
-  QString Y6 = Ports.at(5).getConnection()->Name;
-  QString Y5 = Ports.at(6).getConnection()->Name;
-  QString Y4 = Ports.at(7).getConnection()->Name;
-  QString Y3 = Ports.at(8).getConnection()->Name;
-  QString Y2 = Ports.at(9).getConnection()->Name;
-  QString Y1 = Ports.at(10).getConnection()->Name;
-  QString Y0 = Ports.at(11).getConnection()->Name;
+  QString En = port(0).getConnection()->Name;
+  QString A  = port(1).getConnection()->Name;
+  QString B  = port(2).getConnection()->Name;
+  QString C  = port(3).getConnection()->Name;
+  QString Y7 = port(4).getConnection()->Name;
+  QString Y6 = port(5).getConnection()->Name;
+  QString Y5 = port(6).getConnection()->Name;
+  QString Y4 = port(7).getConnection()->Name;
+  QString Y3 = port(8).getConnection()->Name;
+  QString Y2 = port(9).getConnection()->Name;
+  QString Y1 = port(10).getConnection()->Name;
+  QString Y0 = port(11).getConnection()->Name;
 
   s = "\n  "+Name+":process ("+En+", "+A+", "+B+", "+C+")\n"+
       "  begin\n" +
@@ -154,23 +154,23 @@ QString dmux3to8::vhdlCode( int )
 
 QString dmux3to8::verilogCode( int )
 {
-  QString td = Props.at(1).Value;        // delay time
+  QString td = prop(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
 
-  QString En = Ports.at(0).getConnection()->Name;
-  QString A  = Ports.at(1).getConnection()->Name;
-  QString B  = Ports.at(2).getConnection()->Name;
-  QString C  = Ports.at(3).getConnection()->Name;
-  QString Y7 = Ports.at(4).getConnection()->Name;
-  QString Y6 = Ports.at(5).getConnection()->Name;
-  QString Y5 = Ports.at(6).getConnection()->Name;
-  QString Y4 = Ports.at(7).getConnection()->Name;
-  QString Y3 = Ports.at(8).getConnection()->Name;
-  QString Y2 = Ports.at(9).getConnection()->Name;
-  QString Y1 = Ports.at(10).getConnection()->Name;
-  QString Y0 = Ports.at(11).getConnection()->Name;
+  QString En = port(0).getConnection()->Name;
+  QString A  = port(1).getConnection()->Name;
+  QString B  = port(2).getConnection()->Name;
+  QString C  = port(3).getConnection()->Name;
+  QString Y7 = port(4).getConnection()->Name;
+  QString Y6 = port(5).getConnection()->Name;
+  QString Y5 = port(6).getConnection()->Name;
+  QString Y4 = port(7).getConnection()->Name;
+  QString Y3 = port(8).getConnection()->Name;
+  QString Y2 = port(9).getConnection()->Name;
+  QString Y1 = port(10).getConnection()->Name;
+  QString Y0 = port(11).getConnection()->Name;
 
   QString Y7R = "net_reg" + Name + Y7;
   QString Y6R = "net_reg" + Name + Y6;

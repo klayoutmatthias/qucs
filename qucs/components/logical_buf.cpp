@@ -26,15 +26,15 @@ Logical_Buf::Logical_Buf()
   Description = QObject::tr("logical buffer");
 
   // the list order must be preserved !!!
-  Props.append(Property("V", "1 V", false,
+  Props.push_back(Property("V", "1 V", false,
 		QObject::tr("voltage of high level")));
-  Props.append(Property("t", "0", false,
+  Props.push_back(Property("t", "0", false,
 		QObject::tr("delay time")));
-  Props.append(Property("TR", "10", false,
+  Props.push_back(Property("TR", "10", false,
 		QObject::tr("transfer function scaling factor")));
 
   // this must be the last property in the list !!!
-  Props.append(Property("Symbol", "old", false,
+  Props.push_back(Property("Symbol", "old", false,
 		QObject::tr("schematic symbol")+" [old, DIN40900]"));
 
   createSymbol();
@@ -47,11 +47,11 @@ Logical_Buf::Logical_Buf()
 // -------------------------------------------------------
 QString Logical_Buf::vhdlCode(int NumPorts)
 {
-  QString s = "  " + Ports.first().getConnection()->Name + " <= " +
-              Ports.last().getConnection()->Name;
+  QString s = "  " + Ports.front().getConnection()->Name + " <= " +
+              Ports.back().getConnection()->Name;
 
   if(NumPorts <= 0) { // no truth table simulation ?
-    QString td = Props.at(1).Value;
+    QString td = prop(1).Value;
     if(!misc::VHDL_Delay(td, Name)) return td;
     s += td;
   }
@@ -64,20 +64,20 @@ QString Logical_Buf::vhdlCode(int NumPorts)
 QString Logical_Buf::verilogCode(int NumPorts)
 {
   bool synthesize = true;
-  Port &pp = Ports[0];
+  Port &pp = port(0);
   QString s ("");
 
   if (synthesize) {
     s = "  assign";
 
     if(NumPorts <= 0) { // no truth table simulation ?
-      QString td = Props.at(1).Value;
+      QString td = prop(1).Value;
       if(!misc::Verilog_Delay(td, Name)) return td;
       s += td;
     }
     s += " ";
     s += pp.getConnection()->Name + " = ";  // output port
-    pp = Ports.at(1);
+    pp = port(1);
     s += pp.getConnection()->Name;          // input port
     s += ";\n";
   }
@@ -89,27 +89,27 @@ void Logical_Buf::createSymbol()
 {
   int xr;
 
-  if(Props.last().Value.at(0) == 'D') {  // DIN symbol
-    Lines.append(Line( 15,-20, 15, 20,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15,-20, 15,-20,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15, 20, 15, 20,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15,-20,-15, 20,QPen(Qt::darkBlue,2)));
+  if(Props.back().Value.at(0) == 'D') {  // DIN symbol
+    Lines.push_back(Line( 15,-20, 15, 20,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15,-20, 15,-20,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15, 20, 15, 20,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15,-20,-15, 20,QPen(Qt::darkBlue,2)));
 
-    Texts.append(Text(-11,-17, "1", Qt::darkBlue, 15.0));
+    Texts.push_back(Text(-11,-17, "1", Qt::darkBlue, 15.0));
     xr =  15;
   }
   else {   // old symbol
-    Lines.append(Line(-10,-20,-10,20, QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(-30,-20, 40, 30,  0, 16*90,QPen(Qt::darkBlue,2)));
-    Arcs.append(Arc(-30,-10, 40, 30,  0,-16*90,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( 10,-5, 10, 5,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-10,-20,-10,20, QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(-30,-20, 40, 30,  0, 16*90,QPen(Qt::darkBlue,2)));
+    Arcs.push_back(Arc(-30,-10, 40, 30,  0,-16*90,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 10,-5, 10, 5,QPen(Qt::darkBlue,2)));
     xr =  10;
   }
 
-  Lines.append(Line( xr, 0, 30, 0, QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 0,-xr, 0, QPen(Qt::darkBlue,2)));
-  Ports.append(Port( 30, 0));
-  Ports.append(Port(-30, 0));
+  Lines.push_back(Line( xr, 0, 30, 0, QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 0,-xr, 0, QPen(Qt::darkBlue,2)));
+  Ports.push_back(Port( 30, 0));
+  Ports.push_back(Port(-30, 0));
 
   x1 = -30; y1 = -23;
   x2 =  30; y2 =  23;
@@ -119,7 +119,7 @@ void Logical_Buf::createSymbol()
 Component* Logical_Buf::newOne()
 {
   Logical_Buf* p = new Logical_Buf();
-  p->Props.last().Value = Props.last().Value;
+  p->Props.back().Value = Props.back().Value;
   p->recreate(0);
   return p;
 }

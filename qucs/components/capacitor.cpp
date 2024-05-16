@@ -22,11 +22,11 @@ Capacitor::Capacitor()
 {
   Description = QObject::tr("capacitor");
 
-  Props.append(Property("C", "1 pF", true,
+  Props.push_back(Property("C", "1 pF", true,
 		QObject::tr("capacitance in Farad")));
-  Props.append(Property("V", "", false,
+  Props.push_back(Property("V", "", false,
 		QObject::tr("initial voltage for transient simulation")));
-  Props.append(Property("Symbol", "neutral", false,
+  Props.push_back(Property("Symbol", "neutral", false,
 	QObject::tr("schematic symbol")+" [neutral, polar]"));
 
   createSymbol();
@@ -52,22 +52,22 @@ Element* Capacitor::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
 void Capacitor::createSymbol()
 {
-  if(Props.last().Value.at(0) == 'n') {
-    Lines.append(Line( -4,-11, -4, 11,QPen(Qt::darkBlue,4)));
-    Lines.append(Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
+  if(Props.back().Value.at(0) == 'n') {
+    Lines.push_back(Line( -4,-11, -4, 11,QPen(Qt::darkBlue,4)));
+    Lines.push_back(Line(  4,-11,  4, 11,QPen(Qt::darkBlue,4)));
   }
   else {
-    Lines.append(Line(-11, -5,-11,-11,QPen(Qt::red,1)));
-    Lines.append(Line(-14, -8, -8, -8,QPen(Qt::red,1)));
-    Lines.append(Line( -4,-11, -4, 11,QPen(Qt::darkBlue,3)));
-    Arcs.append(Arc(4,-12, 20, 24, 16*122, 16*116,QPen(Qt::darkBlue,3)));
+    Lines.push_back(Line(-11, -5,-11,-11,QPen(Qt::red,1)));
+    Lines.push_back(Line(-14, -8, -8, -8,QPen(Qt::red,1)));
+    Lines.push_back(Line( -4,-11, -4, 11,QPen(Qt::darkBlue,3)));
+    Arcs.push_back(Arc(4,-12, 20, 24, 16*122, 16*116,QPen(Qt::darkBlue,3)));
   }
 
-  Lines.append(Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0, -4,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  4,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -13;
   x2 =  30; y2 =  13;

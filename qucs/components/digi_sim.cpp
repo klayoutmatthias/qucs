@@ -27,9 +27,9 @@ Digi_Sim::Digi_Sim()
   int a = s.indexOf(" ");
   if (a != -1) s[a] = '\n';  // break line before the word "simulation"
 
-  Texts.append(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
   if (a != -1)
-    Texts.append(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
+    Texts.push_back(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+120; y2 = y1+59;
@@ -40,11 +40,11 @@ Digi_Sim::Digi_Sim()
   Name  = "Digi";
 
   // Property list must keeps its order !
-  Props.append(Property("Type", "TruthTable", true,
+  Props.push_back(Property("Type", "TruthTable", true,
 	QObject::tr("type of simulation")+" [TruthTable, TimeList]"));
-  Props.append(Property("time", "10 ns", false,
+  Props.push_back(Property("time", "10 ns", false,
 	QObject::tr("duration of TimeList simulation")));
-  Props.append(Property("Model", "VHDL", false,
+  Props.push_back(Property("Model", "VHDL", false,
 	QObject::tr("netlist format")+" [VHDL, Verilog]"));
 }
 

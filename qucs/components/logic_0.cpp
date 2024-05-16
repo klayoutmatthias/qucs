@@ -23,7 +23,7 @@ logic_0::logic_0()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("logic 0 verilog device");
 
-  Props.append (Property ("LEVEL", "0", false,
+  Props.push_back (Property ("LEVEL", "0", false,
     QObject::tr ("logic 0 voltage level")
     +" ("+QObject::tr ("V")+")"));
 
@@ -37,7 +37,7 @@ logic_0::logic_0()
 Component * logic_0::newOne()
 {
   logic_0 * p = new logic_0();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -53,16 +53,16 @@ Element * logic_0::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void logic_0::createSymbol()
 {
-  Lines.append(Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
-  Lines.append(Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
-  Lines.append(Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
-  Lines.append(Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-10,  0,  0,  0,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-20,-10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-20, 10,-10,  0,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-35,-10,-20,-10,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-35, 10,-20, 10,QPen(Qt::darkGreen,2)));
+  Lines.push_back(Line(-35,-10,-35, 10,QPen(Qt::darkGreen,2)));
 
-  Texts.append(Text(-30,-12, "0", Qt::darkGreen, 12.0));
+  Texts.push_back(Text(-30,-12, "0", Qt::darkGreen, 12.0));
 
-  Ports.append(Port(  0,  0)); // L0
+  Ports.push_back(Port(  0,  0)); // L0
 
   x1 = -39; y1 = -14;
   x2 = 0;   y2 =  14;
@@ -72,7 +72,7 @@ QString logic_0::vhdlCode( int )
 {
   QString s="";
 
-  QString LO = Ports.at(0).getConnection()->Name;
+  QString LO = port(0).getConnection()->Name;
  
   s = "\n  " + Name + ":process\n" +
      "  begin\n    " +
@@ -85,7 +85,7 @@ QString logic_0::verilogCode( int )
 {
   QString l = "";
 
-  QString LO = Ports.at(0).getConnection()->Name;
+  QString LO = port(0).getConnection()->Name;
   
   QString v = "net_reg" + Name + LO;
   

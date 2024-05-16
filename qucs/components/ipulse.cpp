@@ -22,22 +22,22 @@ iPulse::iPulse()
 {
   Description = QObject::tr("ideal current pulse source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
 
   // little pulse symbol
-  Lines.append(Line( 13,  7, 13, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 19, 10, 19, 14,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 13, 14, 13, 17,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 13, 10, 19, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 13, 14, 19, 14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 13,  7, 13, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 19, 10, 19, 14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 13, 14, 13, 17,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 13, 10, 19, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 13, 14, 19, 14,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  20;
@@ -47,17 +47,17 @@ iPulse::iPulse()
   Model = "Ipulse";
   Name  = "I";
 
-  Props.append(Property("I1", "0", true,
+  Props.push_back(Property("I1", "0", true,
 		QObject::tr("current before and after the pulse")));
-  Props.append(Property("I2", "1 A", true,
+  Props.push_back(Property("I2", "1 A", true,
 		QObject::tr("current of the pulse")));
-  Props.append(Property("T1", "0", true,
+  Props.push_back(Property("T1", "0", true,
 		QObject::tr("start time of the pulse")));
-  Props.append(Property("T2", "1 ms", true,
+  Props.push_back(Property("T2", "1 ms", true,
 		QObject::tr("ending time of the pulse")));
-  Props.append(Property("Tr", "1 ns", false,
+  Props.push_back(Property("Tr", "1 ns", false,
 		QObject::tr("rise time of the leading edge")));
-  Props.append(Property("Tf", "1 ns", false,
+  Props.push_back(Property("Tf", "1 ns", false,
 		QObject::tr("fall time of the trailing edge")));
 
   rotate();  // fix historical flaw

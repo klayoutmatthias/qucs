@@ -18,51 +18,51 @@ TunnelDiode::TunnelDiode()
 {
   Description = QObject::tr("resonance tunnel diode");
 
-  Props.append(Property("Ip", "4 mA", true,
+  Props.push_back(Property("Ip", "4 mA", true,
 	QObject::tr("peak current")));
-  Props.append(Property("Iv", "0.6 mA", true,
+  Props.push_back(Property("Iv", "0.6 mA", true,
 	QObject::tr("valley current")));
-  Props.append(Property("Vv", "0.8 V", true,
+  Props.push_back(Property("Vv", "0.8 V", true,
 	QObject::tr("valley voltage")));
-  Props.append(Property("Wr", "2.7e-20", false,
+  Props.push_back(Property("Wr", "2.7e-20", false,
 	QObject::tr("resonance energy in Ws")));
-  Props.append(Property("eta", "1e-20", false,
+  Props.push_back(Property("eta", "1e-20", false,
 	QObject::tr("Fermi energy in Ws")));
-  Props.append(Property("dW", "4.5e-21", false,
+  Props.push_back(Property("dW", "4.5e-21", false,
 	QObject::tr("resonance width in Ws")));
-  Props.append(Property("Tmax", "0.95", false,
+  Props.push_back(Property("Tmax", "0.95", false,
 	QObject::tr("maximum of transmission")));
-  Props.append(Property("de", "0.9", false,
+  Props.push_back(Property("de", "0.9", false,
 	QObject::tr("fitting factor for electron density")));
-  Props.append(Property("dv", "2.0", false,
+  Props.push_back(Property("dv", "2.0", false,
 	QObject::tr("fitting factor for voltage drop")));
-  Props.append(Property("nv", "16", false,
+  Props.push_back(Property("nv", "16", false,
 	QObject::tr("fitting factor for diode current")));
 
-  Props.append(Property("Cj0", "80 fF", false,
+  Props.push_back(Property("Cj0", "80 fF", false,
 	QObject::tr("zero-bias depletion capacitance")));
-  Props.append(Property("M", "0.5", false,
+  Props.push_back(Property("M", "0.5", false,
 	QObject::tr("grading coefficient")));
-  Props.append(Property("Vj", "0.5 V", false,
+  Props.push_back(Property("Vj", "0.5 V", false,
 	QObject::tr("junction potential")));
-  Props.append(Property("te", "0.6 ps", false,
+  Props.push_back(Property("te", "0.6 ps", false,
 	QObject::tr("life-time of electrons")));
 
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(Property("Area", "1.0", false,
+  Props.push_back(Property("Area", "1.0", false,
 	QObject::tr("default area for diode")));
 
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 12,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12, -9,-12,  9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, -9,  0,  9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 12, -9, 12,  9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12, -9, 12,  9,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12,  9, 12, -9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 12,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12, -9,-12,  9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, -9,  0,  9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 12, -9, 12,  9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12, -9, 12,  9,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,  9, 12, -9,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30, 0));
-  Ports.append(Port( 30, 0));
+  Ports.push_back(Port(-30, 0));
+  Ports.push_back(Port( 30, 0));
 
   x1 = -30; y1 = -11;
   x2 =  30; y2 =  11;

@@ -26,9 +26,9 @@ Param_Sweep::Param_Sweep()
   int a = s.lastIndexOf(" ");
   if (a != -1) s[a] = '\n';    // break line
 
-  Texts.append(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
   if (a != -1)
-    Texts.append(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
+    Texts.push_back(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+104; y2 = y1+59;
@@ -39,17 +39,17 @@ Param_Sweep::Param_Sweep()
   Name  = "SW";
 
   // The index of the first 6 properties must not changed. Used in recreate().
-  Props.append(Property("Sim", "", true,
+  Props.push_back(Property("Sim", "", true,
 		QObject::tr("simulation to perform parameter sweep on")));
-  Props.append(Property("Type", "lin", true,
+  Props.push_back(Property("Type", "lin", true,
 		QObject::tr("sweep type")+" [lin, log, list, const]"));
-  Props.append(Property("Param", "R1", true,
+  Props.push_back(Property("Param", "R1", true,
 		QObject::tr("parameter to sweep")));
-  Props.append(Property("Start", "5 Ohm", true,
+  Props.push_back(Property("Start", "5 Ohm", true,
 		QObject::tr("start value for sweep")));
-  Props.append(Property("Stop", "50 Ohm", true,
+  Props.push_back(Property("Stop", "50 Ohm", true,
 		QObject::tr("stop value for sweep")));
-  Props.append(Property("Points", "20", true,
+  Props.push_back(Property("Points", "20", true,
 		QObject::tr("number of simulation steps")));
 }
 
@@ -73,7 +73,8 @@ Element* Param_Sweep::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
 void Param_Sweep::recreate(Schematic*)
 {
-  auto pp = Props.begin() + 1;
+  auto pp = Props.begin();
+  ++pp;
   if((pp->Value == "list") || (pp->Value == "const")) {
     // Call them "Symbol" to omit them in the netlist.
     ++pp;

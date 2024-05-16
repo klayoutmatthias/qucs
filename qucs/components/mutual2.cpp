@@ -34,42 +34,42 @@ Mutual2::Mutual2()
   int w;
   QString stmp;
 
-  Arcs.append(Arc(-16,-58,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16,-46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16,-34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16, 46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16, 34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(-16, 22,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-58,-10,-70,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-70,-30,-70,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 58,-10, 70,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 70,-30, 70,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-10,-30,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,-22,-10,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 10,-30, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, 10,-10, 22,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16,-58,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16,-46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16,-34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16, 46,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16, 34,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-16, 22,12,12, 16*270,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4,-18,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4, -6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  4,  6,12,12,  16*90,16*180, QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-58,-10,-70,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-70,-30,-70,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10,-18, 10,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 58,-10, 70,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 70,-30, 70,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10, 18, 10, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 10, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-10,-30,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-22,-10,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 10,-30, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, 10,-10, 22,QPen(Qt::darkBlue,2)));
 
   stmp = "1"; w = smallmetrics.horizontalAdvance(stmp); // compute width to right-align
-  Texts.append(Text(-13-w,-61,stmp));
+  Texts.push_back(Text(-13-w,-61,stmp));
   stmp = "2"; w = smallmetrics.horizontalAdvance(stmp); // compute width to right-align
-  Texts.append(Text(-13-w, 18,stmp));
-  Texts.append(Text( 13,-22,"3")); // left-aligned, no need to compute width
+  Texts.push_back(Text(-13-w, 18,stmp));
+  Texts.push_back(Text( 13,-22,"3")); // left-aligned, no need to compute width
 
-  Lines.append(Line(  0,-57,  0, 57,QPen(Qt::darkBlue,1,Qt::DashLine)));
+  Lines.push_back(Line(  0,-57,  0, 57,QPen(Qt::darkBlue,1,Qt::DashLine)));
 
-  Ports.append(Port(-30,-70));
-  Ports.append(Port( 30,-30));
-  Ports.append(Port( 30, 30));
-  Ports.append(Port(-30, 70));
-  Ports.append(Port(-30, 10));
-  Ports.append(Port(-30,-10));
+  Ports.push_back(Port(-30,-70));
+  Ports.push_back(Port( 30,-30));
+  Ports.push_back(Port( 30, 30));
+  Ports.push_back(Port(-30, 70));
+  Ports.push_back(Port(-30, 10));
+  Ports.push_back(Port(-30,-10));
 
   x1 = -33; y1 = -74;
   x2 =  33; y2 =  74;
@@ -79,17 +79,17 @@ Mutual2::Mutual2()
   Model = "MUT2";
   Name  = "Tr";
 
-  Props.append(Property("L1", "1 mH", false,
+  Props.push_back(Property("L1", "1 mH", false,
 		QObject::tr("inductance of coil 1")));
-  Props.append(Property("L2", "1 mH", false,
+  Props.push_back(Property("L2", "1 mH", false,
 		QObject::tr("inductance of coil 2")));
-  Props.append(Property("L3", "1 mH", false,
+  Props.push_back(Property("L3", "1 mH", false,
 		QObject::tr("inductance of coil 3")));
-  Props.append(Property("k12", "0.9", false,
+  Props.push_back(Property("k12", "0.9", false,
 		QObject::tr("coupling factor between coil 1 and 2")));
-  Props.append(Property("k13", "0.9", false,
+  Props.push_back(Property("k13", "0.9", false,
 		QObject::tr("coupling factor between coil 1 and 3")));
-  Props.append(Property("k23", "0.9", false,
+  Props.push_back(Property("k23", "0.9", false,
 		QObject::tr("coupling factor between coil 2 and 3")));
 }
 

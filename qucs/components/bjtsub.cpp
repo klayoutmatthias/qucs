@@ -21,101 +21,101 @@
 Basic_BJT::Basic_BJT()
 {
   // this must be the first property in the list  !!!
-  Props.append(Property("Type", "npn", true,
+  Props.push_back(Property("Type", "npn", true,
 	QObject::tr("polarity")+" [npn, pnp]"));
-  Props.append(Property("Is", "1e-16", true,
+  Props.push_back(Property("Is", "1e-16", true,
 	QObject::tr("saturation current")));
-  Props.append(Property("Nf", "1", true,
+  Props.push_back(Property("Nf", "1", true,
 	QObject::tr("forward emission coefficient")));
-  Props.append(Property("Nr", "1", false,
+  Props.push_back(Property("Nr", "1", false,
 	QObject::tr("reverse emission coefficient")));
-  Props.append(Property("Ikf", "0", false,
+  Props.push_back(Property("Ikf", "0", false,
 	QObject::tr("high current corner for forward beta")));
-  Props.append(Property("Ikr", "0", false,
+  Props.push_back(Property("Ikr", "0", false,
 	QObject::tr("high current corner for reverse beta")));
-  Props.append(Property("Vaf", "0", true,
+  Props.push_back(Property("Vaf", "0", true,
 	QObject::tr("forward early voltage")));
-  Props.append(Property("Var", "0", false,
+  Props.push_back(Property("Var", "0", false,
 	QObject::tr("reverse early voltage")));
-  Props.append(Property("Ise", "0", false,
+  Props.push_back(Property("Ise", "0", false,
 	QObject::tr("base-emitter leakage saturation current")));
-  Props.append(Property("Ne", "1.5", false,
+  Props.push_back(Property("Ne", "1.5", false,
 	QObject::tr("base-emitter leakage emission coefficient")));
-  Props.append(Property("Isc", "0", false,
+  Props.push_back(Property("Isc", "0", false,
 	QObject::tr("base-collector leakage saturation current")));
-  Props.append(Property("Nc", "2", false,
+  Props.push_back(Property("Nc", "2", false,
 	QObject::tr("base-collector leakage emission coefficient")));
-  Props.append(Property("Bf", "100", true,
+  Props.push_back(Property("Bf", "100", true,
 	QObject::tr("forward beta")));
-  Props.append(Property("Br", "1", false,
+  Props.push_back(Property("Br", "1", false,
 	QObject::tr("reverse beta")));
-  Props.append(Property("Rbm", "0", false,
+  Props.push_back(Property("Rbm", "0", false,
 	QObject::tr("minimum base resistance for high currents")));
-  Props.append(Property("Irb", "0", false,
+  Props.push_back(Property("Irb", "0", false,
 	QObject::tr("current for base resistance midpoint")));
-  Props.append(Property("Rc", "0", false,
+  Props.push_back(Property("Rc", "0", false,
 	QObject::tr("collector ohmic resistance")));
-  Props.append(Property("Re", "0", false,
+  Props.push_back(Property("Re", "0", false,
 	QObject::tr("emitter ohmic resistance")));
-  Props.append(Property("Rb", "0", false,
+  Props.push_back(Property("Rb", "0", false,
 	QObject::tr("zero-bias base resistance (may be high-current dependent)")));
-  Props.append(Property("Cje", "0", false,
+  Props.push_back(Property("Cje", "0", false,
 	QObject::tr("base-emitter zero-bias depletion capacitance")));
-  Props.append(Property("Vje", "0.75", false,
+  Props.push_back(Property("Vje", "0.75", false,
 	QObject::tr("base-emitter junction built-in potential")));
-  Props.append(Property("Mje", "0.33", false,
+  Props.push_back(Property("Mje", "0.33", false,
 	QObject::tr("base-emitter junction exponential factor")));
-  Props.append(Property("Cjc", "0", false,
+  Props.push_back(Property("Cjc", "0", false,
 	QObject::tr("base-collector zero-bias depletion capacitance")));
-  Props.append(Property("Vjc", "0.75", false,
+  Props.push_back(Property("Vjc", "0.75", false,
 	QObject::tr("base-collector junction built-in potential")));
-  Props.append(Property("Mjc", "0.33", false,
+  Props.push_back(Property("Mjc", "0.33", false,
 	QObject::tr("base-collector junction exponential factor")));
-  Props.append(Property("Xcjc", "1.0", false,
+  Props.push_back(Property("Xcjc", "1.0", false,
 	QObject::tr("fraction of Cjc that goes to internal base pin")));
-  Props.append(Property("Cjs", "0", false,
+  Props.push_back(Property("Cjs", "0", false,
 	QObject::tr("zero-bias collector-substrate capacitance")));
-  Props.append(Property("Vjs", "0.75", false,
+  Props.push_back(Property("Vjs", "0.75", false,
 	QObject::tr("substrate junction built-in potential")));
-  Props.append(Property("Mjs", "0", false,
+  Props.push_back(Property("Mjs", "0", false,
 	QObject::tr("substrate junction exponential factor")));
-  Props.append(Property("Fc", "0.5", false,
+  Props.push_back(Property("Fc", "0.5", false,
 	QObject::tr("forward-bias depletion capacitance coefficient")));
-  Props.append(Property("Tf", "0.0", false,
+  Props.push_back(Property("Tf", "0.0", false,
 	QObject::tr("ideal forward transit time")));
-  Props.append(Property("Xtf", "0.0", false,
+  Props.push_back(Property("Xtf", "0.0", false,
 	QObject::tr("coefficient of bias-dependence for Tf")));
-  Props.append(Property("Vtf", "0.0", false,
+  Props.push_back(Property("Vtf", "0.0", false,
 	QObject::tr("voltage dependence of Tf on base-collector voltage")));
-  Props.append(Property("Itf", "0.0", false,
+  Props.push_back(Property("Itf", "0.0", false,
 	QObject::tr("high-current effect on Tf")));
-  Props.append(Property("Tr", "0.0", false,
+  Props.push_back(Property("Tr", "0.0", false,
 	QObject::tr("ideal reverse transit time")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 	QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(Property("Kf", "0.0", false,
+  Props.push_back(Property("Kf", "0.0", false,
 	QObject::tr("flicker noise coefficient")));
-  Props.append(Property("Af", "1.0", false,
+  Props.push_back(Property("Af", "1.0", false,
 	QObject::tr("flicker noise exponent")));
-  Props.append(Property("Ffe", "1.0", false,
+  Props.push_back(Property("Ffe", "1.0", false,
 	QObject::tr("flicker noise frequency exponent")));
-  Props.append(Property("Kb", "0.0", false,
+  Props.push_back(Property("Kb", "0.0", false,
 	QObject::tr("burst noise coefficient")));
-  Props.append(Property("Ab", "1.0", false,
+  Props.push_back(Property("Ab", "1.0", false,
 	QObject::tr("burst noise exponent")));
-  Props.append(Property("Fb", "1.0", false,
+  Props.push_back(Property("Fb", "1.0", false,
 	QObject::tr("burst noise corner frequency in Hertz")));
-  Props.append(Property("Ptf", "0.0", false,
+  Props.push_back(Property("Ptf", "0.0", false,
 	QObject::tr("excess phase in degrees")));
-  Props.append(Property("Xtb", "0.0", false,
+  Props.push_back(Property("Xtb", "0.0", false,
 	QObject::tr("temperature exponent for forward- and reverse beta")));
-  Props.append(Property("Xti", "3.0", false,
+  Props.push_back(Property("Xti", "3.0", false,
 	QObject::tr("saturation current temperature exponent")));
-  Props.append(Property("Eg", "1.11", false,
+  Props.push_back(Property("Eg", "1.11", false,
 	QObject::tr("energy bandgap in eV")));
-  Props.append(Property("Tnom", "26.85", false,
+  Props.push_back(Property("Tnom", "26.85", false,
 	QObject::tr("temperature at which parameters were extracted")));
-  Props.append(Property("Area", "1.0", false,
+  Props.push_back(Property("Area", "1.0", false,
 	QObject::tr("default area for bipolar transistor")));
 
   Name  = "T";
@@ -134,7 +134,7 @@ BJTsub::BJTsub()
 Component* BJTsub::newOne()
 {
   BJTsub* p = new BJTsub();
-  p->Props.first().Value = Props.first().Value;
+  p->Props.front().Value = Props.front().Value;
   p->recreate(0);
   return p;
 }
@@ -157,7 +157,7 @@ Element* BJTsub::info_pnp(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     BJTsub* p = new BJTsub();
-    p->Props.first().Value = "pnp";
+    p->Props.front().Value = "pnp";
     p->recreate(0);
     return p;
   }
@@ -167,29 +167,29 @@ Element* BJTsub::info_pnp(QString& Name, char* &BitmapFile, bool getNewOne)
 // -------------------------------------------------------
 void BJTsub::createSymbol()
 {
-  Lines.append(Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, -5,  0,-15,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,-15,  0,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,  5,  0, 15,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 15,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, -5,  0,-15,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-15,  0,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,  5,  0, 15,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 15,  0, 30,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(  9,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  9, -7,  9,  7,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  9,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  9, -7,  9,  7,QPen(Qt::darkBlue,3)));
 
-  if(Props.first().Value == "npn") {
-    Lines.append(Line( -6, 15,  0, 15,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(  0,  9,  0, 15,QPen(Qt::darkBlue,2)));
+  if(Props.front().Value == "npn") {
+    Lines.push_back(Line( -6, 15,  0, 15,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(  0,  9,  0, 15,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(Line( -5, 10, -5, 16,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( -5, 10,  1, 10,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( -5, 10, -5, 16,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( -5, 10,  1, 10,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port(  0,-30));
-  Ports.append(Port(  0, 30));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port(  0,-30));
+  Ports.push_back(Port(  0, 30));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -30;
   x2 =  30; y2 =  30;

@@ -30,20 +30,20 @@ RFedd2P::RFedd2P()
   Name  = "RF";
 
   // first properties !!!
-  Props.append(Property("Type", "Y", false,
+  Props.push_back(Property("Type", "Y", false,
 		QObject::tr("type of parameters")+" [Y, Z, S, H, G, A, T]"));
-  Props.append(Property("duringDC", "open", false,
+  Props.push_back(Property("duringDC", "open", false,
 		QObject::tr("representation during DC analysis")+
 			    " [open, short, unspecified, zerofrequency]"));
 
   // last properties
-  Props.append(Property("P11", "0", false,
+  Props.push_back(Property("P11", "0", false,
 		QObject::tr("parameter equation") + " 11"));
-  Props.append(Property("P12", "0", false,
+  Props.push_back(Property("P12", "0", false,
 		QObject::tr("parameter equation") + " 12"));
-  Props.append(Property("P21", "0", false,
+  Props.push_back(Property("P21", "0", false,
 		QObject::tr("parameter equation") + " 21"));
-  Props.append(Property("P22", "0", false,
+  Props.push_back(Property("P22", "0", false,
 		QObject::tr("parameter equation") + " 22"));
 
   createSymbol();
@@ -53,7 +53,7 @@ RFedd2P::RFedd2P()
 Component* RFedd2P::newOne()
 {
   RFedd2P* p = new RFedd2P();
-  p->Props[0].Value = Props[0].Value;
+  p->prop(0).Value = prop(0).Value;
   p->recreate(0);
   return p;
 }
@@ -66,7 +66,7 @@ Element* RFedd2P::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     RFedd2P* p = new RFedd2P();
-    p->Props[0].Value = "Y";
+    p->prop(0).Value = "Y";
     p->recreate(0);
     return p;
   }
@@ -85,14 +85,14 @@ QString RFedd2P::netlist()
     s += " "+p1->getConnection()->Name;   // node names
 
   // output all properties
-  s += " "+Props[0].Name+"=\""+Props[0].Value+"\"";
-  p = Props[0].Value;
-  s += " "+Props[1].Name+"=\""+Props[1].Value+"\"";
-  for (int i = 2; i < Props.count(); ++i) {
-    n = Props[i].Name.mid(1);
-    s += " "+Props[i].Name+"=\""+Name+"."+p+n+"\"";
-    e += "  Eqn:Eqn"+Name+Props[i].Name+" "+
-      Name+"."+p+n+"=\""+Props[i].Value+"\" Export=\"no\"\n";
+  s += " "+prop(0).Name+"=\""+prop(0).Value+"\"";
+  p = prop(0).Value;
+  s += " "+prop(1).Name+"=\""+prop(1).Value+"\"";
+  for (int i = 2; i < int(Props.size()); ++i) {
+    n = prop(i).Name.mid(1);
+    s += " "+prop(i).Name+"=\""+Name+"."+p+n+"\"";
+    e += "  Eqn:Eqn"+Name+prop(i).Name+" "+
+      Name+"."+p+n+"=\""+prop(i).Value+"\" Export=\"no\"\n";
   }
 
   return s+e;
@@ -113,30 +113,30 @@ void RFedd2P::createSymbol()
   // draw symbol
   #define HALFWIDTH  17
   int h = 15;
-  Lines.append(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
 
   // component text name
-  tmp = Props.at(0).Value;
+  tmp = prop(0).Value;
   w = smallmetrics.horizontalAdvance(tmp);
-  Texts.append(Text(-w/2, -fHeight/2, tmp)); // text centered in the box
+  Texts.push_back(Text(-w/2, -fHeight/2, tmp)); // text centered in the box
 
   // add port numbers text
   i = 0;
   int y = 15-h;
-  Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
-  Ports.append(Port(-30,  y));
+  Lines.push_back(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
+  Ports.push_back(Port(-30,  y));
   tmp = QString::number(i+1);
   w = smallmetrics.horizontalAdvance(tmp);
-  Texts.append(Text(-25-w, y-fHeight-2, tmp)); // text right-aligned
+  Texts.push_back(Text(-25-w, y-fHeight-2, tmp)); // text right-aligned
   i++;
 
-  Lines.append(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
-  Ports.append(Port( 30,  y));
+  Lines.push_back(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
+  Ports.push_back(Port( 30,  y));
   tmp = QString::number(i+1);
-  Texts.append(Text(25, y-fHeight-2, tmp)); // text left-aligned
+  Texts.push_back(Text(25, y-fHeight-2, tmp)); // text left-aligned
   y += 60;
   i++;
 

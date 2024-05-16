@@ -22,23 +22,23 @@ AM_Modulator::AM_Modulator()
 {
   Description = QObject::tr("ac voltage source with amplitude modulator");
 
-  Arcs.append(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -7, -4,  7,  7,     0, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  0, -4,  7,  7,16*180, 16*180,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 30,  0, 12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,-30,  0,-12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  5,-18, 11,-18,QPen(Qt::red,1)));
-  Lines.append(Line(  8,-21,  8,-15,QPen(Qt::red,1)));
-  Lines.append(Line(  5, 18, 11, 18,QPen(Qt::black,1)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -7, -4,  7,  7,     0, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  0, -4,  7,  7,16*180, 16*180,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 30,  0, 12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-30,  0,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  5,-18, 11,-18,QPen(Qt::red,1)));
+  Lines.push_back(Line(  8,-21,  8,-15,QPen(Qt::red,1)));
+  Lines.push_back(Line(  5, 18, 11, 18,QPen(Qt::black,1)));
 
-  Lines.append(Line(-12,  0,-30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12,  0,-17,  5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12,  0,-17, -5,QPen(Qt::darkBlue,2)));
-  Texts.append(Text(-30,-22, QObject::tr("AM"), Qt::black, 10.0,1.0,0.0));
+  Lines.push_back(Line(-12,  0,-30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,  0,-17,  5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,  0,-17, -5,QPen(Qt::darkBlue,2)));
+  Texts.push_back(Text(-30,-22, QObject::tr("AM"), Qt::black, 10.0,1.0,0.0));
 
-  Ports.append(Port(  0,-30));
-  Ports.append(Port(  0, 30));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port(  0,-30));
+  Ports.push_back(Port(  0, 30));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -30;
   x2 =  14; y2 =  30;
@@ -48,13 +48,13 @@ AM_Modulator::AM_Modulator()
   Model = "AM_Mod";
   Name  = "V";
 
-  Props.append(Property("U", "1 V", true,
+  Props.push_back(Property("U", "1 V", true,
 		QObject::tr("peak voltage in Volts")));
-  Props.append(Property("f", "1 GHz", false,
+  Props.push_back(Property("f", "1 GHz", false,
 		QObject::tr("frequency in Hertz")));
-  Props.append(Property("Phase", "0", false,
+  Props.push_back(Property("Phase", "0", false,
 		QObject::tr("initial phase in degrees")));
-  Props.append(Property("m", "1.0", false,
+  Props.push_back(Property("m", "1.0", false,
 		QObject::tr("modulation level")));
 }
 

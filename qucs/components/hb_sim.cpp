@@ -26,9 +26,9 @@ HB_Sim::HB_Sim()
   int a = s.lastIndexOf(" ");
   if (a != -1) s[a] = '\n';    // break line before the word "simulation"
 
-  Texts.append(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, s.left(a), Qt::darkBlue, QucsSettings.largeFontSize));
   if (a != -1)
-    Texts.append(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
+    Texts.push_back(Text(0, 0, s.mid(a+1), Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+163; y2 = y1+59;
@@ -38,17 +38,17 @@ HB_Sim::HB_Sim()
   Model = ".HB";
   Name  = "HB";
 
-  Props.append(Property("f", "1 GHz", false,
+  Props.push_back(Property("f", "1 GHz", false,
 		QObject::tr("frequency in Hertz")));
-  Props.append(Property("n", "4", true,
+  Props.push_back(Property("n", "4", true,
 		QObject::tr("number of harmonics")));
-  Props.append(Property("iabstol", "1 pA", false,
+  Props.push_back(Property("iabstol", "1 pA", false,
 		QObject::tr("absolute tolerance for currents")));
-  Props.append(Property("vabstol", "1 uV", false,
+  Props.push_back(Property("vabstol", "1 uV", false,
 		QObject::tr("absolute tolerance for voltages")));
-  Props.append(Property("reltol", "0.001", false,
+  Props.push_back(Property("reltol", "0.001", false,
 		QObject::tr("relative tolerance for convergence")));
-  Props.append(Property("MaxIter", "150", false,
+  Props.push_back(Property("MaxIter", "150", false,
 		QObject::tr("maximum number of iterations until error")));
 }
 

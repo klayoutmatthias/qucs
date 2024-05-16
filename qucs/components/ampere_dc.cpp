@@ -22,15 +22,15 @@ Ampere_dc::Ampere_dc()
 {
   Description = QObject::tr("ideal dc current source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  14;
@@ -40,7 +40,7 @@ Ampere_dc::Ampere_dc()
   Model = "Idc";
   Name  = "I";
 
-  Props.append(Property("I", "1 mA", true,
+  Props.push_back(Property("I", "1 mA", true,
 		QObject::tr("current in Ampere")));
 
   rotate();  // fix historical flaw

@@ -22,15 +22,15 @@ Amplifier::Amplifier()
 {
   Description = QObject::tr("ideal amplifier");
 
-  Lines.append(Line(-16,-20,-16, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-16,-20, 16,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-16, 20, 16,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-16,-20,-16, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-16,-20, 16,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-16, 20, 16,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-30,  0,-16,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 16,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-16,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 16,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -23;
   x2 =  30; y2 =  23;
@@ -40,13 +40,13 @@ Amplifier::Amplifier()
   Model = "Amp";
   Name  = "X";
 
-  Props.append(Property("G", "10", true,
+  Props.push_back(Property("G", "10", true,
 		QObject::tr("voltage gain")));
-  Props.append(Property("Z1", "50 Ohm", false,
+  Props.push_back(Property("Z1", "50 Ohm", false,
 		QObject::tr("reference impedance of input port")));
-  Props.append(Property("Z2", "50 Ohm", false,
+  Props.push_back(Property("Z2", "50 Ohm", false,
 		QObject::tr("reference impedance of output port")));
-  Props.append(Property("NF", "0 dB", false,
+  Props.push_back(Property("NF", "0 dB", false,
 		QObject::tr("noise figure")));
 }
 

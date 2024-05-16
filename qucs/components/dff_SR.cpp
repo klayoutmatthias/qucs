@@ -24,11 +24,11 @@ dff_SR::dff_SR()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("D flip flop with set and reset verilog device");
 
-  Props.append (Property ("TR_H", "6", false,
+  Props.push_back (Property ("TR_H", "6", false,
     QObject::tr ("cross coupled gate transfer function high scaling factor")));
-  Props.append (Property ("TR_L", "5", false,
+  Props.push_back (Property ("TR_L", "5", false,
     QObject::tr ("cross coupled gate transfer function low scaling factor")));
-  Props.append (Property ("Delay", "1 ns", false,
+  Props.push_back (Property ("Delay", "1 ns", false,
     QObject::tr ("cross coupled gate delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -42,7 +42,7 @@ dff_SR::dff_SR()
 Component * dff_SR::newOne()
 {
   dff_SR * p = new dff_SR();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -59,38 +59,38 @@ Element * dff_SR::info(QString& Name, char * &BitmapFile, bool getNewOne)
 void dff_SR::createSymbol()
 {
   // put in here symbol drawing code and terminal definitions
-  Lines.append(Line(-30,-40, 30,-40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,-40, 30, 40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, 40,-30, 40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 40,-30,-40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,-40, 30,-40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,-40, 30, 40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, 40,-30, 40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 40,-30,-40,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, 20, 50, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, 20, 50, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line( -30, 10,-20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -30, 30,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -30, 10,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -30, 30,-20, 20,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(  0, -50,  0, -60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,  50,  0,  60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, -50,  0, -60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,  50,  0,  60,QPen(Qt::darkBlue,2)));
 
-  Arcs.append(Arc( -5,-50, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -5, 40, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -5,-50, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -5, 40, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
 
-  Texts.append(Text(-25,-32,  "D", Qt::darkBlue, 12.0));
-  Texts.append(Text( 11,-32,  "Q", Qt::darkBlue, 12.0));
-  Texts.append(Text( -5,-39,  "S", Qt::darkBlue, 12.0));
-  Texts.append(Text( 11,  7,  "Q", Qt::darkBlue, 12.0));
-  Texts.last().over=true;
-  Texts.append(Text( -5, 17,  "R", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25,-32,  "D", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 11,-32,  "Q", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( -5,-39,  "S", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 11,  7,  "Q", Qt::darkBlue, 12.0));
+  Texts.back().over=true;
+  Texts.push_back(Text( -5, 17,  "R", Qt::darkBlue, 12.0));
  
-  Ports.append(Port(0,  -60));  // S
-  Ports.append(Port(-50,-20));  // D
-  Ports.append(Port(-50, 20));  // CLK
-  Ports.append(Port(  0, 60));  // R
-  Ports.append(Port( 50, 20));  // QB
-  Ports.append(Port( 50,-20));  // Q
+  Ports.push_back(Port(0,  -60));  // S
+  Ports.push_back(Port(-50,-20));  // D
+  Ports.push_back(Port(-50, 20));  // CLK
+  Ports.push_back(Port(  0, 60));  // R
+  Ports.push_back(Port( 50, 20));  // QB
+  Ports.push_back(Port( 50,-20));  // Q
 
   x1 = -50; y1 = -60;
   x2 =  50; y2 =  60;
@@ -100,16 +100,16 @@ QString dff_SR::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(2).Value;     // delay time
+  QString td = prop(2).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString S     = Ports.at(0).getConnection()->Name;
-  QString D     = Ports.at(1).getConnection()->Name;
-  QString CLK   = Ports.at(2).getConnection()->Name;
-  QString R     = Ports.at(3).getConnection()->Name;
-  QString QB    = Ports.at(4).getConnection()->Name;
-  QString Q     = Ports.at(5).getConnection()->Name;
+  QString S     = port(0).getConnection()->Name;
+  QString D     = port(1).getConnection()->Name;
+  QString CLK   = port(2).getConnection()->Name;
+  QString R     = port(3).getConnection()->Name;
+  QString QB    = port(4).getConnection()->Name;
+  QString Q     = port(5).getConnection()->Name;
 
   s = "\n  "+Name+":process ("+S+", "+CLK+", "+R+") is\n"+
       "  variable state : std_logic;\n"+
@@ -129,17 +129,17 @@ QString dff_SR::vhdlCode( int )
 
 QString dff_SR::verilogCode( int )
 {
-  QString td = Props.at(2).Value;        // delay time
+  QString td = prop(2).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
  
-  QString S     = Ports.at(0).getConnection()->Name;
-  QString D     = Ports.at(1).getConnection()->Name;
-  QString CLK   = Ports.at(2).getConnection()->Name;
-  QString R     = Ports.at(3).getConnection()->Name;
-  QString QB    = Ports.at(4).getConnection()->Name;
-  QString Q     = Ports.at(5).getConnection()->Name;
+  QString S     = port(0).getConnection()->Name;
+  QString D     = port(1).getConnection()->Name;
+  QString CLK   = port(2).getConnection()->Name;
+  QString R     = port(3).getConnection()->Name;
+  QString QB    = port(4).getConnection()->Name;
+  QString Q     = port(5).getConnection()->Name;
 
   QString QR   = "Q_reg"  + Name + Q;
   QString QBR  = "QB_reg"  + Name + QB;

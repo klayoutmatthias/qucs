@@ -22,20 +22,20 @@ Circulator::Circulator()
 {
   Description = QObject::tr("circulator");
 
-  Arcs.append(Arc(-14,-14, 28, 28,  0,16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 14,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 14,  0, 30,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-14,-14, 28, 28,  0,16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 14,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 14,  0, 30,QPen(Qt::darkBlue,2)));
 
-  Arcs.append(Arc( -8, -6, 16, 16,16*20,16*150,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  8,  0,  9, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  8,  0,  2, -1,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -8, -6, 16, 16,16*20,16*150,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  8,  0,  9, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  8,  0,  2, -1,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));   // marks port 1
+  Lines.push_back(Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));   // marks port 1
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(  0, 30));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(  0, 30));
 
   x1 = -30; y1 = -16;
   x2 =  30; y2 =  30;
@@ -45,11 +45,11 @@ Circulator::Circulator()
   Model = "Circulator";
   Name  = "X";
 
-  Props.append(Property("Z1", "50 Ohm", false,
+  Props.push_back(Property("Z1", "50 Ohm", false,
 		QObject::tr("reference impedance of port 1")));
-  Props.append(Property("Z2", "50 Ohm", false,
+  Props.push_back(Property("Z2", "50 Ohm", false,
 		QObject::tr("reference impedance of port 2")));
-  Props.append(Property("Z3", "50 Ohm", false,
+  Props.push_back(Property("Z3", "50 Ohm", false,
 		QObject::tr("reference impedance of port 3")));
 }
 

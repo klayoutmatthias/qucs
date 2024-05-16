@@ -22,34 +22,34 @@ Coupler::Coupler()
 {
   Description = QObject::tr("ideal coupler");
 
-  Lines.append(Line(-23,-24, 23,-24,QPen(Qt::darkGray,1)));
-  Lines.append(Line( 23,-24, 23, 24,QPen(Qt::darkGray,1)));
-  Lines.append(Line( 23, 24,-23, 24,QPen(Qt::darkGray,1)));
-  Lines.append(Line(-23, 24,-23,-24,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line(-23,-24, 23,-24,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line( 23,-24, 23, 24,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line( 23, 24,-23, 24,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line(-23, 24,-23,-24,QPen(Qt::darkGray,1)));
 
-  Lines.append(Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,-20, 20,-20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,-20, 20,-20,QPen(Qt::darkBlue,4)));
-  Lines.append(Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, 20, 20, 20,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20, 20, 20, 20,QPen(Qt::darkBlue,4)));
+  Lines.push_back(Line(-30,-20,-20,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,-20, 20,-20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-20, 20,-20,QPen(Qt::darkBlue,4)));
+  Lines.push_back(Line(-30, 20,-20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, 20, 20, 20,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20, 20, 20, 20,QPen(Qt::darkBlue,4)));
 
-  Lines.append(Line( 14, 14,-14,-14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-14,-14, -9,-14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-14,-14,-14, -9,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(  9, 14, 14, 14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 14,  9, 14, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 14, 14,-14,-14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-14,-14, -9,-14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-14,-14,-14, -9,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(  9, 14, 14, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 14,  9, 14, 14,QPen(Qt::darkBlue,1)));
   
-  Lines.append(Line( 14,-14,-14, 14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 14,-14,  9,-14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 14,-14, 14, -9,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-14, 14, -9, 14,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-14, 14,-14,  9,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 14,-14,-14, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 14,-14,  9,-14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 14,-14, 14, -9,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-14, 14, -9, 14,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-14, 14,-14,  9,QPen(Qt::darkBlue,1)));
 
-  Ports.append(Port(-30,-20));
-  Ports.append(Port( 30,-20));
-  Ports.append(Port( 30, 20));
-  Ports.append(Port(-30, 20));
+  Ports.push_back(Port(-30,-20));
+  Ports.push_back(Port( 30,-20));
+  Ports.push_back(Port( 30, 20));
+  Ports.push_back(Port(-30, 20));
 
 
   x1 = -30; y1 = -25;
@@ -60,11 +60,11 @@ Coupler::Coupler()
   Model = "Coupler";
   Name  = "X";
 
-  Props.append(Property("k", "0.7071", true,
+  Props.push_back(Property("k", "0.7071", true,
 		QObject::tr("coupling factor")));
-  Props.append(Property("phi", "180", true,
+  Props.push_back(Property("phi", "180", true,
 		QObject::tr("phase shift of coupling path in degree")));
-  Props.append(Property("Z", "50 Ohm", false,
+  Props.push_back(Property("Z", "50 Ohm", false,
 		QObject::tr("reference impedance")));
 }
 

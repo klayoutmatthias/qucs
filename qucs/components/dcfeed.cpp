@@ -22,19 +22,19 @@ dcFeed::dcFeed()
 {
   Description = QObject::tr("dc feed");
 
-  Arcs.append(Arc(-17, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  5, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 17,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-17, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  5, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 17,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-23,-13, 23,-13,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-23, 13, 23, 13,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-23,-13,-23, 13,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 23,-13, 23, 13,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23,-13, 23,-13,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23, 13, 23, 13,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-23,-13,-23, 13,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 23,-13, 23, 13,QPen(Qt::darkBlue,1)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -15;
   x2 =  30; y2 =  16;
@@ -44,7 +44,7 @@ dcFeed::dcFeed()
   Model = "DCFeed";
   Name  = "L";
 
-  Props.append(Property("L", "1 uH", false,
+  Props.push_back(Property("L", "1 uH", false,
 	QObject::tr("for transient simulation: inductance in Henry")));
 }
 

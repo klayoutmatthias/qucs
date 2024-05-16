@@ -24,9 +24,9 @@ hpribin4bit::hpribin4bit()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("4bit highest priority encoder (binary form) verilog device");
 
-  Props.append (Property ("TR", "6", false,
+  Props.push_back (Property ("TR", "6", false,
     QObject::tr ("transfer function scaling factor")));
-  Props.append (Property ("Delay", "1 ns", false,
+  Props.push_back (Property ("Delay", "1 ns", false,
     QObject::tr ("output delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -40,7 +40,7 @@ hpribin4bit::hpribin4bit()
 Component * hpribin4bit::newOne()
 {
   hpribin4bit * p = new hpribin4bit();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -56,37 +56,37 @@ Element * hpribin4bit::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void hpribin4bit::createSymbol()
 {
-  Lines.append(Line(-40, -50, 40,-50,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 40, -50, 40, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 40,  60,-40, 60,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-40,  60,-40, -50,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-40, -50, 40,-50,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 40, -50, 40, 60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 40,  60,-40, 60,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-40,  60,-40, -50,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // A
-  Lines.append(Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // B
-  Lines.append(Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // C
-  Lines.append(Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // D
-  Lines.append(Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // V
-  Lines.append(Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // Y
-  Lines.append(Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // X
+  Lines.push_back(Line(-60,-10,-40,-10,QPen(Qt::darkBlue,2)));  // A
+  Lines.push_back(Line(-60, 10,-40, 10,QPen(Qt::darkBlue,2)));  // B
+  Lines.push_back(Line(-60, 30,-40, 30,QPen(Qt::darkBlue,2)));  // C
+  Lines.push_back(Line(-60, 50,-40, 50,QPen(Qt::darkBlue,2)));  // D
+  Lines.push_back(Line( 40, 30, 60, 30,QPen(Qt::darkBlue,2)));  // V
+  Lines.push_back(Line( 40, 10, 60, 10,QPen(Qt::darkBlue,2)));  // Y
+  Lines.push_back(Line( 40,-10, 60,-10,QPen(Qt::darkBlue,2)));  // X
 
-  Texts.append(Text(-35,-45, "HPRI/BIN", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-35,-45, "HPRI/BIN", Qt::darkBlue, 12.0));
 
-  Texts.append(Text(-35,-23,  "0",  Qt::darkBlue, 12.0));
-  Texts.append(Text(-35, -3,  "1",  Qt::darkBlue, 12.0)); 
-  Texts.append(Text(-35, 17,  "2",  Qt::darkBlue, 12.0));
-  Texts.append(Text(-35, 37,  "3",  Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-35,-23,  "0",  Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-35, -3,  "1",  Qt::darkBlue, 12.0)); 
+  Texts.push_back(Text(-35, 17,  "2",  Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-35, 37,  "3",  Qt::darkBlue, 12.0));
 
-  Texts.append(Text( 25, 17,  "V",  Qt::darkBlue, 12.0)); 
-  Texts.append(Text( 25, -3,  "Y",  Qt::darkBlue, 12.0));
-  Texts.append(Text( 25,-23,  "X",  Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 25, 17,  "V",  Qt::darkBlue, 12.0)); 
+  Texts.push_back(Text( 25, -3,  "Y",  Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 25,-23,  "X",  Qt::darkBlue, 12.0));
 
-  Ports.append(Port(-60,-10));  // A
-  Ports.append(Port(-60, 10));  // B
-  Ports.append(Port(-60, 30));  // C
-  Ports.append(Port(-60, 50));  // D
-  Ports.append(Port( 60, 30));  // V
-  Ports.append(Port( 60, 10));  // Y
-  Ports.append(Port( 60,-10));  // X
+  Ports.push_back(Port(-60,-10));  // A
+  Ports.push_back(Port(-60, 10));  // B
+  Ports.push_back(Port(-60, 30));  // C
+  Ports.push_back(Port(-60, 50));  // D
+  Ports.push_back(Port( 60, 30));  // V
+  Ports.push_back(Port( 60, 10));  // Y
+  Ports.push_back(Port( 60,-10));  // X
 
   x1 = -60; y1 = -54;
   x2 =  60; y2 =  64;
@@ -96,17 +96,17 @@ QString hpribin4bit::vhdlCode( int )
 {
   QString s;
 
-  QString td = Props.at(1).Value;     // delay time
+  QString td = prop(1).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString A    = Ports.at(0).getConnection()->Name;
-  QString B    = Ports.at(1).getConnection()->Name;
-  QString C    = Ports.at(2).getConnection()->Name;
-  QString D    = Ports.at(3).getConnection()->Name;
-  QString V    = Ports.at(4).getConnection()->Name;
-  QString Y    = Ports.at(5).getConnection()->Name;
-  QString X    = Ports.at(6).getConnection()->Name;
+  QString A    = port(0).getConnection()->Name;
+  QString B    = port(1).getConnection()->Name;
+  QString C    = port(2).getConnection()->Name;
+  QString D    = port(3).getConnection()->Name;
+  QString V    = port(4).getConnection()->Name;
+  QString Y    = port(5).getConnection()->Name;
+  QString X    = port(6).getConnection()->Name;
 
   s = "\n  "+Name+":process ("+A+", "+B+", "+C+", "+D+")\n"+
       "  begin\n" +
@@ -119,18 +119,18 @@ QString hpribin4bit::vhdlCode( int )
 
 QString hpribin4bit::verilogCode( int )
 {
-  QString td = Props.at(1).Value;        // delay time
+  QString td = prop(1).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
 
-  QString A    = Ports.at(0).getConnection()->Name;
-  QString B    = Ports.at(1).getConnection()->Name;
-  QString C    = Ports.at(2).getConnection()->Name;
-  QString D    = Ports.at(3).getConnection()->Name;
-  QString V    = Ports.at(4).getConnection()->Name;
-  QString Y    = Ports.at(5).getConnection()->Name;
-  QString X    = Ports.at(6).getConnection()->Name;
+  QString A    = port(0).getConnection()->Name;
+  QString B    = port(1).getConnection()->Name;
+  QString C    = port(2).getConnection()->Name;
+  QString D    = port(3).getConnection()->Name;
+  QString V    = port(4).getConnection()->Name;
+  QString Y    = port(5).getConnection()->Name;
+  QString X    = port(6).getConnection()->Name;
 
   QString VR  = "V_reg"  + Name + V;
   QString YR  = "Y_reg"  + Name + Y;

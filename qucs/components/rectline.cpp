@@ -21,22 +21,22 @@ RectLine::RectLine()
 {
   Description = QObject::tr("Rectangular Waveguide");
 
-  Lines.append(Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-17,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-14, -7, 18, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, -7,-14, 11,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, 11, 18, 11,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18, -7, 18, 11,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,-13, 12,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,-13,-20,  5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, -7, 18, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, -7,-14, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, 11, 18, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18, -7, 18, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-13, 12,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-13,-20,  5,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-20,-13,-14, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 12,-13, 18, -7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,  5,-14, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,-13,-14, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 12,-13, 18, -7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,  5,-14, 11,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30, 0));
-  Ports.append(Port( 30, 0));
+  Ports.push_back(Port(-30, 0));
+  Ports.push_back(Port( 30, 0));
 
   x1 = -30; y1 =-16;
   x2 =  30; y2 = 14;
@@ -46,23 +46,23 @@ RectLine::RectLine()
   Model = "RECTLINE";
   Name  = "Line";
 
-  Props.append(Property("a", "2.95 mm", true,
+  Props.push_back(Property("a", "2.95 mm", true,
 		QObject::tr("widest side")));
-  Props.append(Property("b", "0.9 mm", true,
+  Props.push_back(Property("b", "0.9 mm", true,
 		QObject::tr("shortest side")));
-  Props.append(Property("L", "1500 mm", true,
+  Props.push_back(Property("L", "1500 mm", true,
 		QObject::tr("mechanical length of the line")));
-  Props.append(Property("er", "1", false,
+  Props.push_back(Property("er", "1", false,
 		QObject::tr("relative permittivity of dielectric")));
-  Props.append(Property("mur", "1", false,
+  Props.push_back(Property("mur", "1", false,
 		QObject::tr("relative permeability of conductor")));
-  Props.append(Property("tand", "0", false,
+  Props.push_back(Property("tand", "0", false,
 		QObject::tr("loss tangent")));
-  Props.append(Property("rho", "0.022e-6", false,
+  Props.push_back(Property("rho", "0.022e-6", false,
 		QObject::tr("specific resistance of conductor")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(Property("Material", "unspecified", false,
+  Props.push_back(Property("Material", "unspecified", false,
 		QObject::tr("material parameter for temperature model")+
 			    " [unspecified, Copper, StainlessSteel, Gold]"));
 }

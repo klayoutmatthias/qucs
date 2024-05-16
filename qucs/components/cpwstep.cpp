@@ -22,37 +22,37 @@ CPWstep::CPWstep()
 {
   Description = QObject::tr("coplanar step");
 
-  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  6,-10, 24,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -6, 10, 12, 10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, -6,  4, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-22,  6, -4,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  6,-10,  4, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -6, 10, -4,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, -6,-22,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 24,-10, 12, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  6,-10, 24,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -6, 10, 12, 10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, -6,  4, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-22,  6, -4,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  6,-10,  4, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -6, 10, -4,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, -6,-22,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 24,-10, 12, 10,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-25,-13, 25,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 16,-21, 24,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  8,-21, 16,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,-21,  8,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -8,-21,  0,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-16,-21, -8,-13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-24,-21,-16,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-25,-13, 25,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 16,-21, 24,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  8,-21, 16,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-21,  8,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -8,-21,  0,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-16,-21, -8,-13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-24,-21,-16,-13,QPen(Qt::darkBlue,2)));
   
-  Lines.append(Line(-25, 13, 25, 13,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-24, 13,-16, 21,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-16, 13, -8, 21,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -8, 13,  0, 21,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 13,  8, 21,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  8, 13, 16, 21,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 16, 13, 24, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-25, 13, 25, 13,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-24, 13,-16, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-16, 13, -8, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -8, 13,  0, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 13,  8, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  8, 13, 16, 21,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 16, 13, 24, 21,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-22, -4,-26,  4,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30, 0));
-  Ports.append(Port( 30, 0));
+  Ports.push_back(Port(-30, 0));
+  Ports.push_back(Port( 30, 0));
 
   x1 = -30; y1 =-24;
   x2 =  30; y2 = 24;
@@ -62,15 +62,15 @@ CPWstep::CPWstep()
   Model = "CSTEP";
   Name  = "CL";
 
-  Props.append(Property("Subst", "Subst1", true,
+  Props.push_back(Property("Subst", "Subst1", true,
 		QObject::tr("name of substrate definition")));
-  Props.append(Property("W1", "1 mm", true,
+  Props.push_back(Property("W1", "1 mm", true,
 		QObject::tr("width of line 1")));
-  Props.append(Property("W2", "2 mm", true,
+  Props.push_back(Property("W2", "2 mm", true,
 		QObject::tr("width of line 2")));
-  Props.append(Property("S", "3 mm", true,
+  Props.push_back(Property("S", "3 mm", true,
 		QObject::tr("distance between ground planes")));
-  Props.append(Property("Backside", "Air", false,
+  Props.push_back(Property("Backside", "Air", false,
 		QObject::tr("material at the backside of the substrate")+
 		" [Metal, Air]"));
 }

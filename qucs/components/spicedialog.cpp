@@ -156,13 +156,13 @@ SpiceDialog::SpiceDialog(QucsApp* App_, const std::shared_ptr<SpiceFile> &c, Sch
   changed = false;
 
   // insert all properties into the ListBox
-  Property &pp = Comp->Props[0];
+  Property &pp = Comp->prop(0);
   FileEdit->setText(pp.Value);
   FileCheck->setChecked(pp.display);
-  SimCheck->setChecked(Comp->Props[2].Value == "yes");
+  SimCheck->setChecked(Comp->prop(2).Value == "yes");
   for(int i=0; i<PrepCombo->count(); i++)
   {
-    if(PrepCombo->itemText(i) == Comp->Props[3].Value)
+    if(PrepCombo->itemText(i) == Comp->prop(3).Value)
     {
       PrepCombo->setCurrentIndex(i);
       currentPrep = i;
@@ -225,14 +225,14 @@ void SpiceDialog::slotButtApply()
   }
 
   // apply all the new property values
-  if(Comp->Props[0].Value != FileEdit->text())
+  if(Comp->prop(0).Value != FileEdit->text())
   {
-    Comp->Props[0].Value = FileEdit->text();
+    Comp->prop(0).Value = FileEdit->text();
     changed = true;
   }
-  if(Comp->Props[0].display != FileCheck->isChecked())
+  if(Comp->prop(0).display != FileCheck->isChecked())
   {
-    Comp->Props[0].display = FileCheck->isChecked();
+    Comp->prop(0).display = FileCheck->isChecked();
     changed = true;
   }
 
@@ -245,24 +245,24 @@ void SpiceDialog::slotButtApply()
     tmp += "_net" + PortsList->item(i)->text();   // chosen ports
   }
 
-  if(Comp->Props[1].Value != tmp)
+  if(Comp->prop(1).Value != tmp)
   {
-    Comp->Props[1].Value = tmp;
+    Comp->prop(1).Value = tmp;
     changed = true;
   }
 
-  if((Comp->Props[2].Value=="yes") != SimCheck->isChecked())
+  if((Comp->prop(2).Value=="yes") != SimCheck->isChecked())
   {
-    Comp->Props[2].Value = ((SimCheck->isChecked())? "yes" : "no");
+    Comp->prop(2).Value = ((SimCheck->isChecked())? "yes" : "no");
     changed = true;
   }
-  if(Comp->Props[2].Value != "yes") {
+  if(Comp->prop(2).Value != "yes") {
     Comp->withSim = false;
   }
 
-  if(Comp->Props[3].Value != PrepCombo->currentText())
+  if(Comp->prop(3).Value != PrepCombo->currentText())
   {
-    Comp->Props[3].Value = PrepCombo->currentText();
+    Comp->prop(3).Value = PrepCombo->currentText();
     changed = true;
   }
 
@@ -296,7 +296,7 @@ void SpiceDialog::slotButtBrowse()
   }
   FileEdit->setText(s);
 
-  Comp->Props[1].Value.clear();
+  Comp->prop(1).Value.clear();
   loadSpiceNetList(s);
 }
 
@@ -460,7 +460,7 @@ bool SpiceDialog::loadSpiceNetList(const QString& s)
       QMessageBox::critical(this, tr("QucsConv Error"), Error);
   }
 
-  Property &pp = Comp->Props[1];
+  Property &pp = Comp->prop(1);
   if(!pp.Value.isEmpty())
   {
     PortsList->clear();

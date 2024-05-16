@@ -18,9 +18,9 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include <QList>
-
 #include "element.h"
+
+#include <list>
 
 class Schematic;
 class ViewPainter;
@@ -64,13 +64,21 @@ public:
   // do somehting with buttons. can sb think of a more descriptive name?
   virtual void dialgButtStuff(ComponentDialog&)const;
 
-  QList<Line>       Lines;
-  QList<Arc>        Arcs;
-  QList<Area>       Rects;
-  QList<Area>       Ellips;
-  QList<Port>       Ports;
-  QList<Text>       Texts;
-  QList<Property>   Props;
+  //  gets property by index
+  Property &prop(int n);
+  const Property &prop(int n) const;
+
+  //  gets port by index
+  Port &port(int n);
+  const Port &port(int n) const;
+
+  std::list<Line>   Lines;
+  std::list<Arc>    Arcs;
+  std::list<Area>   Rects;
+  std::list<Area>   Ellips;
+  std::list<Port>   Ports;
+  std::list<Text>   Texts;
+  std::list<Property>   Props;
 
   #define COMP_IS_OPEN    0
   #define COMP_IS_ACTIVE  1

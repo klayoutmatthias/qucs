@@ -23,25 +23,25 @@ vFile::vFile()
 {
   Description = QObject::tr("file based voltage source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -3, -7,  7,  7,16*270, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -3,  0,  7,  7, 16*90, 16*180,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
-  Lines.append(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
-  Lines.append(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -3, -7,  7,  7,16*270, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -3,  0,  7,  7, 16*90, 16*180,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
+  Lines.push_back(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
+  Lines.push_back(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
 
-  Lines.append(Line( -6,-17, -6,-21,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( -8,-17, -8,-21,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-10,-17,-10,-21,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( -3,-15, -3,-23,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-13,-15,-13,-23,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -3,-23,-13,-23,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -3,-15,-13,-15,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -6,-17, -6,-21,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( -8,-17, -8,-21,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-10,-17,-10,-21,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( -3,-15, -3,-23,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-13,-15,-13,-23,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,-23,-13,-23,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -3,-15,-13,-15,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  14;
@@ -51,14 +51,14 @@ vFile::vFile()
   Model = "Vfile";
   Name  = "V";
 
-  Props.append(Property("File", "vfile.dat", true,
+  Props.push_back(Property("File", "vfile.dat", true,
 		QObject::tr("name of the sample file")));
-  Props.append(Property("Interpolator", "linear", false,
+  Props.push_back(Property("Interpolator", "linear", false,
 		QObject::tr("interpolation type")+" [hold, linear, cubic]"));
-  Props.append(Property("Repeat", "no", false,
+  Props.push_back(Property("Repeat", "no", false,
 		QObject::tr("repeat waveform")+" [no, yes]"));
-  Props.append(Property("G", "1", false, QObject::tr("voltage gain")));
-  Props.append(Property("T", "0", false, QObject::tr("delay time")));
+  Props.push_back(Property("G", "1", false, QObject::tr("voltage gain")));
+  Props.push_back(Property("T", "0", false, QObject::tr("delay time")));
 
   rotate();  // fix historical flaw
 }
@@ -85,7 +85,7 @@ Element* vFile::info(QString& Name, char* &BitmapFile, bool getNewOne)
 QString vFile::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.first().Value;
+  QString FileName = Props.front().Value;
   return misc::properAbsFileName(FileName);
 }
 

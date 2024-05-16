@@ -22,14 +22,14 @@ Inductor::Inductor()
 {
   Description = QObject::tr("inductor");
 
-  Arcs.append(Arc(-18, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( -6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc(  6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-18, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( -6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(  6, -6, 12, 12,  0, 16*180,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-18,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -10;
   x2 =  30; y2 =   6;
@@ -39,9 +39,9 @@ Inductor::Inductor()
   Model = "L";
   Name  = "L";
 
-  Props.append(Property("L", "1 nH", true,
+  Props.push_back(Property("L", "1 nH", true,
 		QObject::tr("inductance in Henry")));
-  Props.append(Property("I", "", false,
+  Props.push_back(Property("I", "", false,
 		QObject::tr("initial current for transient simulation")));
 }
 

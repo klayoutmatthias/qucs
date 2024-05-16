@@ -22,23 +22,23 @@ vRect::vRect()
 {
   Description = QObject::tr("ideal rectangle voltage source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
-  Lines.append(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
-  Lines.append(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,     0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 18,  5, 18, 11,QPen(Qt::red,1)));
+  Lines.push_back(Line( 21,  8, 15,  8,QPen(Qt::red,1)));
+  Lines.push_back(Line(-18,  5,-18, 11,QPen(Qt::black,1)));
 
-  Lines.append(Line( -5, -7, -5, -5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -5, -5,  5, -5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  5, -5,  6,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -5,  0,  6,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -5,  0, -5,  5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -5,  5,  5,  5,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  5,  5,  5,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -5, -7, -5, -5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -5, -5,  5, -5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  5, -5,  6,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -5,  0,  6,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -5,  0, -5,  5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -5,  5,  5,  5,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  5,  5,  5,  7,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  14;
@@ -48,17 +48,17 @@ vRect::vRect()
   Model = "Vrect";
   Name  = "V";
 
-  Props.append(Property("U", "1 V", true,
+  Props.push_back(Property("U", "1 V", true,
 		QObject::tr("voltage of high signal")));
-  Props.append(Property("TH", "1 ms", true,
+  Props.push_back(Property("TH", "1 ms", true,
 		QObject::tr("duration of high pulses")));
-  Props.append(Property("TL", "1 ms", true,
+  Props.push_back(Property("TL", "1 ms", true,
 		QObject::tr("duration of low pulses")));
-  Props.append(Property("Tr", "1 ns", false,
+  Props.push_back(Property("Tr", "1 ns", false,
 		QObject::tr("rise time of the leading edge")));
-  Props.append(Property("Tf", "1 ns", false,
+  Props.push_back(Property("Tf", "1 ns", false,
 		QObject::tr("fall time of the trailing edge")));
-  Props.append(Property("Td", "0 ns", false,
+  Props.push_back(Property("Td", "0 ns", false,
 		QObject::tr("initial delay time")));
 
   rotate();  // fix historical flaw

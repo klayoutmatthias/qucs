@@ -29,21 +29,21 @@ VHDL_File::VHDL_File()
   Type = isDigitalComponent;
   Description = QObject::tr("VHDL file");
 
-  Props.append(Property("File", "sub.vhdl", false,
+  Props.push_back(Property("File", "sub.vhdl", false,
 		QObject::tr("Name of VHDL file")));
 
   Model = "VHDL";
   Name  = "X";
 
   // Do NOT call createSymbol() here. But create port to let it rotate.
-  Ports.append(Port(0, 0));
+  Ports.push_back(Port(0, 0));
 }
 
 // -------------------------------------------------------
 Component* VHDL_File::newOne()
 {
   VHDL_File *p = new VHDL_File();
-  p->Props.first().Value = Props.first().Value;
+  p->Props.front().Value = Props.front().Value;
   p->recreate(0);
   return p;
 }
@@ -72,7 +72,8 @@ QString VHDL_File::vhdlCode(int)
 
     // output all generic properties
     if (Props.size() > 1) {
-      auto pr = Props.begin() + 1;
+      auto pr = Props.begin();
+      ++pr;
       s += " generic map (";
       s += pr->Value;
       for(++pr; pr != Props.end(); ++pr)
@@ -96,7 +97,7 @@ QString VHDL_File::vhdlCode(int)
 // entity in this file.
 QString VHDL_File::loadFile()
 {
-  QString File(Props.first().Value);
+  QString File(Props.front().Value);
   QFileInfo Info(File);
   if(Info.isRelative())
     File = QucsSettings.QucsWorkDir.filePath(File);
@@ -134,34 +135,34 @@ void VHDL_File::createSymbol()
 
   #define HALFWIDTH  17
   int h = 30*((No-1)/2) + 15;
-  Lines.append(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH, -h, HALFWIDTH, -h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( HALFWIDTH, -h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH,  h, HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-HALFWIDTH, -h,-HALFWIDTH,  h,QPen(Qt::darkBlue,2)));
 
   tmp = QObject::tr("vhdl");
   int w = metrics.horizontalAdvance(tmp);
-  Texts.append(Text(w/-2, fHeight/-2, tmp));
+  Texts.push_back(Text(w/-2, fHeight/-2, tmp));
 
   int y = 15-h, i = 0;
   Port pp;
   while(i<No) {
-    Lines.append(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-30,  y,-HALFWIDTH,  y,QPen(Qt::darkBlue,2)));
     pp = Port(-30,  y);
     pp.Type = TypeNames.section(',', i, i);
-    Ports.append(pp);
+    Ports.push_back(pp);
     tmp = PortNames.section(',', i, i);
     w = metrics.horizontalAdvance(tmp);
-    Texts.append(Text(-19-w, y-fHeight-2, tmp));
+    Texts.push_back(Text(-19-w, y-fHeight-2, tmp));
     i++;
 
     if(i == No) break;
-    Lines.append(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(HALFWIDTH,  y, 30,  y,QPen(Qt::darkBlue,2)));
     pp = Port( 30,  y);
     pp.Type = TypeNames.section(',', i, i);
-    Ports.append(pp);
+    Ports.push_back(pp);
     tmp = PortNames.section(',', i, i);
-    Texts.append(Text( 20, y-fHeight-2, tmp));
+    Texts.push_back(Text( 20, y-fHeight-2, tmp));
     y += 60;
     i++;
   }
@@ -175,14 +176,15 @@ void VHDL_File::createSymbol()
   No = 0;
   if(!GenNames.isEmpty())
     No = (GenNames.count(',')) + 1;
-  auto pr = Props.begin() + 1;
+  auto pr = Props.begin();
+  ++pr;
   for(i=0; i<No; i++) {
     if(pr == Props.end()) {
       Property newProp(GenNames.section(',', i, i),
                        GenDefs.section(',', i, i), true,
                        QObject::tr("generic variable")+
                          " "+QString::number(i+1));
-      Props.append(newProp);
+      Props.push_back(newProp);
     } else {
       pr->Description =
 	QObject::tr("generic variable")+" "+QString::number(i+1);
@@ -200,7 +202,7 @@ void VHDL_File::createSymbol()
 QString VHDL_File::getSubcircuitFile()
 {
   // construct full filename
-  QString FileName = Props.first().Value;
+  QString FileName = Props.front().Value;
   return misc::properAbsFileName(FileName);
 }
 
@@ -210,7 +212,7 @@ bool VHDL_File::createSubNetlist(QTextStream *stream)
   ErrText = "";
 
   // check filename
-  QString FileName = Props.first().Value;
+  QString FileName = Props.front().Value;
   if(FileName.isEmpty()) {
     ErrText += QObject::tr("ERROR: No file name in %1 component \"%2\".").
       arg(Model).arg(Name);

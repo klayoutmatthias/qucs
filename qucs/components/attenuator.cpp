@@ -22,23 +22,23 @@ Attenuator::Attenuator()
 {
   Description = QObject::tr("attenuator");
 
-  Lines.append(Line( -4, -6, -4,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -4, -6,  4, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  4, -6,  4,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -4,  6,  4,  6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,-11,  0, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,  6,  0, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -4, -6, -4,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -4, -6,  4, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  4, -6,  4,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -4,  6,  4,  6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-11,  0, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,  6,  0, 11,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-14,-14, 14,-14,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14, 14, 14, 14,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-14,-14,-14, 14,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 14,-14, 14, 14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14,-14, 14,-14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14, 14, 14, 14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-14,-14,-14, 14,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 14,-14, 14, 14,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 14,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-14,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 14,  0, 30,  0,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
 
   x1 = -30; y1 = -17;
   x2 =  30; y2 =  17;
@@ -48,11 +48,11 @@ Attenuator::Attenuator()
   Model = "Attenuator";
   Name  = "X";
 
-  Props.append(Property("L", "10 dB", true,
+  Props.push_back(Property("L", "10 dB", true,
 		QObject::tr("power attenuation")));
-  Props.append(Property("Zref", "50 Ohm", false,
+  Props.push_back(Property("Zref", "50 Ohm", false,
 		QObject::tr("reference impedance")));
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
 }
 

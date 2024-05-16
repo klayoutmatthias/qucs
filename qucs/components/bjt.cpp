@@ -33,7 +33,7 @@ BJT::BJT()
 Component* BJT::newOne()
 {
   BJT* p = new BJT();
-  p->Props.first().Value = Props.first().Value;
+  p->Props.front().Value = Props.front().Value;
   p->recreate(0);
   return p;
 }
@@ -56,7 +56,7 @@ Element* BJT::info_pnp(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     BJT* p = new BJT();
-    p->Props.first().Value = "pnp";
+    p->Props.front().Value = "pnp";
     p->recreate(0);
     return p;
   }
@@ -66,25 +66,25 @@ Element* BJT::info_pnp(QString& Name, char* &BitmapFile, bool getNewOne)
 // -------------------------------------------------------
 void BJT::createSymbol()
 {
-  Lines.append(Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10, -5,  0,-15,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,-15,  0,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-10,  5,  0, 15,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0, 15,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,-15,-10, 15,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(-30,  0,-10,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10, -5,  0,-15,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,-15,  0,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-10,  5,  0, 15,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0, 15,  0, 30,QPen(Qt::darkBlue,2)));
 
-  if(Props.first().Value == "npn") {
-    Lines.append(Line( -6, 15,  0, 15,QPen(Qt::darkBlue,2)));
-    Lines.append(Line(  0,  9,  0, 15,QPen(Qt::darkBlue,2)));
+  if(Props.front().Value == "npn") {
+    Lines.push_back(Line( -6, 15,  0, 15,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(  0,  9,  0, 15,QPen(Qt::darkBlue,2)));
   }
   else {
-    Lines.append(Line( -5, 10, -5, 16,QPen(Qt::darkBlue,2)));
-    Lines.append(Line( -5, 10,  1, 10,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( -5, 10, -5, 16,QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( -5, 10,  1, 10,QPen(Qt::darkBlue,2)));
   }
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port(  0,-30));
-  Ports.append(Port(  0, 30));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port(  0,-30));
+  Ports.push_back(Port(  0, 30));
 
   x1 = -30; y1 = -30;
   x2 =   4; y2 =  30;
@@ -98,7 +98,7 @@ QString BJT::netlist()
   // output all node names
   for(auto p1 = Ports.begin(); p1 != Ports.end(); ++p1)
     s += " "+p1->getConnection()->Name;   // node names
-  s += " "+Ports[1].getConnection()->Name;  // connect substrate to collector
+  s += " "+port(1).getConnection()->Name;  // connect substrate to collector
 
   // output all properties
   for(auto p2 = Props.begin(); p2 != Props.end(); ++p2)

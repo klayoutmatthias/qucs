@@ -22,27 +22,27 @@ BiasT::BiasT()
 {
   Description = QObject::tr("bias t");
 
-  Arcs.append(Arc( -3,  2, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc( -3,  8, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
-  Arcs.append(Arc( -3, 14, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-22,-10, 22,-10,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-22,-10,-22, 22,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-22, 22, 22, 22,QPen(Qt::darkBlue,1)));
-  Lines.append(Line( 22,-10, 22, 22,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -3,  2, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -3,  8, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
+  Arcs.push_back(Arc( -3, 14, 6, 6, 16*270, 16*180,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-22,-10, 22,-10,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-22,-10,-22, 22,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-22, 22, 22, 22,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line( 22,-10, 22, 22,QPen(Qt::darkBlue,1)));
 
-  Lines.append(Line(-13, -6,-13,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -9, -6, -9,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -9,  0, 22,  0,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-22,  0,-13,  0,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-30,  0,-22,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 22,  0, 30,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(  0,  0,  0,  2,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(  0, 20,  0, 22,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(  0, 22,  0, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-13, -6,-13,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -9, -6, -9,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -9,  0, 22,  0,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-22,  0,-13,  0,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-30,  0,-22,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 22,  0, 30,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(  0,  0,  0,  2,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(  0, 20,  0, 22,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(  0, 22,  0, 30,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port(-30,  0));
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(  0, 30));
+  Ports.push_back(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(  0, 30));
 
   x1 = -30; y1 = -13;
   x2 =  30; y2 =  30;
@@ -52,9 +52,9 @@ BiasT::BiasT()
   Model = "BiasT";
   Name  = "X";
 
-  Props.append(Property("L", "1 uH", false,
+  Props.push_back(Property("L", "1 uH", false,
 	QObject::tr("for transient simulation: inductance in Henry")));
-  Props.append(Property("C", "1 uF", false,
+  Props.push_back(Property("C", "1 uF", false,
 	QObject::tr("for transient simulation: capacitance in Farad")));
 }
 

@@ -32,14 +32,14 @@ LibComp::LibComp()
   Type = isComponent;   // both analog and digital
   Description = QObject::tr("Component taken from Qucs library");
 
-  Ports.append(Port(0,  0));  // dummy port because of being device
+  Ports.push_back(Port(0,  0));  // dummy port because of being device
 
   Model = "Lib";
   Name  = "X";
 
-  Props.append(Property("Lib", "", true,
+  Props.push_back(Property("Lib", "", true,
 		QObject::tr("name of qucs library file")));
-  Props.append(Property("Comp", "", true,
+  Props.push_back(Property("Comp", "", true,
 		QObject::tr("name of component in library")));
 }
 
@@ -47,8 +47,8 @@ LibComp::LibComp()
 Component* LibComp::newOne()
 {
   LibComp *p = new LibComp();
-  p->Props[0].Value = Props[0].Value;
-  p->Props[1].Value = Props[1].Value;
+  p->prop(0).Value = prop(0).Value;
+  p->prop(1).Value = prop(1).Value;
   p->recreate(0);
   return p;
 }
@@ -66,10 +66,10 @@ void LibComp::createSymbol()
   }
   else {
     // only paint a rectangle
-    Lines.append(Line(-15, -15, 15, -15, QPen(Qt::darkBlue,2)));
-    Lines.append(Line( 15, -15, 15,  15, QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15,  15, 15,  15, QPen(Qt::darkBlue,2)));
-    Lines.append(Line(-15, -15,-15,  15, QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15, -15, 15, -15, QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line( 15, -15, 15,  15, QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15,  15, 15,  15, QPen(Qt::darkBlue,2)));
+    Lines.push_back(Line(-15, -15,-15,  15, QPen(Qt::darkBlue,2)));
 
     x1 = -18; y1 = -18;
     x2 =  18; y2 =  18;
@@ -85,7 +85,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
 			 QStringList *Includes)
 {
   QDir Directory(QucsSettings.LibDir);
-  QFile file(Directory.absoluteFilePath(Props[0].Value + ".lib"));
+  QFile file(Directory.absoluteFilePath(prop(0).Value + ".lib"));
   if(!file.open(QIODevice::ReadOnly))
     return -1;
 
@@ -118,7 +118,7 @@ int LibComp::loadSection(const QString& Name, QString& Section,
   }
 
   // search component
-  Line = "\n<Component " + Props[1].Value + ">";
+  Line = "\n<Component " + prop(1).Value + ">";
   Start = Section.indexOf(Line);
   if(Start < 0)  return -4;  // component not found
   Start = Section.indexOf('\n', Start);
@@ -219,7 +219,7 @@ int LibComp::loadSymbol()
 QString LibComp::getSubcircuitFile()
 {
   QDir Directory(QucsSettings.LibDir);
-  QString FileName = Directory.absoluteFilePath(Props[0].Value);
+  QString FileName = Directory.absoluteFilePath(prop(0).Value);
   return misc::properAbsFileName(FileName);
 }
 
@@ -267,8 +267,8 @@ bool LibComp::createSubNetlist(QTextStream *stream, QStringList &FileList,
 // -------------------------------------------------------
 QString LibComp::createType()
 {
-  QString Type = misc::properFileName(Props[0].Value);
-  return misc::properName(Type + "_" + Props[1].Value);
+  QString Type = misc::properFileName(prop(0).Value);
+  return misc::properName(Type + "_" + prop(1).Value);
 }
 
 // -------------------------------------------------------
@@ -284,7 +284,10 @@ QString LibComp::netlist()
   s += " Type=\""+createType()+"\"";   // type for subcircuit
 
   // output user defined parameters
-  for(auto pp = Props.begin() + 2; pp != Props.end(); ++pp)
+  auto pp = Props.begin();
+  ++pp;
+  ++pp;
+  for( ; pp != Props.end(); ++pp)
     s += " "+pp->Name+"=\""+pp->Value+"\"";
 
   return s + '\n';

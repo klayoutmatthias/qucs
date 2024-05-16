@@ -24,11 +24,11 @@ gatedDlatch::gatedDlatch()
   Type = isComponent; // Analogue and digital component.
   Description = QObject::tr ("gated D latch verilog device");
 
-  Props.append (Property ("TR_H", "6", false,
+  Props.push_back (Property ("TR_H", "6", false,
     QObject::tr ("cross coupled gate transfer function high scaling factor")));
-  Props.append (Property ("TR_L", "5", false,
+  Props.push_back (Property ("TR_L", "5", false,
     QObject::tr ("cross coupled gate transfer function low scaling factor")));
-  Props.append (Property ("Delay", "1 ns", false,
+  Props.push_back (Property ("Delay", "1 ns", false,
     QObject::tr ("cross coupled gate delay")
     +" ("+QObject::tr ("s")+")"));
 
@@ -42,7 +42,7 @@ gatedDlatch::gatedDlatch()
 Component * gatedDlatch::newOne()
 {
   gatedDlatch * p = new gatedDlatch();
-  p->Props.first().Value = Props.first().Value; 
+  p->Props.front().Value = Props.front().Value; 
   p->recreate(0); 
   return p;
 }
@@ -58,28 +58,28 @@ Element * gatedDlatch::info(QString& Name, char * &BitmapFile, bool getNewOne)
 
 void gatedDlatch::createSymbol()
 {
-  Lines.append(Line(-30, -40, 30,-40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, -40, 30, 40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  40,-30, 40,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 40,-30, -40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, -40, 30,-40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, -40, 30, 40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  40,-30, 40,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 40,-30, -40,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2))); // D
-  Lines.append(Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2))); // C
-  Lines.append(Line( 40, 20, 50, 20,QPen(Qt::darkBlue,2))); // QB
-  Lines.append(Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2))); // Q
+  Lines.push_back(Line(-50,-20,-30,-20,QPen(Qt::darkBlue,2))); // D
+  Lines.push_back(Line(-50, 20,-30, 20,QPen(Qt::darkBlue,2))); // C
+  Lines.push_back(Line( 40, 20, 50, 20,QPen(Qt::darkBlue,2))); // QB
+  Lines.push_back(Line( 30,-20, 50,-20,QPen(Qt::darkBlue,2))); // Q
 
-  Arcs.append(Arc( 30, 15, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( 30, 15, 10, 10, 0, 16*360, QPen(Qt::darkBlue,2)));
 
-  Texts.append(Text(-25,-32, "D", Qt::darkBlue, 12.0));
-  Texts.append(Text(-25,  7, "C", Qt::darkBlue, 12.0));
-  Texts.append(Text( 11,-32, "Q", Qt::darkBlue, 12.0));
-  Texts.append(Text( 11,  7, "Q", Qt::darkBlue, 12.0));
-  Texts.last().over=true;
+  Texts.push_back(Text(-25,-32, "D", Qt::darkBlue, 12.0));
+  Texts.push_back(Text(-25,  7, "C", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 11,-32, "Q", Qt::darkBlue, 12.0));
+  Texts.push_back(Text( 11,  7, "Q", Qt::darkBlue, 12.0));
+  Texts.back().over=true;
 
-  Ports.append(Port(-50,-20));  // D
-  Ports.append(Port(-50, 20));  // C
-  Ports.append(Port( 50, 20));  // QB
-  Ports.append(Port( 50,-20));  // Q
+  Ports.push_back(Port(-50,-20));  // D
+  Ports.push_back(Port(-50, 20));  // C
+  Ports.push_back(Port( 50, 20));  // QB
+  Ports.push_back(Port( 50,-20));  // Q
 
   x1 = -50; y1 = -44;
   x2 =  50; y2 =  44;
@@ -89,14 +89,14 @@ QString gatedDlatch::vhdlCode( int )
 {
   QString s="";
 
-  QString td = Props.at(2).Value;     // delay time
+  QString td = prop(2).Value;     // delay time
   if(!misc::VHDL_Delay(td, Name)) return td; // time has not VHDL format
   td += ";\n";
 
-  QString D    = Ports.at(0).getConnection()->Name;
-  QString C    = Ports.at(1).getConnection()->Name;
-  QString QB   = Ports.at(2).getConnection()->Name;
-  QString Q    = Ports.at(3).getConnection()->Name;
+  QString D    = port(0).getConnection()->Name;
+  QString C    = port(1).getConnection()->Name;
+  QString QB   = port(2).getConnection()->Name;
+  QString Q    = port(3).getConnection()->Name;
 
   s = "\n  "+Name+":process ("+D+", "+C+")\n"+
       "  begin\n" +
@@ -110,15 +110,15 @@ QString gatedDlatch::vhdlCode( int )
 
 QString gatedDlatch::verilogCode( int )
 {
-  QString td = Props.at(2).Value;        // delay time
+  QString td = prop(2).Value;        // delay time
   if(!misc::Verilog_Delay(td, Name)) return td; // time does not have VHDL format
   
   QString l = "";
 
-  QString D    = Ports.at(0).getConnection()->Name;
-  QString C    = Ports.at(1).getConnection()->Name;
-  QString QB   = Ports.at(2).getConnection()->Name;
-  QString Q    = Ports.at(3).getConnection()->Name;
+  QString D    = port(0).getConnection()->Name;
+  QString C    = port(1).getConnection()->Name;
+  QString QB   = port(2).getConnection()->Name;
+  QString Q    = port(3).getConnection()->Name;
 
   QString QR   = "Q_reg"  + Name + Q;
   QString QBR  = "QB_reg"  + Name + QB;

@@ -22,34 +22,34 @@ VCCS::VCCS()
 {
   Description = QObject::tr("voltage controlled current source");
 
-  Arcs.append(Arc(0,-11, 22, 22,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 11, -7, 11,  7,QPen(Qt::darkBlue,3)));
-  Lines.append(Line( 11,  6, 15,  1,QPen(Qt::darkBlue,3)));
-  Lines.append(Line( 11,  6,  7,  1,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc(0,-11, 22, 22,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 11, -7, 11,  7,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line( 11,  6, 15,  1,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line( 11,  6,  7,  1,QPen(Qt::darkBlue,3)));
 
-  Lines.append(Line(-30,-30,-12,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 30,-12, 30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 11,-30, 30,-30,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 11, 30, 30, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,-30,-12,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 30,-12, 30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 11,-30, 30,-30,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 11, 30, 30, 30,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-12,-30,-12,-23,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-12, 30,-12, 23,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 11,-30, 11,-11,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 11, 30, 11, 11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12,-30,-12,-23,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-12, 30,-12, 23,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 11,-30, 11,-11,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 11, 30, 11, 11,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-12,-18,-12, 18,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-12, 18,-17,  9,QPen(Qt::darkBlue,1)));
-  Lines.append(Line(-12, 18, -7,  9,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-12,-18,-12, 18,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-12, 18,-17,  9,QPen(Qt::darkBlue,1)));
+  Lines.push_back(Line(-12, 18, -7,  9,QPen(Qt::darkBlue,1)));
 
-  Lines.append(Line(-25,-27, 25,-27,QPen(Qt::darkGray,1)));
-  Lines.append(Line( 25,-27, 25, 27,QPen(Qt::darkGray,1)));
-  Lines.append(Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
-  Lines.append(Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line(-25,-27, 25,-27,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line( 25,-27, 25, 27,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line( 25, 27,-25, 27,QPen(Qt::darkGray,1)));
+  Lines.push_back(Line(-25, 27,-25,-27,QPen(Qt::darkGray,1)));
 
-  Ports.append(Port(-30,-30));
-  Ports.append(Port( 30,-30));
-  Ports.append(Port( 30, 30));
-  Ports.append(Port(-30, 30));
+  Ports.push_back(Port(-30,-30));
+  Ports.push_back(Port( 30,-30));
+  Ports.push_back(Port( 30, 30));
+  Ports.push_back(Port(-30, 30));
 
   x1 = -30; y1 = -30;
   x2 =  30; y2 =  30;
@@ -59,9 +59,9 @@ VCCS::VCCS()
   Model = "VCCS";
   Name  = "SRC";
 
-  Props.append(Property("G", "1 S", true,
+  Props.push_back(Property("G", "1 S", true,
 		QObject::tr("forward transconductance")));
-  Props.append(Property("T", "0", false, QObject::tr("delay time")));
+  Props.push_back(Property("T", "0", false, QObject::tr("delay time")));
 }
 
 VCCS::~VCCS()

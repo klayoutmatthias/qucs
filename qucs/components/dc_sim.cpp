@@ -31,9 +31,9 @@ DC_Sim::DC_Sim()
   if (a < 8 || s.length() - b < 8) b = -1;
   if (b != -1) s[b] = '\n';
 
-  Texts.append(Text(0, 0, s.left(b), Qt::darkBlue, QucsSettings.largeFontSize));
+  Texts.push_back(Text(0, 0, s.left(b), Qt::darkBlue, QucsSettings.largeFontSize));
   if (b != -1)
-    Texts.append(Text(0, 0, s.mid(b+1), Qt::darkBlue, QucsSettings.largeFontSize));
+    Texts.push_back(Text(0, 0, s.mid(b+1), Qt::darkBlue, QucsSettings.largeFontSize));
 
   x1 = -10; y1 = -9;
   x2 = x1+128; y2 = y1+41;
@@ -43,26 +43,26 @@ DC_Sim::DC_Sim()
   Model = ".DC";
   Name  = "DC";
 
-  Props.append(Property("Temp", "26.85", false,
+  Props.push_back(Property("Temp", "26.85", false,
 		QObject::tr("simulation temperature in degree Celsius")));
-  Props.append(Property("reltol", "0.001", false,
+  Props.push_back(Property("reltol", "0.001", false,
 		QObject::tr("relative tolerance for convergence")));
-  Props.append(Property("abstol", "1 pA", false,
+  Props.push_back(Property("abstol", "1 pA", false,
 		QObject::tr("absolute tolerance for currents")));
-  Props.append(Property("vntol", "1 uV", false,
+  Props.push_back(Property("vntol", "1 uV", false,
 		QObject::tr("absolute tolerance for voltages")));
-  Props.append(Property("saveOPs", "no", false,
+  Props.push_back(Property("saveOPs", "no", false,
 		QObject::tr("put operating points into dataset")+
 		" [yes, no]"));
-  Props.append(Property("MaxIter", "150", false,
+  Props.push_back(Property("MaxIter", "150", false,
 		QObject::tr("maximum number of iterations until error")));
-  Props.append(Property("saveAll", "no", false,
+  Props.push_back(Property("saveAll", "no", false,
 	QObject::tr("save subcircuit nodes into dataset")+
 	" [yes, no]"));
-  Props.append(Property("convHelper", "none", false,
+  Props.push_back(Property("convHelper", "none", false,
 	QObject::tr("preferred convergence algorithm")+
 	" [none, gMinStepping, SteepestDescent, LineSearch, Attenuation, SourceStepping]"));
-  Props.append(Property("Solver", "CroutLU", false,
+  Props.push_back(Property("Solver", "CroutLU", false,
 	QObject::tr("method for solving the circuit matrix")+
 	" [CroutLU, DoolittleLU, HouseholderQR, HouseholderLQ, GolubSVD]"));
 }

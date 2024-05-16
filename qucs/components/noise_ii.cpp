@@ -23,41 +23,41 @@ Noise_ii::Noise_ii()
   Description = QObject::tr("correlated current sources");
 
   // left noise source
-  Arcs.append(Arc(-42,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30, 30,-30, 12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,-30,-30,-12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  7,-30, -7,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(-30, -6,-34,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(-30, -6,-26,  0,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc(-42,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30, 30,-30, 12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,-30,-30,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  7,-30, -7,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(-30, -6,-34,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(-30, -6,-26,  0,QPen(Qt::darkBlue,3)));
 
-  Lines.append(Line(-29, 12,-42, -1,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-24, 10,-27,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-37, -3,-40, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-20,  7,-25,  2,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-34, -7,-37,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-18,  1,-31,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-29, 12,-42, -1,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-24, 10,-27,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-37, -3,-40, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-20,  7,-25,  2,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-34, -7,-37,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-18,  1,-31,-12,QPen(Qt::darkBlue,2)));
 
   // right noise source
-  Arcs.append(Arc( 18,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30, 30, 30, 12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,-30, 30,-12,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  7, 30, -7,QPen(Qt::darkBlue,3)));
-  Lines.append(Line( 30, -6, 26,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line( 30, -6, 34,  0,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc( 18,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30, 30, 30, 12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,-30, 30,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  7, 30, -7,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line( 30, -6, 26,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line( 30, -6, 34,  0,QPen(Qt::darkBlue,3)));
 
-  Lines.append(Line( 31, 12, 18, -1,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 36, 10, 33,  7,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 23, -3, 20, -6,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 40,  7, 35,  2,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 26, -7, 23,-10,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 42,  1, 29,-12,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 31, 12, 18, -1,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 36, 10, 33,  7,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 23, -3, 20, -6,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 40,  7, 35,  2,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 26, -7, 23,-10,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 42,  1, 29,-12,QPen(Qt::darkBlue,2)));
 
-  Lines.append(Line(-18,  0, 18,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(-18,  0, 18,  0,QPen(Qt::darkBlue,3)));
 
-  Ports.append(Port(-30,-30));
-  Ports.append(Port( 30,-30));
-  Ports.append(Port( 30, 30));
-  Ports.append(Port(-30, 30));
+  Ports.push_back(Port(-30,-30));
+  Ports.push_back(Port( 30,-30));
+  Ports.push_back(Port( 30, 30));
+  Ports.push_back(Port(-30, 30));
 
   x1 = -44; y1 = -30;
   x2 =  44; y2 =  30;
@@ -67,17 +67,17 @@ Noise_ii::Noise_ii()
   Model = "IInoise";
   Name  = "SRC";
 
-  Props.append(Property("i1", "1e-6", true,
+  Props.push_back(Property("i1", "1e-6", true,
 		QObject::tr("current power spectral density of source 1")));
-  Props.append(Property("i2", "1e-6", true,
+  Props.push_back(Property("i2", "1e-6", true,
 		QObject::tr("current power spectral density of source 2")));
-  Props.append(Property("C", "0.5", true,
+  Props.push_back(Property("C", "0.5", true,
 		QObject::tr("normalized correlation coefficient")));
-  Props.append(Property("e", "0", false,
+  Props.push_back(Property("e", "0", false,
 		QObject::tr("frequency exponent")));
-  Props.append(Property("c", "1", false,
+  Props.push_back(Property("c", "1", false,
 		QObject::tr("frequency coefficient")));
-  Props.append(Property("a", "0", false,
+  Props.push_back(Property("a", "0", false,
 		QObject::tr("additive frequency term")));
 }
 

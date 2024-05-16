@@ -34,8 +34,8 @@ Logical_OR::~Logical_OR()
 Component* Logical_OR::newOne()
 {
   Logical_OR* p = new Logical_OR();
-  p->Props.first().Value = Props.first().Value;
-  p->Props.last().Value = Props.last().Value;
+  p->Props.front().Value = Props.front().Value;
+  p->Props.back().Value = Props.back().Value;
   p->recreate(0);
   return p;
 }

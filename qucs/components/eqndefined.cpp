@@ -28,15 +28,15 @@ EqnDefined::EqnDefined()
   Name  = "D";
 
   // first properties !!!
-  Props.append(Property("Type", "explicit", false,
+  Props.push_back(Property("Type", "explicit", false,
 		QObject::tr("type of equations")+" [explicit, implicit]"));
-  Props.append(Property("Branches", "1", false,
+  Props.push_back(Property("Branches", "1", false,
 		QObject::tr("number of branches")));
 
   // last properties
-  Props.append(Property("I1", "0", true,
+  Props.push_back(Property("I1", "0", true,
 		QObject::tr("current equation") + " 1"));
-  Props.append(Property("Q1", "0", false,
+  Props.push_back(Property("Q1", "0", false,
 		QObject::tr("charge equation") + " 1"));
 
   createSymbol();
@@ -46,8 +46,8 @@ EqnDefined::EqnDefined()
 Component* EqnDefined::newOne()
 {
   EqnDefined* p = new EqnDefined();
-  p->Props[0].Value = Props[0].Value;
-  p->Props[1].Value = Props[1].Value;
+  p->prop(0).Value = prop(0).Value;
+  p->prop(1).Value = prop(1).Value;
   p->recreate(0);
   return p;
 }
@@ -60,8 +60,8 @@ Element* EqnDefined::info(QString& Name, char* &BitmapFile, bool getNewOne)
 
   if(getNewOne) {
     EqnDefined* p = new EqnDefined();
-    p->Props[0].Value = "explicit";
-    p->Props[1].Value = "1";
+    p->prop(0).Value = "explicit";
+    p->prop(1).Value = "1";
     p->recreate(0);
     return p;
   }
@@ -80,10 +80,10 @@ QString EqnDefined::netlist()
 
   // output all properties
   int i = 2;
-  while(i < Props.count()) {
-    s += " "+Props[i].Name+"=\""+Name+"."+Props[i].Name+"\"";
-    e += "  Eqn:Eqn"+Name+Props[i].Name+" "+
-      Name+"."+Props[i].Name+"=\""+Props[i].Value+"\" Export=\"no\"\n";
+  while(i < int(Props.size())) {
+    s += " "+prop(i).Name+"=\""+Name+"."+prop(i).Name+"\"";
+    e += "  Eqn:Eqn"+Name+prop(i).Name+" "+
+      Name+"."+prop(i).Name+"=\""+prop(i).Value+"\" Export=\"no\"\n";
     ++i;
   }
 
@@ -104,66 +104,66 @@ void EqnDefined::createSymbol()
   int i, PortDistance = 60;
 
   // adjust branch number
-  int Num = Props.at(1).Value.toInt();
+  int Num = prop(1).Value.toInt();
   if(Num < 1) Num = 1;
   else if(Num > 4) {
     PortDistance = 40;
     if(Num > 20) Num = 20;
   }
-  Props[1].Value = QString::number(Num);
+  prop(1).Value = QString::number(Num);
 
   // adjust actual number of properties
-  int NumProps = (Props.count() - 2) / 2; // current number of properties
+  int NumProps = (Props.size() - 2) / 2; // current number of properties
   if (NumProps < Num) {
     for(i = NumProps; i < Num; i++) {
-      Props.append(Property("I"+QString::number(i+1), "0", false,
+      Props.push_back(Property("I"+QString::number(i+1), "0", false,
 		QObject::tr("current equation") + " " +QString::number(i+1)));
-      Props.append(Property("Q"+QString::number(i+1), "0", false,
+      Props.push_back(Property("Q"+QString::number(i+1), "0", false,
 		QObject::tr("charge equation") + " " +QString::number(i+1)));
     }
   } else {
     for(i = Num; i < NumProps; i++) {
-      Props.removeLast();
-      Props.removeLast();
+      Props.pop_back();
+      Props.pop_back();
     }
   }
 
   // adjust property names
   int ii = 2;
   for(i = 1; i <= Num; i++) {
-    Props[ii++].Name = "I"+QString::number(i);
-    Props[ii++].Name = "Q"+QString::number(i);
+    prop(ii++).Name = "I"+QString::number(i);
+    prop(ii++).Name = "Q"+QString::number(i);
   }
 
   // draw symbol
   int h = (PortDistance/2)*((Num-1)) + PortDistance/2; // total component half-height
-  Lines.append(Line(-15, -h, 15, -h,QPen(Qt::darkBlue,2))); // top side
-  Lines.append(Line( 15, -h, 15,  h,QPen(Qt::darkBlue,2))); // right side
-  Lines.append(Line(-15,  h, 15,  h,QPen(Qt::darkBlue,2))); // bottom side
-  Lines.append(Line(-15, -h,-15,  h,QPen(Qt::darkBlue,2))); // left side
+  Lines.push_back(Line(-15, -h, 15, -h,QPen(Qt::darkBlue,2))); // top side
+  Lines.push_back(Line( 15, -h, 15,  h,QPen(Qt::darkBlue,2))); // right side
+  Lines.push_back(Line(-15,  h, 15,  h,QPen(Qt::darkBlue,2))); // bottom side
+  Lines.push_back(Line(-15, -h,-15,  h,QPen(Qt::darkBlue,2))); // left side
 
   i=0;
   int y = PortDistance/2-h, yh; // y is the actual vertical center
   while(i<Num) { // for every branch
     i++;
     // left connection with port
-    Lines.append(Line(-30, y,-15, y,QPen(Qt::darkBlue,2)));
-    Ports.append(Port(-30, y));
+    Lines.push_back(Line(-30, y,-15, y,QPen(Qt::darkBlue,2)));
+    Ports.push_back(Port(-30, y));
     // small black arrow inside the box
-    Lines.append(Line( 7,y-3, 10, y,QPen(Qt::black,1)));
-    Lines.append(Line( 7,y+3, 10, y,QPen(Qt::black,1)));
-    Lines.append(Line(-10, y, 10, y,QPen(Qt::black,1)));
+    Lines.push_back(Line( 7,y-3, 10, y,QPen(Qt::black,1)));
+    Lines.push_back(Line( 7,y+3, 10, y,QPen(Qt::black,1)));
+    Lines.push_back(Line(-10, y, 10, y,QPen(Qt::black,1)));
 
     if (i > 1) {
       yh = y-PortDistance/2; // bottom of the branch box
       // draw horizontal separation between boxes
-      Lines.append(Line(-15, yh, 15, yh, QPen(Qt::darkBlue,2)));
+      Lines.push_back(Line(-15, yh, 15, yh, QPen(Qt::darkBlue,2)));
     }
     // right connection with port
-    Lines.append(Line( 15, y, 30, y,QPen(Qt::darkBlue,2)));
-    Ports.append(Port( 30, y));
+    Lines.push_back(Line( 15, y, 30, y,QPen(Qt::darkBlue,2)));
+    Ports.push_back(Port( 30, y));
     // add branch number near the right connection port
-    Texts.append(Text(25,y-fHeight-2,QString::number(i))); // left-aligned
+    Texts.push_back(Text(25,y-fHeight-2,QString::number(i))); // left-aligned
     // move the vertical center down for the next branch
     y += PortDistance;
   }

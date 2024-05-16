@@ -22,17 +22,17 @@ Ampere_ac::Ampere_ac()
 {
   Description = QObject::tr("ideal ac current source");
 
-  Arcs.append(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
-  Lines.append(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
-  Lines.append(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
-  Lines.append(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
-  Arcs.append(Arc( 12,  5,  6,  6,16*270, 16*180,QPen(Qt::darkBlue,2)));
-  Arcs.append(Arc( 12, 11,  6,  6, 16*90, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc(-12,-12, 24, 24,  0, 16*360,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line(-30,  0,-12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( 30,  0, 12,  0,QPen(Qt::darkBlue,2)));
+  Lines.push_back(Line( -7,  0,  7,  0,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0, -4,QPen(Qt::darkBlue,3)));
+  Lines.push_back(Line(  6,  0,  0,  4,QPen(Qt::darkBlue,3)));
+  Arcs.push_back(Arc( 12,  5,  6,  6,16*270, 16*180,QPen(Qt::darkBlue,2)));
+  Arcs.push_back(Arc( 12, 11,  6,  6, 16*90, 16*180,QPen(Qt::darkBlue,2)));
 
-  Ports.append(Port( 30,  0));
-  Ports.append(Port(-30,  0));
+  Ports.push_back(Port( 30,  0));
+  Ports.push_back(Port(-30,  0));
 
   x1 = -30; y1 = -14;
   x2 =  30; y2 =  16;
@@ -42,13 +42,13 @@ Ampere_ac::Ampere_ac()
   Model = "Iac";
   Name  = "I";
 
-  Props.append(Property("I", "1 mA", true,
+  Props.push_back(Property("I", "1 mA", true,
 		QObject::tr("peak current in Ampere")));
-  Props.append(Property("f", "1 GHz", false,
+  Props.push_back(Property("f", "1 GHz", false,
 		QObject::tr("frequency in Hertz")));
-  Props.append(Property("Phase", "0", false,
+  Props.push_back(Property("Phase", "0", false,
 		QObject::tr("initial phase in degrees")));
-  Props.append(Property("Theta", "0", false,
+  Props.push_back(Property("Theta", "0", false,
 		QObject::tr("damping factor (transient simulation only)")));
 
   rotate();  // fix historical flaw
