@@ -2022,7 +2022,7 @@ bool Schematic::deleteElements()
 
             for (; ign != pd->Graphs.end(); )
             {
-                auto ig = ++ign;
+                auto ig = ign++;
                 // all markers of diagram
                 for(auto pmn = ig->Markers.begin(); pmn != ig->Markers.end(); )
                 {

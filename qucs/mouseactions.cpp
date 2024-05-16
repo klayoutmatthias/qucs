@@ -1984,7 +1984,7 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
 	   }
 	 }
 
-         std::unique_ptr<DiagramDialog> ddia(new DiagramDialog(dia.get(), Doc));
+         DiagramDialog *ddia = new DiagramDialog(dia.get(), Doc);
          if(ddia->exec() != QDialog::Rejected)   // is WDestructiveClose
            Doc->setChanged(true, true);
 
@@ -2005,7 +2005,7 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
            }
            if(!found) break;
 
-           std::unique_ptr<DiagramDialog> ddia(new DiagramDialog(dia.operator->(), Doc, pg.get()));
+           DiagramDialog *ddia = new DiagramDialog(dia.operator->(), Doc, pg.get());
            if(ddia->exec() != QDialog::Rejected)   // is WDestructiveClose
              Doc->setChanged(true, true);
            break;
@@ -2030,7 +2030,7 @@ void MouseActions::editElement(Schematic *Doc, QMouseEvent *Event)
 
     case isMarker:
          {
-           std::unique_ptr<MarkerDialog> mdia(new MarkerDialog(std::dynamic_pointer_cast<Marker>(focusElement).get(), Doc));
+           MarkerDialog *mdia = new MarkerDialog(std::dynamic_pointer_cast<Marker>(focusElement).get(), Doc);
            if(mdia->exec() > 1)
              Doc->setChanged(true, true);
          }

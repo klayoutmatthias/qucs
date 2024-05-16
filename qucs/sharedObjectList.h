@@ -40,11 +40,11 @@ public:
     bool operator==(const Iterator &other) const { return m_basic == other.m_basic; }
     bool operator!=(const Iterator &other) const { return m_basic != other.m_basic; }
     Iterator operator++() { ++m_basic; return *this; }
-    Iterator operator++(int) { m_basic++; return *this; }
+    Iterator operator++(int) { Iterator ret = *this; ++m_basic; return ret; }
     Iterator operator+(int n) const { Iterator result = *this; for (int i = 0; i < n; ++i) ++result; return result; }
     Iterator &operator+=(int n) { for (int i = 0; i < n; ++i) ++m_basic; return *this; }
     Iterator operator--() { --m_basic; return *this; }
-    Iterator operator--(int) { m_basic--; return *this; }
+    Iterator operator--(int) { Iterator ret = *this; --m_basic; return ret; }
     Iterator operator-(int n) const { Iterator result = *this; for (int i = 0; i < n; ++i) --result; return result; }
     Iterator &operator-=(int n) { for (int i = 0; i < n; ++i) --m_basic; return *this; }
     reference operator*() const { return **m_basic; }
@@ -69,11 +69,11 @@ public:
     bool operator==(const ConstIterator &other) const { return m_basic == other.m_basic; }
     bool operator!=(const ConstIterator &other) const { return m_basic != other.m_basic; }
     ConstIterator operator++() { ++m_basic; return *this; }
-    ConstIterator operator++(int) { m_basic++; return *this; }
+    ConstIterator operator++(int) { ConstIterator ret = *this; ++m_basic; return ret; }
     ConstIterator operator+(int n) const { ConstIterator result = *this; for (int i = 0; i < n; ++i) ++result; return result; }
     ConstIterator &operator+=(int n) { for (int i = 0; i < n; ++i) ++m_basic; return *this; }
     ConstIterator operator--() { --m_basic; return *this; }
-    ConstIterator operator--(int) { m_basic--; return *this; }
+    ConstIterator operator--(int) { ConstIterator ret = *this; --m_basic; return ret; }
     ConstIterator operator-(int n) const { ConstIterator result = *this; for (int i = 0; i < n; ++i) --result; return result; }
     ConstIterator &operator-=(int n) { for (int i = 0; i < n; ++i) --m_basic; return *this; }
     reference operator*() const { return **m_basic; }
