@@ -54,14 +54,14 @@ void TimingDiagram::paint(ViewPainter *p)
 void TimingDiagram::paintDiagram(ViewPainter *p)
 {
   // paint all lines
-  foreach(Line *pl, Lines) {
+  for(auto pl = Lines.begin(); pl != Lines.end(); ++pl) {
     p->Painter->setPen(pl->style);
     p->drawLine(cx+pl->x1, cy-pl->y1, cx+pl->x2, cy-pl->y2);
   }
 
   p->Painter->setPen(Qt::black);
   // write whole text
-  foreach(Text *pt, Texts)
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt)
     p->drawText(pt->s, cx+pt->x, cy-pt->y);
 
 
@@ -143,11 +143,11 @@ int TimingDiagram::calcDiagram()
   y = y2 - tHeight - 6;
 
   // outer frame
-  Lines.append(new Line(0, y2, x2, y2, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y2, 0, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(x2, y2, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, 0, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y+2, x2, y+2, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y2, x2, y2, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y2, 0, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(x2, y2, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, 0, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y+2, x2, y+2, QPen(Qt::black,0)));
 
   if(xAxis.limit_min < 0.0)
     xAxis.limit_min = 0.0;
@@ -160,7 +160,7 @@ int TimingDiagram::calcDiagram()
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
-      Texts.append(new Text(x, y2-2, Str)); // independent variable
+      Texts.push_back(Text(x, y2-2, Str)); // independent variable
     return 0;
   }
 
@@ -174,7 +174,7 @@ int TimingDiagram::calcDiagram()
     Str = QObject::tr("no data");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth < 0)  return 0;
-    Texts.append(new Text(x, y2-2, Str));
+    Texts.push_back(Text(x, y2-2, Str));
     return 0;
   }
   firstGraph = ig.operator->();
@@ -207,7 +207,7 @@ if(!firstGraph->isEmpty()) {
     Str = QObject::tr("wrong dependency");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
-      Texts.append(new Text(x, y2-2, Str)); // independent variable
+      Texts.push_back(Text(x, y2-2, Str)); // independent variable
     return 0;
   }
 
@@ -218,7 +218,7 @@ if(!firstGraph->isEmpty()) {
   Str = pD->Var;
   colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
   if(colWidth < 0)  return 1;
-  Texts.append(new Text(x, y2-2, Str));
+  Texts.push_back(Text(x, y2-2, Str));
   
 
   y -= 5;
@@ -228,12 +228,12 @@ if(!firstGraph->isEmpty()) {
     Str = g->Var;
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
     if(colWidth < 0)  return 1;
-    Texts.append(new Text(x, y, Str));  // dependent variable
+    Texts.push_back(Text(x, y, Str));  // dependent variable
     y -= tHeight + 2;
   }
   x += colWidth + 13;
   xAxis.numGraphs = x -6;
-  Lines.append(new Line(x-6, y2, x-6, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(x-6, y2, x-6, 0, QPen(Qt::black,0)));
   xStart = x;
 
 
@@ -258,8 +258,8 @@ if(!firstGraph->isEmpty()) {
     colWidth = metrics.horizontalAdvance(Str);  // width of text
     if(x+colWidth+2 >= x2)  break;
 
-    Texts.append(new Text( x, y2-2, Str));
-    Lines.append(new Line(x+5, y, x+5, y-3, QPen(Qt::black,0)));
+    Texts.push_back(Text( x, y2-2, Str));
+    Lines.push_back(Line(x+5, y, x+5, y-3, QPen(Qt::black,0)));
     x += TimeStepWidth;
   }
 
@@ -275,9 +275,9 @@ if(!firstGraph->isEmpty()) {
   for (auto g = Graphs.begin(); g != Graphs.end(); ++g) {
     if(y < tHeight) {
       // mark lack of space with a small arrow
-      Lines.append(new Line(4, 6, 4, -7, QPen(Qt::red,2)));
-      Lines.append(new Line(1, 0, 4, -7, QPen(Qt::red,2)));
-      Lines.append(new Line(7, 0, 4, -7, QPen(Qt::red,2)));
+      Lines.push_back(Line(4, 6, 4, -7, QPen(Qt::red,2)));
+      Lines.push_back(Line(1, 0, 4, -7, QPen(Qt::red,2)));
+      Lines.push_back(Line(7, 0, 4, -7, QPen(Qt::red,2)));
       break;
     }
 
@@ -288,7 +288,7 @@ if(!firstGraph->isEmpty()) {
       Str = QObject::tr("no data");
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
       if(colWidth < 0)  goto funcEnd;
-      Texts.append(new Text(x, y, Str));
+      Texts.push_back(Text(x, y, Str));
       y -= tHeight;
       continue;
     }
@@ -297,7 +297,7 @@ if(!firstGraph->isEmpty()) {
       Str = QObject::tr("wrong dependency");
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
       if(colWidth < 0)  goto funcEnd;
-      Texts.append(new Text(x, y, Str));
+      Texts.push_back(Text(x, y, Str));
       y -= tHeight;
       continue;
     }
@@ -315,25 +315,25 @@ if(!firstGraph->isEmpty()) {
       px += 2 * z;
       z = g->axis(0)->count - z;
       yNow = 1 + ((tHeight - 6) >> 1);
-      Lines.append(new Line(x, y-yNow, x+2, y-1, Pen));
-      Lines.append(new Line(x+2, y-tHeight+5, x, y-yNow, Pen));
+      Lines.push_back(Line(x, y-yNow, x+2, y-1, Pen));
+      Lines.push_back(Line(x+2, y-tHeight+5, x, y-yNow, Pen));
       for( ; z>0; z--) {
         if(x+TimeStepWidth >= x2) break;
-        Lines.append(new Line(x+2, y-1, x+TimeStepWidth-2, y-1, Pen));
-        Lines.append(new Line(x+2, y-tHeight+5, x+TimeStepWidth-2, y-tHeight+5, Pen));
+        Lines.push_back(Line(x+2, y-1, x+TimeStepWidth-2, y-1, Pen));
+        Lines.push_back(Line(x+2, y-tHeight+5, x+TimeStepWidth-2, y-tHeight+5, Pen));
 
 	if (*(px+1) == 0.0)
 	  // output real number
-	  Texts.append(new Text(x+3, y,QString::number(*px)));
+          Texts.push_back(Text(x+3, y,QString::number(*px)));
 	else
 	  // output magnitude of (complex) number
-	  Texts.append(new Text(x+3, y,
+          Texts.push_back(Text(x+3, y,
               QString::number(sqrt((*px)*(*px) + (*(px+1))*(*(px+1))))));
 
         px += 2;
         x += TimeStepWidth;
-        Lines.append(new Line(x-2, y-tHeight+5, x+2, y-1, Pen));
-        Lines.append(new Line(x+2, y-tHeight+5, x-2, y-1, Pen));
+        Lines.push_back(Line(x-2, y-tHeight+5, x+2, y-1, Pen));
+        Lines.push_back(Line(x+2, y-tHeight+5, x-2, y-1, Pen));
       }
       y -= tHeight;
       continue;
@@ -375,18 +375,18 @@ if(!firstGraph->isEmpty()) {
         } 
 
         if(yLast != yNow)
-          Lines.append(new Line(x, y-yLast, x, y-yNow, Pen));
+          Lines.push_back(Line(x, y-yLast, x, y-yNow, Pen));
         if(x+TimeStepWidth >= x2) break;
         if((*pcx & 254) == '0')
-          Lines.append(new Line(x, y-yNow, x+TimeStepWidth, y-yNow, Pen));
+          Lines.push_back(Line(x, y-yNow, x+TimeStepWidth, y-yNow, Pen));
         else {
-          Texts.append(new Text(x+(TimeStepWidth>>1)-3, y, QString(pcx)));
-          Lines.append(new Line(x+3, y-1, x+TimeStepWidth-3, y-1, Pen));
-          Lines.append(new Line(x+3, y-tHeight+5, x+TimeStepWidth-3, y-tHeight+5, Pen));
-          Lines.append(new Line(x, y-yNow, x+3, y-1, Pen));
-          Lines.append(new Line(x, y-yNow, x+3, y-tHeight+5, Pen));
-          Lines.append(new Line(x+TimeStepWidth-3, y-1, x+TimeStepWidth, y-yNow, Pen));
-          Lines.append(new Line(x+TimeStepWidth-3, y-tHeight+5, x+TimeStepWidth, y-yNow, Pen));
+          Texts.push_back(Text(x+(TimeStepWidth>>1)-3, y, QString(pcx)));
+          Lines.push_back(Line(x+3, y-1, x+TimeStepWidth-3, y-1, Pen));
+          Lines.push_back(Line(x+3, y-tHeight+5, x+TimeStepWidth-3, y-tHeight+5, Pen));
+          Lines.push_back(Line(x, y-yNow, x+3, y-1, Pen));
+          Lines.push_back(Line(x, y-yNow, x+3, y-tHeight+5, Pen));
+          Lines.push_back(Line(x+TimeStepWidth-3, y-1, x+TimeStepWidth, y-yNow, Pen));
+          Lines.push_back(Line(x+TimeStepWidth-3, y-tHeight+5, x+TimeStepWidth, y-yNow, Pen));
         }
 
         yLast = yNow;
@@ -399,19 +399,19 @@ if(!firstGraph->isEmpty()) {
 
       z = g->axis(0)->count - z;
       yNow = 1 + ((tHeight - 6) >> 1);
-      Lines.append(new Line(x, y-yNow, x+2, y-1, Pen));
-      Lines.append(new Line(x+2, y-tHeight+5, x, y-yNow, Pen));
+      Lines.push_back(Line(x, y-yNow, x+2, y-1, Pen));
+      Lines.push_back(Line(x+2, y-tHeight+5, x, y-yNow, Pen));
       for( ; z>0; z--) {
         if(x+TimeStepWidth >= x2) break;
-        Lines.append(new Line(x+2, y-1, x+TimeStepWidth-2, y-1, Pen));
-        Lines.append(new Line(x+2, y-tHeight+5, x+TimeStepWidth-2, y-tHeight+5, Pen));
+        Lines.push_back(Line(x+2, y-1, x+TimeStepWidth-2, y-1, Pen));
+        Lines.push_back(Line(x+2, y-tHeight+5, x+TimeStepWidth-2, y-tHeight+5, Pen));
 
-        Texts.append(new Text(x+3, y, QString(pcx)));
+        Texts.push_back(Text(x+3, y, QString(pcx)));
 
         x += TimeStepWidth;
         pcx += strlen(pcx) + 1;
-        Lines.append(new Line(x-2, y-tHeight+5, x+2, y-1, Pen));
-        Lines.append(new Line(x+2, y-tHeight+5, x-2, y-1, Pen));
+        Lines.push_back(Line(x-2, y-tHeight+5, x+2, y-1, Pen));
+        Lines.push_back(Line(x+2, y-tHeight+5, x-2, y-1, Pen));
       }
     }
 
@@ -423,9 +423,9 @@ funcEnd:
   if(invisibleCount > 0) {  // could all values be displayed ?
     x  = x2 - xAxis.numGraphs - 37;
     if(x < MIN_SCROLLBAR_SIZE+2) {  // not enough space for scrollbar ?
-      Lines.append(new Line(x2, 0, x2, -17, QPen(Qt::red,0)));
-      Lines.append(new Line(xAxis.numGraphs, -17, x2, -17, QPen(Qt::red,0)));
-      Lines.append(new Line(xAxis.numGraphs, 0, xAxis.numGraphs, -17, QPen(Qt::red,0)));
+      Lines.push_back(Line(x2, 0, x2, -17, QPen(Qt::red,0)));
+      Lines.push_back(Line(xAxis.numGraphs, -17, x2, -17, QPen(Qt::red,0)));
+      Lines.push_back(Line(xAxis.numGraphs, 0, xAxis.numGraphs, -17, QPen(Qt::red,0)));
       return 1;
     }
 

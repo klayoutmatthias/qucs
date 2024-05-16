@@ -26,7 +26,8 @@
 
 #include <QFile>
 #include <QTextStream>
-#include <QList>
+
+#include <list>
 
 #define MIN_SCROLLBAR_SIZE 8
 
@@ -109,9 +110,9 @@ public:
   QPen    GridPen;
 
   SharedObjectList<Graph>  Graphs;
-  QList<Arc *>    Arcs;
-  QList<Line *>   Lines;
-  QList<Text *>   Texts;
+  std::list<Arc>    Arcs;
+  std::list<Line>   Lines;
+  std::list<Text>   Texts;
 
   QString sfreq;
   double *freq=nullptr;

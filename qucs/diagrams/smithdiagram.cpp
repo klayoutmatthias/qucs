@@ -46,7 +46,7 @@ SmithDiagram::SmithDiagram(int _cx, int _cy, bool ImpMode) : Diagram(_cx, _cy)
   if(ImpMode)  Name = "Smith";  // with impedance circles
   else  Name = "ySmith";        // with admittance circles
 
-  Arcs.append(new struct Arc(0, y2, x2, y2, 0, 16*360, QPen(Qt::black,0)));
+  Arcs.push_back(Arc(0, y2, x2, y2, 0, 16*360, QPen(Qt::black,0)));
 //  calcDiagram();    // calculate circles for smith chart with |r|=1
 }
 
@@ -94,10 +94,10 @@ int SmithDiagram::calcDiagram()
   else  createSmithChart(&yAxis);
 
   // outer most circle
-  Arcs.append(new Arc(0, x2, x2, x2, 0, 16*360, QPen(Qt::black,0)));
+  Arcs.push_back(Arc(0, x2, x2, x2, 0, 16*360, QPen(Qt::black,0)));
 
   // horizontal line Im(r)=0
-  Lines.append(new Line(0, x2>>1, x2, x2>>1, GridPen));
+  Lines.push_back(Line(0, x2>>1, x2, x2>>1, GridPen));
 
   return 3;
 }

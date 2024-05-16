@@ -55,7 +55,7 @@ void TabDiagram::paint(ViewPainter *p)
 void TabDiagram::paintDiagram(ViewPainter *p)
 {
   // paint all lines
-  foreach(Line *pl, Lines) {
+  for(auto pl = Lines.begin(); pl != Lines.end(); ++pl) {
     p->Painter->setPen(pl->style);
     p->drawLine(cx+pl->x1, cy-pl->y1, cx+pl->x2, cy-pl->y2);
   }
@@ -109,7 +109,7 @@ void TabDiagram::paintDiagram(ViewPainter *p)
 
   p->Painter->setPen(Qt::black);
   // write whole text
-  foreach(Text *pt, Texts)
+  for(auto pt = Texts.begin(); pt != Texts.end(); ++pt)
     p->drawText(pt->s, cx+pt->x, cy-pt->y);
 
 
@@ -148,11 +148,11 @@ int TabDiagram::calcDiagram()
   y = y2 - tHeight - 6;
 
   // outer frame
-  Lines.append(new Line(0, y2, x2, y2, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y2, 0, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(x2, y2, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, 0, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y+2, x2, y+2, QPen(Qt::black,2)));
+  Lines.push_back(Line(0, y2, x2, y2, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y2, 0, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(x2, y2, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, 0, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y+2, x2, y+2, QPen(Qt::black,2)));
 
   if(xAxis.limit_min < 0.0)
     xAxis.limit_min = 0.0;
@@ -165,7 +165,7 @@ int TabDiagram::calcDiagram()
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
-      Texts.append(new Text(x-4, y2-2, Str)); // independent variable
+      Texts.push_back(Text(x-4, y2-2, Str)); // independent variable
     return 0;
   }
 
@@ -202,7 +202,7 @@ int TabDiagram::calcDiagram()
       if(colWidth < 0)  goto funcEnd;
       startWriting = int(xAxis.limit_min + 0.5);  // when to reach visible area
       
-      Texts.append(new Text(x-4, y2-2, Str)); // independent variable
+      Texts.push_back(Text(x-4, y2-2, Str)); // independent variable
       if(pD->count != 0) {
 	y = y2-tHeight-5;
 	counting /= pD->count;   // how many rows to be skipped
@@ -217,7 +217,7 @@ int TabDiagram::calcDiagram()
 	      colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
 	      if(colWidth < 0)  goto funcEnd;
 	      
-	      Texts.append(new Text( x, y, Str));
+              Texts.push_back(Text( x, y, Str));
 	      y -= tHeight*counting;
 	    }
 	    else startWriting -= counting;
@@ -225,14 +225,14 @@ int TabDiagram::calcDiagram()
 	  }
           if(pD == ig->axis(0))   // only paint one time
 	    if(y >= tHeight) if(y < y2-tHeight-5)
-	      Lines.append(new Line(0, y+1, x2, y+1, QPen(Qt::black,0)));
+              Lines.push_back(Line(0, y+1, x2, y+1, QPen(Qt::black,0)));
 	}
 	lastCount *= pD->count;
       }
       x += colWidth+15;
-      Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
+      Lines.push_back(Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
     }
-    Lines.last()->style = QPen(Qt::black,2);
+    Lines.back().style = QPen(Qt::black,2);
   }  // of "if no data in graphs"
 
   
@@ -247,7 +247,7 @@ int TabDiagram::calcDiagram()
     Str = g->Var;
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth < 0)  goto funcEnd;
-    Texts.append(new Text(x, y2-2, Str));  // dependent variable
+    Texts.push_back(Text(x, y2-2, Str));  // dependent variable
 
 
     startWriting = int(xAxis.limit_min + 0.5); // when to reach visible area
@@ -258,7 +258,7 @@ int TabDiagram::calcDiagram()
 	Str = QObject::tr("invalid");
 	colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
 	if(colWidth < 0)  goto funcEnd;
-	Texts.append(new Text(x, y, Str));
+        Texts.push_back(Text(x, y, Str));
       }
       else if(sameDependencies(g.operator->(), firstGraph)) {
         int z=g->axis(0)->count * g->countY;
@@ -278,7 +278,7 @@ int TabDiagram::calcDiagram()
             colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
             if(colWidth < 0)  goto funcEnd;
 
-            Texts.append(new Text(x, y, Str));
+            Texts.push_back(Text(x, y, Str));
             y -= tHeight;
           }
 
@@ -295,7 +295,7 @@ int TabDiagram::calcDiagram()
             colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
             if(colWidth < 0)  goto funcEnd;
 
-            Texts.append(new Text(x, y, Str));
+            Texts.push_back(Text(x, y, Str));
             pcy += strlen(pcy) + 1;
             y -= tHeight;
           }
@@ -307,19 +307,19 @@ int TabDiagram::calcDiagram()
         Str = QObject::tr("wrong dependency");
         colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
         if(colWidth < 0)  goto funcEnd;
-        Texts.append(new Text(x, y, Str));
+        Texts.push_back(Text(x, y, Str));
       }
     }
     else {   // no data in graph
       Str = QObject::tr("no data");
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
       if(colWidth < 0)  goto funcEnd;
-      Texts.append(new Text(x, y, Str));
+      Texts.push_back(Text(x, y, Str));
     }
     x += colWidth+15;
     auto gn = g;
     if(++gn != Graphs.end())   // do not paint last line
-      Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
+      Lines.push_back(Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
   }
 
 funcEnd:

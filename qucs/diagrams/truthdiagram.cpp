@@ -68,11 +68,11 @@ int TruthDiagram::calcDiagram()
   y = y2 - tHeight - 6;
 
   // outer frame
-  Lines.append(new Line(0, y2, x2, y2, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y2, 0, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(x2, y2, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, 0, x2, 0, QPen(Qt::black,0)));
-  Lines.append(new Line(0, y+2, x2, y+2, QPen(Qt::black,2)));
+  Lines.push_back(Line(0, y2, x2, y2, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y2, 0, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(x2, y2, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, 0, x2, 0, QPen(Qt::black,0)));
+  Lines.push_back(Line(0, y+2, x2, y+2, QPen(Qt::black,2)));
 
   if(xAxis.limit_min < 0.0)
     xAxis.limit_min = 0.0;
@@ -84,7 +84,7 @@ int TruthDiagram::calcDiagram()
     Str = QObject::tr("no variables");
     colWidth = checkColumnWidth(Str, metrics, colWidth, x, y2);
     if(colWidth >= 0)
-      Texts.append(new Text(x-4, y2-2, Str)); // independent variable
+      Texts.push_back(Text(x-4, y2-2, Str)); // independent variable
     return 0;
   }
 
@@ -112,7 +112,7 @@ int TruthDiagram::calcDiagram()
     }
 
     colWidth = 0;
-    Texts.append(new Text(x-4, y2-2, Str)); // independent variable
+    Texts.push_back(Text(x-4, y2-2, Str)); // independent variable
     if(NumAll != 0) {
       z = metrics.horizontalAdvance("1");
       colWidth = metrics.horizontalAdvance("0");
@@ -133,14 +133,14 @@ int TruthDiagram::calcDiagram()
 	for(int zi=counting-1; zi>=0; zi--) {
 	  if(z & (1 << zi))  Str = "1";
 	  else  Str = "0";
-	  Texts.append(new Text( startWriting, y, Str));
+          Texts.push_back(Text( startWriting, y, Str));
 	  startWriting += colWidth;
 	}
 	y -= tHeight;
       }
       x = startWriting + 15;
     }
-    Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,2)));  
+    Lines.push_back(Line(x-8, y2, x-8, 0, QPen(Qt::black,2)));
   }  // of "if no data in graphs"
   
 
@@ -154,7 +154,7 @@ int TruthDiagram::calcDiagram()
     Str = g->Var;
     colWidth = checkColumnWidth(Str, metrics, 0, x, y2);
     if(colWidth < 0)  goto funcEnd;
-    Texts.append(new Text(x, y2-2, Str));  // dependent variable
+    Texts.push_back(Text(x, y2-2, Str));  // dependent variable
 
 
     startWriting = int(xAxis.limit_min + 0.5);  // when to reach visible area
@@ -173,7 +173,7 @@ int TruthDiagram::calcDiagram()
             colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
             if(colWidth < 0)  goto funcEnd;
 
-            Texts.append(new Text(x, y, Str));
+            Texts.push_back(Text(x, y, Str));
             y -= tHeight;
           }
         }
@@ -198,7 +198,7 @@ int TruthDiagram::calcDiagram()
             zi = 0;
             while(*py) {
               Str = *(py++);
-              Texts.append(new Text(x + zi, y, Str));
+              Texts.push_back(Text(x + zi, y, Str));
               zi += digitWidth;
             }
             py++;
@@ -215,19 +215,19 @@ int TruthDiagram::calcDiagram()
         Str = QObject::tr("wrong dependency");
         colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
         if(colWidth < 0)  goto funcEnd;
-        Texts.append(new Text(x, y, Str));
+        Texts.push_back(Text(x, y, Str));
       }
     }
     else {   // no data in graph
       Str = QObject::tr("no data");
       colWidth = checkColumnWidth(Str, metrics, colWidth, x, y);
       if(colWidth < 0)  goto funcEnd;
-      Texts.append(new Text(x, y, Str));
+      Texts.push_back(Text(x, y, Str));
     }
     x += colWidth+15;
     auto gn = g;
     if(++gn != Graphs.end())   // do not paint last line
-      Lines.append(new Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
+      Lines.push_back(Line(x-8, y2, x-8, 0, QPen(Qt::black,0)));
   }
 
 funcEnd:

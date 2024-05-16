@@ -43,7 +43,7 @@ PSDiagram::PSDiagram(int _cx, int _cy, bool _polarUp)
   if(_polarUp)  Name = "PS";  // polar diagram upper half ?
   else  Name = "SP";
 
-  Arcs.append(new struct Arc(0, y2, x2, y2, 0, 16*360, QPen(Qt::black,0)));
+  Arcs.push_back(Arc(0, y2, x2, y2, 0, 16*360, QPen(Qt::black,0)));
 //  calcDiagram();
 }
 
@@ -112,7 +112,7 @@ int PSDiagram::calcDiagram()
   }
 
   // x line
-  Lines.append(new Line(0, y2>>1, x2, y2>>1, GridPen));
+  Lines.push_back(Line(0, y2>>1, x2, y2>>1, GridPen));
   return 3;
 }
 
